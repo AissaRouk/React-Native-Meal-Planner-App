@@ -59,17 +59,6 @@ export const CATEGORY_NAME = 'name';
 export const createTables = async () => {
   const db = await getDbConnection();
 
-  // Create Recipe table
-  const createRecipeTable = `
-    CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE} (
-      ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${RECIPE_NAME} TEXT NOT NULL,
-      ${RECIPE_LINK} TEXT,
-      ${RECIPE_PREP_TIME} INTEGER,
-      ${RECIPE_SERVING_SIZE} INTEGER
-    );
-  `;
-
   // // Create Ingredient table
   // const createIngredientTable = `
   //   CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT} (
@@ -129,20 +118,20 @@ export const createTables = async () => {
       ${CATEGORY_NAME} TEXT NOT NULL
     );
   `;
-  try {
-    // Execute all table creation queries
-    await db.transaction(tx => {
-      tx.executeSql(createRecipeTable);
-      // tx.executeSql(createIngredientTable);
-      tx.executeSql(createRecipeIngredientsTable);
-      tx.executeSql(createGroceryListTable);
-      tx.executeSql(createPantryTable);
-      tx.executeSql(createIngredientPantryTable);
-      tx.executeSql(createCategoryTable);
-    });
-  } catch (error) {
-    throw Error('Failed to create tables because: ' + JSON.stringify(error));
-  }
+  // try {
+  //   // Execute all table creation queries
+  //   await db.transaction(tx => {
+  //     tx.executeSql(createRecipeTable);
+  //     // tx.executeSql(createIngredientTable);
+  //     tx.executeSql(createRecipeIngredientsTable);
+  //     tx.executeSql(createGroceryListTable);
+  //     tx.executeSql(createPantryTable);
+  //     tx.executeSql(createIngredientPantryTable);
+  //     tx.executeSql(createCategoryTable);
+  //   });
+  // } catch (error) {
+  //   throw Error('Failed to create tables because: ' + JSON.stringify(error));
+  // }
 };
 
 //Ingredient CRUD functions
@@ -287,6 +276,38 @@ export const updateIngredient: (
     );
   } catch (error) {
     throw new Error('Erro in updating the ingredient');
+  }
+};
+
+//
+//
+//
+//CRUD for Recipe Table
+///
+//
+//
+export const createRecipeTable: () => Promise<void> = async () => {
+  const db = await getDbConnection();
+
+  const sqlInsert = `
+    CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE} (
+      ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${RECIPE_NAME} TEXT NOT NULL,
+      ${RECIPE_LINK} TEXT,
+      ${RECIPE_PREP_TIME} INTEGER,
+      ${RECIPE_SERVING_SIZE} INTEGER
+    );
+  `;
+
+  try {
+    db.transaction(tx =>
+      tx.executeSql(sqlInsert, [], (tx, results) => {
+        if (results.rowsAffected > 0)
+          console.log('Recipe table created successfully!!');
+      }),
+    );
+  } catch (error) {
+    throw new Error('Error creating the Recipe table: ' + error);
   }
 };
 
