@@ -262,6 +262,37 @@ export const deleteIngredient: (id: number) => Promise<void> = async (
   }
 };
 
+/**
+ * Function that updates a specific ingredient
+ */
+export const updateIngredient: (
+  ingredient: Ingredient,
+) => Promise<void> = async ingredient => {
+  const db = getDbConnection();
+
+  //sql query
+  const sqlInsert = `UPDATE INGREDIENT SET ${INGREDIENT_NAME}=?, ${INGREDIENT_CATEGORY}=? WHERE ${INGREDIENT_ID}=?`;
+
+  try {
+    (await db).transaction(tx =>
+      tx.executeSql(
+        sqlInsert,
+        [ingredient.name, ingredient.category, ingredient.id],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('Ingredient updated successfully!!');
+          }
+        },
+      ),
+    );
+  } catch (error) {
+    throw new Error('Erro in updating the ingredient');
+  }
+};
+
+//
+//
+//
 //General Table CRUD functions
 
 export const getTableNames = async () => {
