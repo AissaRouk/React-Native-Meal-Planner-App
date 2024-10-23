@@ -1,10 +1,13 @@
-import {openDatabase} from 'react-native-sqlite-storage';
+import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {Ingredient} from '../Types/Types';
 
 // Function to get the database connection
 export const getDbConnection = async () => {
   return openDatabase({name: 'MealPlanningDB', location: 'default'});
 };
+
+//enabling promises
+enablePromise(true);
 
 // Constants for table and field names
 export const TABLE_RECIPE = 'Recipe';
@@ -25,7 +28,7 @@ export const RECIPE_SERVING_SIZE = 'servingSize';
 // Fields for the Ingredient table
 export const INGREDIENT_ID = 'id';
 export const INGREDIENT_NAME = 'name';
-export const INGREDIENT_CATEGORY_ID = '';
+export const INGREDIENT_CATEGORY = 'category';
 
 // Fields for the RecipeIngredients table
 export const RECIPE_INGREDIENTS_ID = 'id';
@@ -67,15 +70,15 @@ export const createTables = async () => {
     );
   `;
 
-  // Create Ingredient table
-  const createIngredientTable = `
-    CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT} (
-      ${INGREDIENT_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${INGREDIENT_NAME} TEXT NOT NULL,
-      ${INGREDIENT_CATEGORY_ID} INTEGER,
-      FOREIGN KEY (${INGREDIENT_CATEGORY_ID}) REFERENCES ${TABLE_CATEGORY}(${CATEGORY_ID})
-    );
-  `;
+  // // Create Ingredient table
+  // const createIngredientTable = `
+  //   CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT} (
+  //     ${INGREDIENT_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+  //     ${INGREDIENT_NAME} TEXT NOT NULL,
+  //     ${INGREDIENT_CATEGORY_ID} INTEGER,
+  //     FOREIGN KEY (${INGREDIENT_CATEGORY_ID}) REFERENCES ${TABLE_CATEGORY}(${CATEGORY_ID})
+  //   );
+  // `;
 
   // Create RecipeIngredients table
   const createRecipeIngredientsTable = `
@@ -126,31 +129,64 @@ export const createTables = async () => {
       ${CATEGORY_NAME} TEXT NOT NULL
     );
   `;
-
-  // Execute all table creation queries
-  await db.transaction(tx => {
-    tx.executeSql(createRecipeTable);
-    tx.executeSql(createIngredientTable);
-    tx.executeSql(createRecipeIngredientsTable);
-    tx.executeSql(createGroceryListTable);
-    tx.executeSql(createPantryTable);
-    tx.executeSql(createIngredientPantryTable);
-    tx.executeSql(createCategoryTable);
-  });
+  try {
+    // Execute all table creation queries
+    await db.transaction(tx => {
+      tx.executeSql(createRecipeTable);
+      // tx.executeSql(createIngredientTable);
+      tx.executeSql(createRecipeIngredientsTable);
+      tx.executeSql(createGroceryListTable);
+      tx.executeSql(createPantryTable);
+      tx.executeSql(createIngredientPantryTable);
+      tx.executeSql(createCategoryTable);
+    });
+  } catch (error) {
+    throw Error('Failed to create tables because: ' + JSON.stringify(error));
+  }
 };
 
 //Ingredient CRUD functions
 
 /**
- * Function that creates a ingredient
+ * Create the ingredient table
  */
-export const createIngredient = async (name: String, category: String) => {
+export const createIngredientTable = async () => {
+  const db = await getDbConnection();
+  const sqlInsert = `
+    CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT} (
+      ${INGREDIENT_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${INGREDIENT_NAME} TEXT NOT NULL,
+      ${INGREDIENT_CATEGORY} STRING UNIQUE
+    );
+  `;
+  try {
+    await db.transaction(tx => {
+      tx.executeSql(sqlInsert, [], (transaction, resultSet) => {
+        console.log(
+          'createIngredientTable.transaction: ' + JSON.stringify(transaction),
+        );
+        console.log(
+          'createIngredientTable.resultSet: ' + JSON.stringify(resultSet),
+        );
+      });
+    });
+  } catch (error) {
+    throw new Error(
+      'createIngredientTable.Error in createTable: ' + JSON.stringify(error),
+    );
+  }
+};
+
+/**
+ * Function that adds an ingredient to the ingredient table if this one doesn't exist
+ */
+export const addIngredient = async (name: String, category: String) => {
   try {
     //get db connection
     const db = await getDbConnection();
 
     //SQL query to insert a new ingredient
-    const insertQuery = `INSERT INTO ${TABLE_INGREDIENT} (name, category)
+    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT} (name, category)
     VALUES (?, ?);`;
 
     //execute the query
@@ -171,7 +207,9 @@ export const createIngredient = async (name: String, category: String) => {
 /**
  * Function that gets the content of the Ingredient table
  */
-export const getIngredients = async (): Promise<Ingredient[]> => {
+export const getIngredients: () => Promise<Ingredient[]> = async (): Promise<
+  Ingredient[]
+> => {
   try {
     // Get db connection
     const db = await getDbConnection();
@@ -182,17 +220,12 @@ export const getIngredients = async (): Promise<Ingredient[]> => {
     const ingredients: Ingredient[] = [];
 
     // Execute the query and process the results
-    const results = await db.transaction(tx => {
-      tx.executeSql(selectQuery, [], (tx, results) => {
-        const rows = results.rows;
-        for (let i = 0; i < rows.length; i++) {
-          const item = rows.item(i);
-          // Map each row to the Ingredient type
-          ingredients.push({
-            id: item.id,
-            name: item.name,
-            category: item.category_id,
-          });
+    await db.transaction(tx => {
+      tx.executeSql(selectQuery, [], (tx, resultSet) => {
+        const len = resultSet.rows.length;
+        for (let i = 0; i < len; i++) {
+          const row = resultSet.rows.item(i);
+          ingredients.push(row);
         }
       });
     });
@@ -201,5 +234,91 @@ export const getIngredients = async (): Promise<Ingredient[]> => {
   } catch (error) {
     console.error('Error fetching ingredients:', error);
     return [];
+  }
+};
+
+/**
+ * Function to delete an ingredient from the Ingredient Table
+ */
+export const deleteIngredient: (id: number) => Promise<void> = async (
+  id: number,
+) => {
+  const db = await getDbConnection();
+
+  const sqlInsert = `DELETE FROM ${TABLE_INGREDIENT} WHERE ${INGREDIENT_ID} = ?`;
+
+  try {
+    (await db).transaction(tx => {
+      tx.executeSql(sqlInsert, [id], (tx, results) => {
+        if (results.rowsAffected > 0)
+          console.log('Ingredient deleted successfully!');
+        else {
+          console.log('Failed to delete ingredient.');
+        }
+      });
+    });
+  } catch (error) {
+    throw new Error('Failed to delete ingredient: ' + error);
+  }
+};
+
+//General Table CRUD functions
+
+export const getTableNames = async () => {
+  try {
+    const db = await getDbConnection();
+
+    // SQL query to get the names of all tables
+    const sqlQuery = `SELECT name FROM sqlite_master WHERE type='table';`;
+
+    // Execute the query
+    const results = await db.executeSql(sqlQuery);
+
+    if (results[0]?.rows?.length > 0) {
+      const tableNames = [];
+      for (let i = 0; i < results[0].rows.length; i++) {
+        const tableName = results[0].rows.item(i).name;
+        tableNames.push(tableName);
+      }
+
+      console.log('Table names:', tableNames);
+      return tableNames;
+    } else {
+      console.log('No tables found.');
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching table names:', error);
+    return [];
+  }
+};
+
+// Function to drop all tables
+export const dropAllTables = async () => {
+  try {
+    const db = await getDbConnection();
+    const selectTablesQuery = `SELECT name FROM sqlite_master WHERE type='table';`;
+
+    await db.transaction(tx => {
+      tx.executeSql(selectTablesQuery, [], (tx, results) => {
+        const rows = results.rows;
+
+        // Loop through the list of tables and drop each one
+        for (let i = 0; i < rows.length; i++) {
+          const tableName = rows.item(i).name;
+          if (
+            tableName !== 'sqlite_sequence' &&
+            tableName !== 'android_metadata'
+          ) {
+            const dropTableQuery = `DROP TABLE IF EXISTS ${tableName};`;
+            tx.executeSql(dropTableQuery, [], () => {
+              console.log(`Dropped table: ${tableName}`);
+            });
+          }
+        }
+      });
+    });
+  } catch (error) {
+    console.error('Error dropping tables:', error);
   }
 };
