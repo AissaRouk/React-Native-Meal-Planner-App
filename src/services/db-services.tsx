@@ -1,5 +1,5 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import {Ingredient} from '../Types/Types';
+import {Ingredient, Recipe} from '../Types/Types';
 
 // Function to get the database connection
 export const getDbConnection = async () => {
@@ -144,8 +144,8 @@ export const createIngredientTable = async () => {
   const sqlInsert = `
     CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT} (
       ${INGREDIENT_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${INGREDIENT_NAME} TEXT NOT NULL,
-      ${INGREDIENT_CATEGORY} STRING UNIQUE
+      ${INGREDIENT_NAME} TEXT NOT NULL UNIQUE,
+      ${INGREDIENT_CATEGORY} STRING
     );
   `;
   try {
@@ -175,7 +175,7 @@ export const addIngredient = async (name: String, category: String) => {
     const db = await getDbConnection();
 
     //SQL query to insert a new ingredient
-    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT} (name, category)
+    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT} (${INGREDIENT_NAME}, ${INGREDIENT_CATEGORY})
     VALUES (?, ?);`;
 
     //execute the query
@@ -286,20 +286,24 @@ export const updateIngredient: (
 ///
 //
 //
-export const createRecipeTable: () => Promise<void> = async () => {
-  const db = await getDbConnection();
 
-  const sqlInsert = `
+/**
+ * Function that creates the Recipe Table in the DB
+ */
+export const createRecipeTable: () => Promise<void> = async () => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `
     CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE} (
       ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${RECIPE_NAME} TEXT NOT NULL,
+      ${RECIPE_NAME} TEXT NOT NULL UNIQUE,
       ${RECIPE_LINK} TEXT,
       ${RECIPE_PREP_TIME} INTEGER,
       ${RECIPE_SERVING_SIZE} INTEGER
     );
   `;
 
-  try {
     db.transaction(tx =>
       tx.executeSql(sqlInsert, [], (tx, results) => {
         if (results.rowsAffected > 0)
@@ -307,7 +311,76 @@ export const createRecipeTable: () => Promise<void> = async () => {
       }),
     );
   } catch (error) {
-    throw new Error('Error creating the Recipe table: ' + error);
+    throw new Error(
+      'createRecipeTable -> Error creating the Recipe table: ' + error,
+    );
+  }
+};
+
+/**
+ * Function that adds a Recipe in the table
+ * ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${RECIPE_NAME} TEXT NOT NULL,
+      ${RECIPE_LINK} TEXT,
+      ${RECIPE_PREP_TIME} INTEGER,
+      ${RECIPE_SERVING_SIZE} INTEGER
+ */
+export const addRecipe: (
+  name: string,
+  link: string,
+  preparationTime: number,
+  servingSize: number,
+) => Promise<void> = async (name, link, preparationTime, servingSize) => {
+  try {
+    const db = await getDbConnection();
+
+    //SQL query
+    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_RECIPE} (${RECIPE_NAME}, ${RECIPE_LINK}, ${RECIPE_PREP_TIME}, ${RECIPE_SERVING_SIZE})
+  VALUES (?, ?, ?, ?);`;
+
+    //sql execution
+    await db.transaction(tx =>
+      tx.executeSql(
+        insertQuery,
+        [name, link, preparationTime, servingSize],
+        (tx, resultSet) => {
+          if (resultSet.rowsAffected > 0)
+            console.log('Recipe added successfully!!');
+          else console.log('Recipe not added!!');
+        },
+        (tx, error) =>
+          console.log('Error in adding Recipe: ' + JSON.stringify(error)),
+      ),
+    );
+  } catch (error) {
+    throw new Error('addRecipe -> Error adding the Recipe table: ' + error);
+  }
+};
+
+/**
+ * Function that fetches all the Recipes
+ */
+export const getRecipes: () => Promise<Recipe[]> = async () => {
+  const db = await getDbConnection();
+
+  const sqlInsert = `SELECT * FROM ${TABLE_RECIPE}`;
+
+  try {
+    var fetchedRecipes: Recipe[] = [];
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
+        const len = resultSet.rows.length;
+        for (let i = 0; i < len; i++) {
+          const row = resultSet.rows.item(i);
+          fetchedRecipes.push(row);
+        }
+      }),
+    );
+
+    return fetchedRecipes;
+  } catch (error) {
+    throw new Error('Error in fetching the recipes: ' + error);
   }
 };
 
