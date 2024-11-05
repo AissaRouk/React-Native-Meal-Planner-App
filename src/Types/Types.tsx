@@ -11,3 +11,13 @@ export type Recipe = {
   preparationTime: number;
   servingSize: number;
 };
+
+export enum QuantityType {
+  GRAMS = 'grams',
+  MILLILITERS = 'milliliters',
+  PIECES = 'pieces',
+  TABLESPOON = 'tablespoon',
+  TEASPOON = 'teaspoon',
+  CUPS = 'cups',
+  // Add other units as needed
+}
