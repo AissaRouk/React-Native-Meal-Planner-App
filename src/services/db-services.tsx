@@ -386,6 +386,8 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
 
 /**
  * Function to update an existing recipe
+ *
+ * @param {Recipe} recipe the recipe that will be updated
  */
 export const updateRecipe: (recipe: Recipe) => Promise<void> = async recipe => {
   try {
@@ -417,7 +419,12 @@ export const updateRecipe: (recipe: Recipe) => Promise<void> = async recipe => {
   }
 };
 
-export const checkRecipe: (id: number) => Promise<void> = async id => {
+/**
+ * Function that gets a recipe by id
+ *
+ * @param id
+ */
+export const getRecipeById: (id: number) => Promise<void> = async id => {
   const db = getDbConnection();
 
   const sqlInsert = `SELECT * FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID}= ?`;
