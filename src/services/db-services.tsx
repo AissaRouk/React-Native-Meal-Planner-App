@@ -260,7 +260,7 @@ export const updateIngredient: (
   const db = getDbConnection();
 
   //sql query
-  const sqlInsert = `UPDATE INGREDIENT SET ${INGREDIENT_NAME}=?, ${INGREDIENT_CATEGORY}=? WHERE ${INGREDIENT_ID}=?`;
+  const sqlInsert = `UPDATE ${TABLE_INGREDIENT} SET ${INGREDIENT_NAME}=?, ${INGREDIENT_CATEGORY}=? WHERE ${INGREDIENT_ID}=?`;
 
   try {
     (await db).transaction(tx =>
@@ -275,7 +275,7 @@ export const updateIngredient: (
       ),
     );
   } catch (error) {
-    throw new Error('Erro in updating the ingredient');
+    throw new Error('Erro in updating the ingredient: ' + error);
   }
 };
 
@@ -382,6 +382,53 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
   } catch (error) {
     throw new Error('Error in fetching the recipes: ' + error);
   }
+};
+
+/**
+ * Function to update an existing recipe
+ */
+export const updateRecipe: (recipe: Recipe) => Promise<void> = async recipe => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `UPDATE ${TABLE_RECIPE} SET ${RECIPE_NAME}=?, ${RECIPE_LINK}=?, ${RECIPE_PREP_TIME}=?, ${RECIPE_SERVING_SIZE}=? WHERE ${RECIPE_ID}=?`;
+
+    db.transaction(tx =>
+      tx.executeSql(
+        sqlInsert,
+        [
+          recipe.name,
+          recipe.link,
+          recipe.preparationTime,
+          recipe.servingSize,
+          recipe.id,
+        ],
+        (tx, resultset) => {
+          if (resultset.rowsAffected > 0)
+            console.log('Recipe updated successfully!!');
+          else console.log("couldn't updated Recipe successfully!!");
+        },
+        (tx, error) =>
+          console.log('Error in updating Recipe: ' + JSON.stringify(error)),
+      ),
+    );
+  } catch (error) {
+    throw new Error('Error while updating recipe: ' + error);
+  }
+};
+
+export const checkRecipe: (id: number) => Promise<void> = async id => {
+  const db = getDbConnection();
+
+  const sqlInsert = `SELECT * FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID}= ?`;
+
+  (await db).transaction(tx =>
+    tx.executeSql(sqlInsert, [id], (tx, resultSet) => {
+      if (resultSet.rows.length > 0) {
+        console.log('Recipe found: ' + JSON.stringify(resultSet.rows.item(0)));
+      } else console.log("Couldn't find any recipe!");
+    }),
+  );
 };
 
 //
