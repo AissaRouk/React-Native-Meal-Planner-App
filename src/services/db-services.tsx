@@ -422,7 +422,7 @@ export const updateRecipe: (recipe: Recipe) => Promise<void> = async recipe => {
 /**
  * Function that gets a recipe by id
  *
- * @param id
+ * @param {number} id te id of the recipe wanted to be fetched
  */
 export const getRecipeById: (id: number) => Promise<void> = async id => {
   const db = getDbConnection();
@@ -434,6 +434,25 @@ export const getRecipeById: (id: number) => Promise<void> = async id => {
       if (resultSet.rows.length > 0) {
         console.log('Recipe found: ' + JSON.stringify(resultSet.rows.item(0)));
       } else console.log("Couldn't find any recipe!");
+    }),
+  );
+};
+
+/**
+ * Function to delete recipe
+ *
+ * @param {number} id the id of the Recipe to delete
+ */
+export const deleteRecipe: (id: number) => Promise<void> = async id => {
+  const db = await getDbConnection();
+
+  const sqlInsert = `DELETE FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID}=?`;
+
+  await db.transaction(tx =>
+    tx.executeSql(sqlInsert, [id], (tx, resultSet) => {
+      if (resultSet.rowsAffected > 0) {
+        console.log('deleteRecipe -> recipe deleted successfully!');
+      } else console.log("deleteRecipe -> Couldn't delete Recipe!!");
     }),
   );
 };
