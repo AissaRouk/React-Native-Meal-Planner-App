@@ -460,6 +460,47 @@ export const deleteRecipe: (id: number) => Promise<void> = async id => {
 //
 //
 //
+//CRUD for Table
+
+/**
+ * Funtion that creates the RecipeIngredients table
+ *
+ */
+export const createRecipeIngredientTable: () => Promise<void> = async () => {
+  const db = await getDbConnection();
+
+  try {
+    const sqlInsert = `CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE_INGREDIENTS} (
+      ${RECIPE_INGREDIENTS_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+      ${RECIPE_INGREDIENTS_RECIPE_ID} INTEGER,
+      ${RECIPE_INGREDIENTS_INGREDIENT_ID} INTEGER,
+      ${RECIPE_INGREDIENTS_QUANTITY} REAL,
+      ${RECIPE_INGREDIENTS_QUANTITY_TYPE} TEXT,
+      FOREIGN KEY (${RECIPE_INGREDIENTS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID}),
+      FOREIGN KEY (${RECIPE_INGREDIENTS_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID})
+    );
+  `;
+
+    await db.transaction(tx =>
+      tx.executeSql(
+        sqlInsert,
+        [],
+        () => {
+          console.log("Table 'Recipe' created successfully or already exists.");
+        },
+        error => {
+          console.error("Failed to create 'Recipe' table:", error);
+        },
+      ),
+    );
+  } catch (error) {
+    throw new Error('createRecipeIngredientTable: ' + error);
+  }
+};
+
+//
+//
+//
 //General Table CRUD functions
 
 export const getTableNames = async () => {
