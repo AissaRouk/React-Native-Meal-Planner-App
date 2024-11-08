@@ -1,5 +1,5 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import {Ingredient, Recipe} from '../Types/Types';
+import {Ingredient, QuantityType, Recipe} from '../Types/Types';
 
 // Function to get the database connection
 export const getDbConnection = async () => {
@@ -502,10 +502,69 @@ export const createRecipeIngredientTable: () => Promise<void> = async () => {
   }
 };
 
+/**
+ * Adds a new ingredient to a recipe in the database.
+ *
+ * This function inserts a record linking an ingredient to a recipe along with the specified quantity and quantity type.
+ * If the ingredient already exists for the recipe, the `INSERT OR IGNORE` ensures no duplicate entries.
+ *
+ * @async
+ * @function addRecipeIngredient
+ * @param {Recipe} recipe - The recipe object containing the recipe ID.
+ * @param {Ingredient} ingredient - The ingredient object containing the ingredient ID.
+ * @param {number} quantity - The quantity of the ingredient required for the recipe.
+ * @param {QuantityType} quantityType - The type of measurement for the quantity (e.g., grams, cups).
+ * @returns {Promise<void>} Resolves when the ingredient is added successfully.
+ * @throws {Error} Throws an error if the insertion fails.
+ *
+ * @example
+ * addRecipeIngredient(recipe, ingredient, 100, 'grams')
+ *   .then(() => console.log('Ingredient added successfully'))
+ *   .catch(error => console.error('Error adding ingredient:', error));
+ */
+export const addRecipeIngredient = async (
+  recipe: Recipe,
+  ingredient: Ingredient,
+  quantity: number,
+  quantityType: QuantityType,
+): Promise<void> => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_RECIPE_INGREDIENTS} (${RECIPE_INGREDIENTS_RECIPE_ID}, ${RECIPE_INGREDIENTS_INGREDIENT_ID}, ${RECIPE_INGREDIENTS_QUANTITY}, ${RECIPE_INGREDIENTS_QUANTITY_TYPE}) VALUES (?,?,?,?)`;
+
+    await db.transaction(tx =>
+      tx.executeSql(
+        sqlInsert,
+        [recipe.id, ingredient.id, quantity, quantityType],
+        (_, resultSet) => {
+          if (resultSet.rowsAffected > 0) {
+            console.log(
+              `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipe.id}`,
+            );
+          } else {
+            console.log(
+              `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipe.id}`,
+            );
+          }
+        },
+        error =>
+          console.error(
+            `addRecipeIngredient -> SQL error for Recipe ID ${recipe.id}:`,
+            error,
+          ),
+      ),
+    );
+  } catch (error) {
+    console.error('addRecipeIngredient -> Transaction failed:', error);
+    throw new Error(`Failed to add ingredient to recipe: ${error}`);
+  }
+};
+
 //
 //
 //
-//General Table CRUD functions
+//Generic Tables CRUD functions
 
 export const getTableNames = async () => {
   try {
