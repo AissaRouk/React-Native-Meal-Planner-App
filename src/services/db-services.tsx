@@ -478,18 +478,22 @@ export const createRecipeIngredientTable: () => Promise<void> = async () => {
       ${RECIPE_INGREDIENTS_QUANTITY_TYPE} TEXT,
       FOREIGN KEY (${RECIPE_INGREDIENTS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID}),
       FOREIGN KEY (${RECIPE_INGREDIENTS_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID})
-    );
-  `;
+    );`;
 
     await db.transaction(tx =>
       tx.executeSql(
         sqlInsert,
         [],
         () => {
-          console.log("Table 'Recipe' created successfully or already exists.");
+          console.log(
+            "createRecipeIngredientTable -> Table 'Recipe' created successfully or already exists.",
+          );
         },
         error => {
-          console.error("Failed to create 'Recipe' table:", error);
+          console.error(
+            "createRecipeIngredientTable -> Failed to create 'Recipe' table:",
+            error,
+          );
         },
       ),
     );
