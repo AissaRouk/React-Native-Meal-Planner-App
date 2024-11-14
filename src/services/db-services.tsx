@@ -1,5 +1,10 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
-import {Ingredient, QuantityType, Recipe} from '../Types/Types';
+import {
+  Ingredient,
+  QuantityType,
+  Recipe,
+  RecipeIngredient,
+} from '../Types/Types';
 
 // Function to get the database connection
 export const getDbConnection = async () => {
@@ -137,145 +142,235 @@ export const createTables = async () => {
 //Ingredient CRUD functions
 
 /**
- * Create the ingredient table
+ * Creates the Ingredient table in the database.
+ *
+ * This function creates the `Ingredient` table if it does not already exist. The table includes columns for the
+ * ingredient's ID, name, and category. The name field must be unique to ensure that no duplicate ingredient names exist.
+ *
+ * @async
+ * @function createIngredientTable
+ * @returns {Promise<void>} Resolves when the table is successfully created or already exists.
+ *
  */
-export const createIngredientTable = async () => {
+export const createIngredientTable = async (): Promise<void> => {
   const db = await getDbConnection();
-  const sqlInsert = `
+  const sqlCreateTable = `
     CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT} (
       ${INGREDIENT_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${INGREDIENT_NAME} TEXT NOT NULL UNIQUE,
-      ${INGREDIENT_CATEGORY} STRING
+      ${INGREDIENT_CATEGORY} TEXT
     );
   `;
+
   try {
     await db.transaction(tx => {
-      tx.executeSql(sqlInsert, [], (transaction, resultSet) => {
-        console.log(
-          'createIngredientTable.transaction: ' + JSON.stringify(transaction),
-        );
-        console.log(
-          'createIngredientTable.resultSet: ' + JSON.stringify(resultSet),
-        );
-      });
+      tx.executeSql(
+        sqlCreateTable,
+        [],
+        (transaction, resultSet) => {
+          console.log(
+            'createIngredientTable -> Table created successfully or already exists.',
+          );
+        },
+        error => {
+          console.error(
+            'createIngredientTable -> SQL error in table creation:',
+            error,
+          );
+        },
+      );
     });
   } catch (error) {
-    throw new Error(
-      'createIngredientTable.Error in createTable: ' + JSON.stringify(error),
-    );
+    console.error('createIngredientTable -> Transaction failed:', error);
+    throw new Error(`createIngredientTable: ${error}`);
   }
 };
 
 /**
- * Function that adds an ingredient to the ingredient table if this one doesn't exist
+ * Adds a new ingredient to the Ingredient table if it does not already exist.
+ *
+ * This function inserts a new ingredient with the provided name and category into the `Ingredient` table.
+ * If an ingredient with the same name already exists, the function ignores the insertion to prevent duplicates.
+ *
+ * @async
+ * @function addIngredient
+ * @param {string} name - The name of the ingredient to add (must be unique).
+ * @param {string} category - The category of the ingredient (e.g., "Spice", "Vegetable").
+ * @returns {Promise<void>} Resolves when the ingredient is added or the insertion is ignored if it already exists.
+ *
  */
-export const addIngredient = async (name: String, category: String) => {
+export const addIngredient = async (
+  name: string,
+  category: string,
+): Promise<void> => {
   try {
-    //get db connection
+    // Get database connection
     const db = await getDbConnection();
 
-    //SQL query to insert a new ingredient
-    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT} (${INGREDIENT_NAME}, ${INGREDIENT_CATEGORY})
-    VALUES (?, ?);`;
+    // SQL query to insert a new ingredient
+    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT} (${INGREDIENT_NAME}, ${INGREDIENT_CATEGORY}) VALUES (?, ?);`;
 
-    //execute the query
+    // Execute the query
     await db.transaction(tx => {
-      tx.executeSql(insertQuery, [name, category], (tx, results) => {
-        if (results.rowsAffected > 0)
-          console.log('Ingredient added successfully!');
-        else {
-          console.log('Failed to add ingredient.');
-        }
-      });
+      tx.executeSql(
+        insertQuery,
+        [name, category],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('addIngredient -> Ingredient added successfully!');
+          } else {
+            console.log(
+              'addIngredient -> Ingredient already exists, insertion ignored.',
+            );
+          }
+        },
+        error => {
+          console.error(
+            'addIngredient -> SQL error in adding ingredient:',
+            error,
+          );
+        },
+      );
     });
   } catch (error) {
-    console.error('Error creating ingredient:', error);
+    console.error('addIngredient -> Transaction failed:', error);
+    throw new Error(`addIngredient: ${error}`);
   }
 };
 
 /**
- * Function that gets the content of the Ingredient table
+ * Fetches all ingredients from the Ingredient table.
+ *
+ * This function retrieves all rows from the `Ingredient` table and returns them as an array of `Ingredient` objects.
+ *
+ * @async
+ * @function getIngredients
+ * @returns {Promise<Ingredient[]>} A promise that resolves to an array of ingredients or an empty array if an error occurs.
+ *
  */
 export const getIngredients: () => Promise<Ingredient[]> = async (): Promise<
   Ingredient[]
 > => {
   try {
-    // Get db connection
+    // Get database connection
     const db = await getDbConnection();
 
     // SQL query to fetch all ingredients
     const selectQuery = `SELECT * FROM ${TABLE_INGREDIENT}`;
-
     const ingredients: Ingredient[] = [];
 
     // Execute the query and process the results
     await db.transaction(tx => {
-      tx.executeSql(selectQuery, [], (tx, resultSet) => {
-        const len = resultSet.rows.length;
-        for (let i = 0; i < len; i++) {
-          const row = resultSet.rows.item(i);
-          ingredients.push(row);
-        }
-      });
+      tx.executeSql(
+        selectQuery,
+        [],
+        (tx, resultSet) => {
+          const len = resultSet.rows.length;
+          for (let i = 0; i < len; i++) {
+            const row = resultSet.rows.item(i);
+            ingredients.push(row);
+          }
+        },
+        error => {
+          console.error(
+            'getIngredients -> SQL error fetching ingredients:',
+            error,
+          );
+        },
+      );
     });
 
     return ingredients;
   } catch (error) {
-    console.error('Error fetching ingredients:', error);
+    console.error(
+      'getIngredients -> Transaction error:',
+      error instanceof Error ? error : JSON.stringify(error),
+    );
     return [];
   }
 };
 
 /**
- * Function to delete an ingredient from the Ingredient Table
+ * Deletes an ingredient from the Ingredient table by its ID.
+ *
+ * This function deletes an ingredient row in the `Ingredient` table, specified by its unique ID.
+ *
+ * @async
+ * @function deleteIngredient
+ * @param {number} id - The ID of the ingredient to be deleted.
+ * @returns {Promise<void>} A promise that resolves when the ingredient has been successfully deleted or logs an error if the deletion fails.
+ *
  */
 export const deleteIngredient: (id: number) => Promise<void> = async (
   id: number,
 ) => {
   const db = await getDbConnection();
-
-  const sqlInsert = `DELETE FROM ${TABLE_INGREDIENT} WHERE ${INGREDIENT_ID} = ?`;
+  const sqlDelete = `DELETE FROM ${TABLE_INGREDIENT} WHERE ${INGREDIENT_ID} = ?`;
 
   try {
-    (await db).transaction(tx => {
-      tx.executeSql(sqlInsert, [id], (tx, results) => {
-        if (results.rowsAffected > 0)
-          console.log('Ingredient deleted successfully!');
-        else {
-          console.log('Failed to delete ingredient.');
-        }
-      });
+    await db.transaction(tx => {
+      tx.executeSql(
+        sqlDelete,
+        [id],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('deleteIngredient -> Ingredient deleted successfully!');
+          } else {
+            console.warn(
+              'deleteIngredient -> No ingredient found with the provided ID.',
+            );
+          }
+        },
+        error => {
+          console.error(
+            'deleteIngredient -> SQL error during deletion:',
+            error,
+          );
+        },
+      );
     });
   } catch (error) {
-    throw new Error('Failed to delete ingredient: ' + error);
+    console.error(
+      'deleteIngredient -> Transaction error:',
+      error instanceof Error ? error : JSON.stringify(error),
+    );
+    throw new Error(
+      'Failed to delete ingredient: ' +
+        (error instanceof Error ? error.message : JSON.stringify(error)),
+    );
   }
 };
 
 /**
- * Function that updates a specific ingredient
+ * Updates a specific ingredient in the Ingredient table.
+ *
+ * @param ingredient - The ingredient object containing updated properties (`id`, `name`, and `category`).
+ * @returns A promise that resolves when the ingredient update operation is complete.
  */
 export const updateIngredient: (
   ingredient: Ingredient,
 ) => Promise<void> = async ingredient => {
-  const db = getDbConnection();
+  const db = await getDbConnection();
 
-  //sql query
+  // SQL query to update the ingredient
   const sqlInsert = `UPDATE ${TABLE_INGREDIENT} SET ${INGREDIENT_NAME}=?, ${INGREDIENT_CATEGORY}=? WHERE ${INGREDIENT_ID}=?`;
 
   try {
-    (await db).transaction(tx =>
+    await db.transaction(tx =>
       tx.executeSql(
         sqlInsert,
         [ingredient.name, ingredient.category, ingredient.id],
         (tx, results) => {
           if (results.rowsAffected > 0) {
-            console.log('Ingredient updated successfully!!');
+            console.log('Ingredient updated successfully!');
+          } else {
+            console.log('Ingredient update failed.');
           }
         },
       ),
     );
   } catch (error) {
-    throw new Error('Erro in updating the ingredient: ' + error);
+    console.error('Error in updating the ingredient:', error);
   }
 };
 
@@ -288,42 +383,46 @@ export const updateIngredient: (
 //
 
 /**
- * Function that creates the Recipe Table in the DB
+ * Creates the Recipe Table in the database if it does not already exist.
+ *
+ * @returns A promise that resolves when the Recipe table creation operation is complete.
  */
 export const createRecipeTable: () => Promise<void> = async () => {
   try {
     const db = await getDbConnection();
 
     const sqlInsert = `
-    CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE} (
-      ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${RECIPE_NAME} TEXT NOT NULL UNIQUE,
-      ${RECIPE_LINK} TEXT,
-      ${RECIPE_PREP_TIME} INTEGER,
-      ${RECIPE_SERVING_SIZE} INTEGER
-    );
-  `;
+      CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE} (
+        ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${RECIPE_NAME} TEXT NOT NULL UNIQUE,
+        ${RECIPE_LINK} TEXT,
+        ${RECIPE_PREP_TIME} INTEGER,
+        ${RECIPE_SERVING_SIZE} INTEGER
+      );
+    `;
 
-    db.transaction(tx =>
+    await db.transaction(tx =>
       tx.executeSql(sqlInsert, [], (tx, results) => {
-        if (results.rowsAffected > 0)
-          console.log('Recipe table created successfully!!');
+        if (results.rowsAffected > 0) {
+          console.log('Recipe table created successfully!');
+        } else {
+          console.log('Recipe table already exists or creation not required.');
+        }
       }),
     );
   } catch (error) {
-    throw new Error(
-      'createRecipeTable -> Error creating the Recipe table: ' + error,
-    );
+    console.error('Error creating the Recipe table:', error);
   }
 };
 
 /**
- * Function that adds a Recipe in the table
- * ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${RECIPE_NAME} TEXT NOT NULL,
-      ${RECIPE_LINK} TEXT,
-      ${RECIPE_PREP_TIME} INTEGER,
-      ${RECIPE_SERVING_SIZE} INTEGER
+ * Adds a new recipe to the Recipe table if it does not already exist.
+ *
+ * @param name - The name of the recipe.
+ * @param link - A link to the recipe (optional).
+ * @param preparationTime - The preparation time for the recipe in minutes.
+ * @param servingSize - The serving size for the recipe.
+ * @returns A promise that resolves when the recipe addition operation is complete.
  */
 export const addRecipe: (
   name: string,
@@ -334,39 +433,41 @@ export const addRecipe: (
   try {
     const db = await getDbConnection();
 
-    //SQL query
+    // SQL query
     const insertQuery = `INSERT OR IGNORE INTO ${TABLE_RECIPE} (${RECIPE_NAME}, ${RECIPE_LINK}, ${RECIPE_PREP_TIME}, ${RECIPE_SERVING_SIZE})
-  VALUES (?, ?, ?, ?);`;
+    VALUES (?, ?, ?, ?);`;
 
-    //sql execution
+    // Execute the query
     await db.transaction(tx =>
       tx.executeSql(
         insertQuery,
         [name, link, preparationTime, servingSize],
         (tx, resultSet) => {
-          if (resultSet.rowsAffected > 0)
-            console.log('Recipe added successfully!!');
-          else console.log('Recipe not added!!');
+          if (resultSet.rowsAffected > 0) {
+            console.log('Recipe added successfully!');
+          } else {
+            console.log('Recipe not added; it may already exist.');
+          }
         },
-        (tx, error) =>
-          console.log('Error in adding Recipe: ' + JSON.stringify(error)),
+        (tx, error) => console.error('Error adding recipe:', error),
       ),
     );
   } catch (error) {
-    throw new Error('addRecipe -> Error adding the Recipe table: ' + error);
+    console.error('addRecipe -> Error adding the recipe:', error);
   }
 };
 
 /**
- * Function that fetches all the Recipes
+ * Fetches all recipes from the Recipe table.
+ *
+ * @returns A promise that resolves to an array of Recipe objects.
  */
 export const getRecipes: () => Promise<Recipe[]> = async () => {
   const db = await getDbConnection();
-
   const sqlInsert = `SELECT * FROM ${TABLE_RECIPE}`;
 
   try {
-    var fetchedRecipes: Recipe[] = [];
+    const fetchedRecipes: Recipe[] = [];
 
     await db.transaction(tx =>
       tx.executeSql(sqlInsert, [], (tx, resultSet) => {
@@ -380,7 +481,8 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
 
     return fetchedRecipes;
   } catch (error) {
-    throw new Error('Error in fetching the recipes: ' + error);
+    console.error('getRecipes -> Error fetching recipes:', error);
+    return [];
   }
 };
 
@@ -461,19 +563,34 @@ export const deleteRecipe: (id: number) => Promise<void> = async id => {
 //
 //
 //CRUD for Table
-
+//
+//
+//
 /**
- * Funtion that creates the RecipeIngredients table
+ * Creates the RecipeIngredients table in the database.
  *
+ * This function creates the `RecipeIngredients` table if it does not already exist. The table includes columns for
+ * linking recipes to ingredients, as well as specifying the quantity and type of measurement for each ingredient.
+ * Foreign keys link to the `Recipe` and `Ingredient` tables, ensuring referential integrity.
+ *
+ * @async
+ * @function createRecipeIngredientTable
+ * @returns {Promise<void>} Resolves when the table is created successfully.
+ * @throws {Error} Throws an error if the table creation fails.
+ *
+ * @example
+ * createRecipeIngredientTable()
+ *   .then(() => console.log('RecipeIngredients table created or already exists'))
+ *   .catch(error => console.error('Error creating RecipeIngredients table:', error));
  */
-export const createRecipeIngredientTable: () => Promise<void> = async () => {
+export const createRecipeIngredientTable = async (): Promise<void> => {
   const db = await getDbConnection();
 
   try {
-    const sqlInsert = `CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE_INGREDIENTS} (
+    const sqlCreateTable = `CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE_INGREDIENTS} (
       ${RECIPE_INGREDIENTS_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${RECIPE_INGREDIENTS_RECIPE_ID} INTEGER,
-      ${RECIPE_INGREDIENTS_INGREDIENT_ID} INTEGER,
+      ${RECIPE_INGREDIENTS_INGREDIENT_ID} INTEGER UNIQUE,
       ${RECIPE_INGREDIENTS_QUANTITY} REAL,
       ${RECIPE_INGREDIENTS_QUANTITY_TYPE} TEXT,
       FOREIGN KEY (${RECIPE_INGREDIENTS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID}),
@@ -482,23 +599,24 @@ export const createRecipeIngredientTable: () => Promise<void> = async () => {
 
     await db.transaction(tx =>
       tx.executeSql(
-        sqlInsert,
+        sqlCreateTable,
         [],
         () => {
           console.log(
-            "createRecipeIngredientTable -> Table 'Recipe' created successfully or already exists.",
+            "createRecipeIngredientTable -> Table 'RecipeIngredients' created successfully or already exists.",
           );
         },
         error => {
           console.error(
-            "createRecipeIngredientTable -> Failed to create 'Recipe' table:",
+            "createRecipeIngredientTable -> SQL error in creating 'RecipeIngredients' table:",
             error,
           );
         },
       ),
     );
   } catch (error) {
-    throw new Error('createRecipeIngredientTable: ' + error);
+    console.error('createRecipeIngredientTable -> Transaction failed:', error);
+    throw new Error(`createRecipeIngredientTable: ${error}`);
   }
 };
 
@@ -558,6 +676,44 @@ export const addRecipeIngredient = async (
   } catch (error) {
     console.error('addRecipeIngredient -> Transaction failed:', error);
     throw new Error(`Failed to add ingredient to recipe: ${error}`);
+  }
+};
+
+/**
+ * Fetches all the RecipeIngredients from the database
+ *
+ * @async
+ * @function addRecipeIngredient
+ * @returns  {Promise<void>} Resolves when the ingredient is added successfully.
+ */
+/**
+ * Fetches all the RecipeIngredients from the database.
+ *
+ * @async
+ * @function getRecipeIngredients
+ * @returns {Promise<RecipeIngredient[]>} Resolves with an array of RecipeIngredient objects.
+ */
+export const getRecipeIngredients = async (): Promise<RecipeIngredient[]> => {
+  try {
+    const db = await getDbConnection();
+    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS}`;
+    const result: RecipeIngredient[] = [];
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
+        const len = resultSet.rows.length;
+
+        for (let i = 0; i < len; i++) {
+          const row = resultSet.rows.item(i);
+          result.push(row);
+        }
+      }),
+    );
+
+    return result;
+  } catch (error) {
+    console.error('getRecipeIngredients -> Transaction failed:', error);
+    throw new Error(`getRecipeIngredients: ${error}`);
   }
 };
 
