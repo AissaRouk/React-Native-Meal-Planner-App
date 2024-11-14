@@ -1,3 +1,4 @@
+//Types
 export type Ingredient = {
   id: number;
   name: string;
@@ -11,6 +12,16 @@ export type Recipe = {
   preparationTime: number;
   servingSize: number;
 };
+
+export type RecipeIngredient = {
+  id: number;
+  recipeId: number;
+  ingredientId: number;
+  quantity: number;
+  quantityType: QuantityType;
+};
+
+//Enums
 
 export enum QuantityType {
   GRAMS = 'grams',
