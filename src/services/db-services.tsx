@@ -641,8 +641,8 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  *   .catch(error => console.error('Error adding ingredient:', error));
  */
 export const addRecipeIngredient = async (
-  recipe: Recipe,
-  ingredient: Ingredient,
+  recipeId: number,
+  ingredientId: number,
   quantity: number,
   quantityType: QuantityType,
 ): Promise<void> => {
@@ -654,21 +654,21 @@ export const addRecipeIngredient = async (
     await db.transaction(tx =>
       tx.executeSql(
         sqlInsert,
-        [recipe.id, ingredient.id, quantity, quantityType],
+        [recipeId, ingredientId, quantity, quantityType],
         (_, resultSet) => {
           if (resultSet.rowsAffected > 0) {
             console.log(
-              `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipe.id}`,
+              `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipeId}`,
             );
           } else {
             console.log(
-              `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipe.id}`,
+              `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipeId}`,
             );
           }
         },
         error =>
           console.error(
-            `addRecipeIngredient -> SQL error for Recipe ID ${recipe.id}:`,
+            `addRecipeIngredient -> SQL error for Recipe ID ${recipeId}:`,
             error,
           ),
       ),
@@ -732,21 +732,28 @@ export const updateRecipeIngredient: (
   try {
     const db = getDbConnection();
 
+    console.log(
+      'updateRecipeIngredient -> REcipeIngredient to be updated: ' +
+        JSON.stringify(recipeIngredient),
+    );
+
     const sqlInsert = `UPDATE ${TABLE_RECIPE_INGREDIENTS} SET ${RECIPE_INGREDIENTS_RECIPE_ID} = ?, ${RECIPE_INGREDIENTS_INGREDIENT_ID} = ?, ${RECIPE_INGREDIENTS_QUANTITY} = ?, ${RECIPE_INGREDIENTS_QUANTITY_TYPE} = ? WHERE ${RECIPE_INGREDIENTS_ID} = ?`;
 
     (await db).transaction(tx =>
       tx.executeSql(
         sqlInsert,
         [
-          recipeIngredient.id,
           recipeIngredient.recipeId,
           recipeIngredient.ingredientId,
           recipeIngredient.quantity,
           recipeIngredient.quantityType,
+          recipeIngredient.id,
         ],
         (tx, resultSet) => {
           if (resultSet.rowsAffected > 0) {
-            console.log('RecipeIngredient updated');
+            console.log('updateRecipeIngredient -> RecipeIngredient updated');
+          } else {
+            console.log('updateRecipeIngredient -> RecipeIngredient updated');
           }
         },
       ),
