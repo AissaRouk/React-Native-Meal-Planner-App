@@ -37,8 +37,8 @@ export const INGREDIENT_CATEGORY = 'category';
 
 // Fields for the RecipeIngredients table
 export const RECIPE_INGREDIENTS_ID = 'id';
-export const RECIPE_INGREDIENTS_RECIPE_ID = 'recipe_id';
-export const RECIPE_INGREDIENTS_INGREDIENT_ID = 'ingredient_id';
+export const RECIPE_INGREDIENTS_RECIPE_ID = 'recipeId';
+export const RECIPE_INGREDIENTS_INGREDIENT_ID = 'ingredientId';
 export const RECIPE_INGREDIENTS_QUANTITY = 'quantity';
 export const RECIPE_INGREDIENTS_QUANTITY_TYPE = 'quantityType';
 
@@ -710,6 +710,7 @@ export const getRecipeIngredients = async (): Promise<RecipeIngredient[]> => {
       }),
     );
 
+    console.log('getRecipeIngredients -> ' + JSON.stringify(result));
     return result;
   } catch (error) {
     console.error('getRecipeIngredients -> Transaction failed:', error);
@@ -717,6 +718,75 @@ export const getRecipeIngredients = async (): Promise<RecipeIngredient[]> => {
   }
 };
 
+/**
+ * Changes the data of the RecipeIngredient with the id submitted in the param
+ *
+ * @async
+ * @function updateRecipeIngredient
+ * @param {RecipeIngredient} recipeIngredient the RecipeIngredient with the data that will be updated and the same id
+ * @returns {Promise<void>} Resolves with a void
+ */
+export const updateRecipeIngredient: (
+  recipeIngredient: RecipeIngredient,
+) => Promise<void> = async recipeIngredient => {
+  try {
+    const db = getDbConnection();
+
+    const sqlInsert = `UPDATE ${TABLE_RECIPE_INGREDIENTS} SET ${RECIPE_INGREDIENTS_RECIPE_ID} = ?, ${RECIPE_INGREDIENTS_INGREDIENT_ID} = ?, ${RECIPE_INGREDIENTS_QUANTITY} = ?, ${RECIPE_INGREDIENTS_QUANTITY_TYPE} = ? WHERE ${RECIPE_INGREDIENTS_ID} = ?`;
+
+    (await db).transaction(tx =>
+      tx.executeSql(
+        sqlInsert,
+        [
+          recipeIngredient.id,
+          recipeIngredient.recipeId,
+          recipeIngredient.ingredientId,
+          recipeIngredient.quantity,
+          recipeIngredient.quantityType,
+        ],
+        (tx, resultSet) => {
+          if (resultSet.rowsAffected > 0) {
+            console.log('RecipeIngredient updated');
+          }
+        },
+      ),
+    );
+  } catch (error) {
+    console.log('Error while updating RecipeIngredient: ' + error);
+    throw new Error('Error while updating RecipeIngredient: ' + error);
+  }
+};
+
+/**
+ * Deletes a function given its id
+ *
+ * @async
+ * @function updateRecipeIngredient
+ * @param {number} id
+ * @returns {Promise<void>} Resolves with a void
+ */
+export const deleteRecipeIngredient: (
+  id: number,
+) => Promise<void> = async id => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `DELETE FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_INGREDIENTS_ID} = ?`;
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [id], (tx, resultSet) => {
+        if (resultSet.rowsAffected > 0) {
+          console.log(
+            'deleteRecipeIngredient -> RecipeIngredient deleted successfully',
+          );
+        } else
+          console.log(
+            'deleteRecipeIngredient -> could not delete RecipeIngredient',
+          );
+      }),
+    );
+  } catch (error) {}
+};
 //
 //
 //
