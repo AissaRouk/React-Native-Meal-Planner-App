@@ -5,6 +5,8 @@ export type Ingredient = {
   category: string;
 };
 
+export type IngredientWithoutId = Omit<Ingredient, 'id'>;
+
 export type Recipe = {
   id: number;
   name: string;
@@ -12,6 +14,7 @@ export type Recipe = {
   preparationTime: number;
   servingSize: number;
 };
+export type RecipeWithoutId = Omit<Recipe, 'id'>;
 
 export type RecipeIngredient = {
   id: number;
@@ -20,6 +23,7 @@ export type RecipeIngredient = {
   quantity: number;
   quantityType: QuantityType;
 };
+export type RecipeIngredientWithoutId = Omit<RecipeIngredient, 'id'>;
 
 //Enums
 
