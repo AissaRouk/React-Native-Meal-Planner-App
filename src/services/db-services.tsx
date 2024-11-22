@@ -1,9 +1,12 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
   Ingredient,
+  IngredientWithoutId,
   QuantityType,
   Recipe,
   RecipeIngredient,
+  RecipeIngredientWithoutId,
+  RecipeWithoutId,
 } from '../Types/Types';
 
 // Function to get the database connection
@@ -200,8 +203,7 @@ export const createIngredientTable = async (): Promise<void> => {
  *
  */
 export const addIngredient = async (
-  name: string,
-  category: string,
+  ingredient: IngredientWithoutId,
 ): Promise<void> => {
   try {
     // Get database connection
@@ -214,7 +216,7 @@ export const addIngredient = async (
     await db.transaction(tx => {
       tx.executeSql(
         insertQuery,
-        [name, category],
+        [ingredient.name, ingredient.category],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             console.log('addIngredient -> Ingredient added successfully!');
@@ -418,18 +420,12 @@ export const createRecipeTable: () => Promise<void> = async () => {
 /**
  * Adds a new recipe to the Recipe table if it does not already exist.
  *
- * @param name - The name of the recipe.
- * @param link - A link to the recipe (optional).
- * @param preparationTime - The preparation time for the recipe in minutes.
- * @param servingSize - The serving size for the recipe.
+ * @param {RecipeWithoutId} recipe - The recipe object without the id param
  * @returns A promise that resolves when the recipe addition operation is complete.
  */
 export const addRecipe: (
-  name: string,
-  link: string,
-  preparationTime: number,
-  servingSize: number,
-) => Promise<void> = async (name, link, preparationTime, servingSize) => {
+  recipe: RecipeWithoutId,
+) => Promise<void> = async recipe => {
   try {
     const db = await getDbConnection();
 
@@ -441,7 +437,7 @@ export const addRecipe: (
     await db.transaction(tx =>
       tx.executeSql(
         insertQuery,
-        [name, link, preparationTime, servingSize],
+        [recipe.name, recipe.link, recipe.preparationTime, recipe.servingSize],
         (tx, resultSet) => {
           if (resultSet.rowsAffected > 0) {
             console.log('Recipe added successfully!');
@@ -641,10 +637,7 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  *   .catch(error => console.error('Error adding ingredient:', error));
  */
 export const addRecipeIngredient = async (
-  recipeId: number,
-  ingredientId: number,
-  quantity: number,
-  quantityType: QuantityType,
+  recipeIngredient: RecipeIngredientWithoutId,
 ): Promise<void> => {
   try {
     const db = await getDbConnection();
@@ -654,21 +647,26 @@ export const addRecipeIngredient = async (
     await db.transaction(tx =>
       tx.executeSql(
         sqlInsert,
-        [recipeId, ingredientId, quantity, quantityType],
+        [
+          recipeIngredient.recipeId,
+          recipeIngredient.ingredientId,
+          recipeIngredient.quantity,
+          recipeIngredient.quantityType,
+        ],
         (_, resultSet) => {
           if (resultSet.rowsAffected > 0) {
             console.log(
-              `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipeId}`,
+              `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipeIngredient.recipeId}`,
             );
           } else {
             console.log(
-              `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipeId}`,
+              `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipeIngredient.recipeId}`,
             );
           }
         },
         error =>
           console.error(
-            `addRecipeIngredient -> SQL error for Recipe ID ${recipeId}:`,
+            `addRecipeIngredient -> SQL error for Recipe ID ${recipeIngredient.recipeId}:`,
             error,
           ),
       ),
@@ -679,13 +677,6 @@ export const addRecipeIngredient = async (
   }
 };
 
-/**
- * Fetches all the RecipeIngredients from the database
- *
- * @async
- * @function addRecipeIngredient
- * @returns  {Promise<void>} Resolves when the ingredient is added successfully.
- */
 /**
  * Fetches all the RecipeIngredients from the database.
  *
@@ -794,6 +785,7 @@ export const deleteRecipeIngredient: (
     );
   } catch (error) {}
 };
+
 //
 //
 //
