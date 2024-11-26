@@ -561,7 +561,7 @@ export const deleteRecipe: (id: number) => Promise<void> = async id => {
 //CRUD for Table
 //
 //
-//
+//AUTOINCREMENT
 /**
  * Creates the RecipeIngredients table in the database.
  *
@@ -624,10 +624,7 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  *
  * @async
  * @function addRecipeIngredient
- * @param {Recipe} recipe - The recipe object containing the recipe ID.
- * @param {Ingredient} ingredient - The ingredient object containing the ingredient ID.
- * @param {number} quantity - The quantity of the ingredient required for the recipe.
- * @param {QuantityType} quantityType - The type of measurement for the quantity (e.g., grams, cups).
+ * @param {RecipeIngredientWithoutId} recipeIngredient - recipeIngredient without the id param
  * @returns {Promise<void>} Resolves when the ingredient is added successfully.
  * @throws {Error} Throws an error if the insertion fails.
  *
@@ -784,6 +781,36 @@ export const deleteRecipeIngredient: (
       }),
     );
   } catch (error) {}
+};
+
+/**
+ *
+ *
+ * @returns
+ */
+export const createIngredientPantryTable: () => Promise<void> = async () => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT_PANTRY} (
+    ${INGREDIENT_PANTRY_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+    ${INGREDIENT_PANTRY_INGREDIENT_ID} INTEGER UNIQUE,
+    ${INGREDIENT_PANTRY_QUANTITY} REAL
+    FOREIGN KEY (${INGREDIENT_PANTRY_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID}),
+    ) `;
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
+        if (resultSet.rowsAffected > 0) {
+          console.log('createIngredientPantryTable -> Table created');
+        } else {
+          console.log('createIngredientPantryTable -> Table NOT created');
+        }
+      }),
+    );
+  } catch (error) {
+    throw new Error('Error in createIngredientPantryTable -> ' + error);
+  }
 };
 
 //
