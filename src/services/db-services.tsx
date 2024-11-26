@@ -2,6 +2,7 @@ import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
   Ingredient,
   IngredientWithoutId,
+  PantryWithoutId,
   QuantityType,
   Recipe,
   RecipeIngredient,
@@ -782,6 +783,91 @@ export const deleteRecipeIngredient: (
     );
   } catch (error) {}
 };
+
+/**
+ * PANTRY TABLE OPERATIONS
+ */
+
+/**
+ * Function that creates the Pantry table
+ *
+ * @function createPantryTable
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
+ */
+export const createPantryTable: () => Promise<void> = async () => {
+  try {
+    const db = await getDbConnection();
+
+    // SQL query to create the Pantry table
+    const sqlCreatePantryTable = `
+      CREATE TABLE IF NOT EXISTS ${TABLE_PANTRY} (
+        ${PANTRY_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${PANTRY_INGREDIENT_PANTRY} INTEGER,
+        FOREIGN KEY (ingredientPantry) REFERENCES IngredientPantry(id)
+      );
+    `;
+
+    // Execute the SQL transaction
+    await db.transaction(tx =>
+      tx.executeSql(
+        sqlCreatePantryTable,
+        [],
+        () => {
+          console.log(
+            'createPantryTable -> Table "Pantry" created successfully or already exists.',
+          );
+        },
+        (_, error) => {
+          console.error(
+            'createPantryTable -> Failed to create "Pantry" table:',
+            error,
+          );
+          return false;
+        },
+      ),
+    );
+  } catch (error) {
+    throw new Error(
+      'createPantryTable -> Error creating the Pantry table: ' + error,
+    );
+  }
+};
+
+/**
+ * Function that adds a pantry row to the table
+ *
+ * @param {PantryWithoutId} pantry the pantry object but without id
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
+ */
+export const addPantry: (
+  pantry: PantryWithoutId,
+) => Promise<void> = async pantry => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_PANTRY} (${PANTRY_INGREDIENT_PANTRY} = ?)`;
+
+    db.transaction(tx =>
+      tx.executeSql(sqlInsert, [pantry.ingredientPantry], (tx, resultSet) => {
+        if (resultSet.rowsAffected > 0) {
+          console.log(
+            'addPantry -> Pantry added successfully or already exists',
+          );
+        } else {
+          console.log("addPantry -> Couldn't add pantry");
+        }
+      }),
+    );
+  } catch (error) {
+    throw new Error(
+      'addPantry -> pantry was not added: ' + JSON.stringify(error),
+    );
+  }
+};
+
+/**
+ * Ingredient Pantry Table Operations
+ */
 
 /**
  *
