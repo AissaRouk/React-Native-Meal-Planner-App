@@ -25,6 +25,12 @@ export type RecipeIngredient = {
 };
 export type RecipeIngredientWithoutId = Omit<RecipeIngredient, 'id'>;
 
+export type Pantry = {
+  id: number;
+  ingredientPantry: number;
+};
+export type PantryWithoutId = Omit<Pantry, 'id'>;
+
 //Enums
 
 export enum QuantityType {
