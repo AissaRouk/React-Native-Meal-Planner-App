@@ -905,6 +905,10 @@ export const getPantries: () => Promise<Pantry[]> = async () => {
  */
 
 /**
+ * INGREDIENTPANTRY TABLE FUNCTIONS
+ */
+
+/**
  *
  *
  * @returns
@@ -916,8 +920,8 @@ export const createIngredientPantryTable: () => Promise<void> = async () => {
     const sqlInsert = `CREATE TABLE IF NOT EXISTS ${TABLE_INGREDIENT_PANTRY} (
     ${INGREDIENT_PANTRY_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
     ${INGREDIENT_PANTRY_INGREDIENT_ID} INTEGER UNIQUE,
-    ${INGREDIENT_PANTRY_QUANTITY} REAL
-    FOREIGN KEY (${INGREDIENT_PANTRY_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID}),
+    ${INGREDIENT_PANTRY_QUANTITY} REAL,
+    FOREIGN KEY (${INGREDIENT_PANTRY_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID})
     ) `;
 
     await db.transaction(tx =>
@@ -930,7 +934,7 @@ export const createIngredientPantryTable: () => Promise<void> = async () => {
       }),
     );
   } catch (error) {
-    throw new Error('Error in createIngredientPantryTable -> ' + error);
+    throw new Error('Error in createIngredientPantryTable -> ' + error.message);
   }
 };
 
