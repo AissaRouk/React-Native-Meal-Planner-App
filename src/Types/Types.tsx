@@ -31,6 +31,14 @@ export type Pantry = {
 };
 export type PantryWithoutId = Omit<Pantry, 'id'>;
 
+export type ingredientPantry = {
+  id: number;
+  ingredientId: number;
+  quantity: number;
+  quantityType: QuantityType;
+};
+export type ingredientPantryWithoutId = Omit<ingredientPantry, 'id'>;
+
 //Enums
 
 export enum QuantityType {
