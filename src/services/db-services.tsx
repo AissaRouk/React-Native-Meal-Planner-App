@@ -1,6 +1,7 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
   Ingredient,
+  ingredientPantryWithoutId,
   IngredientWithoutId,
   Pantry,
   PantryWithoutId,
@@ -57,9 +58,9 @@ export const PANTRY_INGREDIENT_PANTRY = 'ingredientPantry';
 
 // Fields for the IngredientPantry table
 export const INGREDIENT_PANTRY_ID = 'id';
-export const INGREDIENT_PANTRY_INGREDIENT_ID = 'ingredient_id';
+export const INGREDIENT_PANTRY_INGREDIENT_ID = 'ingredientId';
 export const INGREDIENT_PANTRY_QUANTITY = 'quantity';
-export const INGREDIENT_PANTRY_UNIT = 'unit';
+export const INGREDIENT_PANTRY_QUANTITY_TYPE = 'quantityType';
 
 // Fields for the Category table
 export const CATEGORY_ID = 'id';
@@ -116,7 +117,7 @@ export const createTables = async () => {
       ${INGREDIENT_PANTRY_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
       ${INGREDIENT_PANTRY_INGREDIENT_ID} INTEGER,
       ${INGREDIENT_PANTRY_QUANTITY} REAL,
-      ${INGREDIENT_PANTRY_UNIT} TEXT,
+      ${INGREDIENT_PANTRY_QUANTITY_TYPE} TEXT,
       FOREIGN KEY (${INGREDIENT_PANTRY_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID})
     );
   `;
@@ -782,7 +783,11 @@ export const deleteRecipeIngredient: (
           );
       }),
     );
-  } catch (error) {}
+  } catch (error) {
+    throw new Error(
+      'deleteRecipeIngredient -> could not delete RecipeIngredient: ' + error,
+    );
+  }
 };
 
 /**
@@ -901,17 +906,13 @@ export const getPantries: () => Promise<Pantry[]> = async () => {
 };
 
 /**
- * Ingredient Pantry Table Operations
- */
-
-/**
  * INGREDIENTPANTRY TABLE FUNCTIONS
  */
 
 /**
+ *Function that creates the INGREDIENTPANTRY table
  *
- *
- * @returns
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
  */
 export const createIngredientPantryTable: () => Promise<void> = async () => {
   try {
@@ -921,6 +922,7 @@ export const createIngredientPantryTable: () => Promise<void> = async () => {
     ${INGREDIENT_PANTRY_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
     ${INGREDIENT_PANTRY_INGREDIENT_ID} INTEGER UNIQUE,
     ${INGREDIENT_PANTRY_QUANTITY} REAL,
+    ${INGREDIENT_PANTRY_QUANTITY_TYPE} STRING,
     FOREIGN KEY (${INGREDIENT_PANTRY_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID})
     ) `;
 
@@ -934,7 +936,54 @@ export const createIngredientPantryTable: () => Promise<void> = async () => {
       }),
     );
   } catch (error) {
-    throw new Error('Error in createIngredientPantryTable -> ' + error.message);
+    throw new Error(
+      'Error in createIngredientPantryTable -> ' + JSON.stringify(error),
+    );
+  }
+};
+
+/**
+ * Function that adds a pantry row to the table
+ *
+ * @param {IngredientWithoutId} ingredientPantry the ingredientPantry object but without id
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
+ */
+export const addIngredientPantry: (
+  ingredientPantry: ingredientPantryWithoutId,
+) => Promise<void> = async ingredientPantry => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT_PANTRY} (
+    ${INGREDIENT_PANTRY_INGREDIENT_ID}=?,
+    ${INGREDIENT_PANTRY_QUANTITY} =?,
+    ${INGREDIENT_PANTRY_QUANTITY_TYPE}=?
+    )`;
+
+    await db.transaction(tx =>
+      tx.executeSql(
+        sqlInsert,
+        [
+          ingredientPantry.ingredientId,
+          ingredientPantry.quantity,
+          ingredientPantry.quantityType,
+        ],
+        (tx, resultSet) => {
+          if (resultSet.rowsAffected > 0) {
+            console.log('addIngredientPantry -> row added successfully');
+          } else {
+            console.log(
+              'addIngredientPantry -> there was a problem adding the row',
+            );
+          }
+        },
+      ),
+    );
+  } catch (error) {
+    throw new Error(
+      'addIngredientPantry -> an error ocurred while adding row: ' +
+        JSON.stringify(error),
+    );
   }
 };
 
