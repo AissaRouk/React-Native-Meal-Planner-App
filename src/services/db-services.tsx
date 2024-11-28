@@ -2,6 +2,7 @@ import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
   Ingredient,
   IngredientWithoutId,
+  Pantry,
   PantryWithoutId,
   QuantityType,
   Recipe,
@@ -862,6 +863,40 @@ export const addPantry: (
     throw new Error(
       'addPantry -> pantry was not added: ' + JSON.stringify(error),
     );
+  }
+};
+
+/**
+ * Function that fetches all the Pantry objects from the Pantry Table
+ *
+ * @returns {Promise<Pantry[]>} an array of all the Pantry objects.
+ */
+export const getPantries: () => Promise<Pantry[]> = async () => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `GET * FROM ${TABLE_PANTRY}`;
+
+    const resultPantries: Pantry[] = [];
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
+        if (resultSet.rows.length > 0) {
+          for (var i = 0; i < resultSet.rows.length; i++) {
+            const pantryItem: Pantry = resultSet.rows.item(i);
+            resultPantries.push(pantryItem);
+            console.log('Pantries fetched successfully');
+          }
+        } else if ((resultSet.rows.length = 0)) {
+          console.log('getPantries -> There are no elements in the table');
+        } else {
+          console.log("getPantries -> Couldn't retrieve any Pantries");
+        }
+      }),
+    );
+    return resultPantries;
+  } catch (error) {
+    throw new Error('getPantries -> Error while retrieving: ' + error);
   }
 };
 
