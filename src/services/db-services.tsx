@@ -877,7 +877,7 @@ export const addPantry: (
  *
  * @returns {Promise<Pantry[]>} an array of all the Pantry objects.
  */
-export const getPantries: () => Promise<Pantry[]> = async () => {
+export const getAllPantries: () => Promise<Pantry[]> = async () => {
   try {
     const db = await getDbConnection();
 
@@ -994,7 +994,7 @@ export const addIngredientPantry: (
  *
  * @returns {Promise<ingredientPantry[]>} an array of all the IngredientPantry objects.
  */
-export const getIngredientPantries: () => Promise<
+export const getAllIngredientPantries: () => Promise<
   ingredientPantry[]
 > = async () => {
   try {
