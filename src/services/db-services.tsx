@@ -907,6 +907,36 @@ export const getAllPantries: () => Promise<Pantry[]> = async () => {
 };
 
 /**
+ * Function that updates a specific pantry
+ *
+ * @param {Pantry} updatedPantry The pantry with the updated data and the same id
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
+ */
+export const updatePantry: (
+  updatedPantry: Pantry,
+) => Promise<void> = async pantry => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `UPDATE INTO ${TABLE_PANTRY} SET ${PANTRY_INGREDIENT_PANTRY} = ? WHERE ${PANTRY_ID} = ?`;
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [pantry.ingredientPantry], (tx, resultSet) => {
+        if (resultSet.rowsAffected > 0) {
+          console.log('updatePantry -> Pantry updated successfully :)');
+        } else {
+          console.log("updatePantry -> Couldn't update Pantry :(");
+        }
+      }),
+    );
+  } catch (error) {
+    throw new Error(
+      "pdatePantry -> Couldn't update Pantry error: " + JSON.stringify(error),
+    );
+  }
+};
+
+/**
  * INGREDIENTPANTRY TABLE FUNCTIONS
  */
 
