@@ -918,20 +918,24 @@ export const updatePantry: (
   try {
     const db = await getDbConnection();
 
-    const sqlInsert = `UPDATE INTO ${TABLE_PANTRY} SET ${PANTRY_INGREDIENT_PANTRY} = ? WHERE ${PANTRY_ID} = ?`;
+    const sqlInsert = `UPDATE ${TABLE_PANTRY} SET ${PANTRY_INGREDIENT_PANTRY} = ? WHERE ${PANTRY_ID} = ?`;
 
     await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [pantry.ingredientPantry], (tx, resultSet) => {
-        if (resultSet.rowsAffected > 0) {
-          console.log('updatePantry -> Pantry updated successfully :)');
-        } else {
-          console.log("updatePantry -> Couldn't update Pantry :(");
-        }
-      }),
+      tx.executeSql(
+        sqlInsert,
+        [pantry.ingredientPantry, pantry.id],
+        (tx, resultSet) => {
+          if (resultSet.rowsAffected > 0) {
+            console.log('updatePantry -> Pantry updated successfully :)');
+          } else {
+            console.log("updatePantry -> Couldn't update Pantry :(");
+          }
+        },
+      ),
     );
   } catch (error) {
     throw new Error(
-      "pdatePantry -> Couldn't update Pantry error: " + JSON.stringify(error),
+      "updatePantry -> Couldn't update Pantry error: " + JSON.stringify(error),
     );
   }
 };
