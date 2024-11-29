@@ -881,7 +881,7 @@ export const getPantries: () => Promise<Pantry[]> = async () => {
   try {
     const db = await getDbConnection();
 
-    const sqlInsert = `GET * FROM ${TABLE_PANTRY}`;
+    const sqlInsert = `SELECT * FROM ${TABLE_PANTRY}`;
 
     const resultPantries: Pantry[] = [];
 
@@ -1000,7 +1000,7 @@ export const getIngredientPantries: () => Promise<
   try {
     const db = await getDbConnection();
 
-    const sqlInsert = `GET * FROM ${TABLE_INGREDIENT_PANTRY}`;
+    const sqlInsert = `SELECT * FROM ${TABLE_INGREDIENT_PANTRY}`;
 
     const result: ingredientPantry[] = [];
 
@@ -1026,7 +1026,8 @@ export const getIngredientPantries: () => Promise<
     return result;
   } catch (error) {
     throw new Error(
-      "getIngredientPantries -> Couldn't retrieve the ingredientPantry",
+      "getIngredientPantries -> Couldn't retrieve the ingredientPantry " +
+        JSON.stringify(error),
     );
   }
 };
