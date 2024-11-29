@@ -852,7 +852,7 @@ export const addPantry: (
   try {
     const db = await getDbConnection();
 
-    const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_PANTRY} (${PANTRY_INGREDIENT_PANTRY} = ?)`;
+    const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_PANTRY} (${PANTRY_INGREDIENT_PANTRY}) values (?)`;
 
     db.transaction(tx =>
       tx.executeSql(sqlInsert, [pantry.ingredientPantry], (tx, resultSet) => {
