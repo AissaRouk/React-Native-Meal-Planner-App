@@ -1,6 +1,7 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
   Ingredient,
+  ingredientPantry,
   ingredientPantryWithoutId,
   IngredientWithoutId,
   Pantry,
@@ -954,11 +955,12 @@ export const addIngredientPantry: (
   try {
     const db = await getDbConnection();
 
+    // Corrected SQL insert statement
     const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT_PANTRY} (
-    ${INGREDIENT_PANTRY_INGREDIENT_ID}=?,
-    ${INGREDIENT_PANTRY_QUANTITY} =?,
-    ${INGREDIENT_PANTRY_QUANTITY_TYPE}=?
-    )`;
+      ${INGREDIENT_PANTRY_INGREDIENT_ID},
+      ${INGREDIENT_PANTRY_QUANTITY},
+      ${INGREDIENT_PANTRY_QUANTITY_TYPE}
+    ) VALUES (?, ?, ?);`;
 
     await db.transaction(tx =>
       tx.executeSql(
@@ -981,8 +983,50 @@ export const addIngredientPantry: (
     );
   } catch (error) {
     throw new Error(
-      'addIngredientPantry -> an error ocurred while adding row: ' +
+      'addIngredientPantry -> an error occurred while adding row: ' +
         JSON.stringify(error),
+    );
+  }
+};
+
+/**
+ * Function that returns all the IngredientPantries available
+ *
+ * @returns {Promise<ingredientPantry[]>} an array of all the IngredientPantry objects.
+ */
+export const getIngredientPantries: () => Promise<
+  ingredientPantry[]
+> = async () => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `GET * FROM ${TABLE_INGREDIENT_PANTRY}`;
+
+    const result: ingredientPantry[] = [];
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
+        if (resultSet.rows.length > 0) {
+          var item: ingredientPantry;
+          for (var i = 0; i < resultSet.rows.length; i++) {
+            item = resultSet.rows.item(i);
+            result.push(item);
+          }
+        } else if (resultSet.rows.length == 0)
+          console.log(
+            'getIngredientPantries -> IngredientPantry Table is empty!',
+          );
+        else {
+          console.log(
+            "getIngredientPantries -> couldn't retrieve the IngredientPantries",
+          );
+        }
+      }),
+    );
+    return result;
+  } catch (error) {
+    throw new Error(
+      "getIngredientPantries -> Couldn't retrieve the ingredientPantry",
     );
   }
 };
