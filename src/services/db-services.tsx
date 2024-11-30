@@ -1149,6 +1149,41 @@ export const updateIngredientPantry: (
   }
 };
 
+/**
+ * Function that deletes a specific ingredientPantry
+ *
+ * @param {number} ingredientPantryId - The id of the  ingredientPantry that will be deleted
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
+ */
+export const deleteIngredientPantry: (
+  ingredientPantryId: number,
+) => Promise<void> = async ingredientPantryId => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlQuery = `DELETE FROM ${TABLE_INGREDIENT_PANTRY} WHERE ${INGREDIENT_PANTRY_ID} = ?`;
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlQuery, [ingredientPantryId], (tx, resultSet) => {
+        if (resultSet.rowsAffected > 0) {
+          console.log(
+            'deleteIngredientPantry -> IngredientPantry deleted successfully :)',
+          );
+        } else {
+          console.log(
+            "deleteIngredientPantry -> couldn't delete IngredientPantry :(",
+          );
+        }
+      }),
+    );
+  } catch (error) {
+    throw new Error(
+      'deleteIngredientPantry -> error while deleting IngredientPantry: ' +
+        JSON.stringify(error),
+    );
+  }
+};
+
 //
 //
 //
