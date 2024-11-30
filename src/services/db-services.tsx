@@ -618,8 +618,6 @@ export const getRecipeIngredients = async (): Promise<RecipeIngredient[]> => {
         }
       }),
     );
-
-    console.log('getRecipeIngredients -> ' + JSON.stringify(result));
     return result;
   } catch (error) {
     console.error('getRecipeIngredients -> Transaction failed:', error);
@@ -1123,7 +1121,6 @@ export const getTableNames = async () => {
         tableNames.push(tableName);
       }
 
-      console.log('Table names:', tableNames);
       return tableNames;
     } else {
       console.log('No tables found.');
