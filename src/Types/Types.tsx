@@ -31,13 +31,13 @@ export type Pantry = {
 };
 export type PantryWithoutId = Omit<Pantry, 'id'>;
 
-export type ingredientPantry = {
+export type IngredientPantry = {
   id: number;
   ingredientId: number;
   quantity: number;
   quantityType: QuantityType;
 };
-export type ingredientPantryWithoutId = Omit<ingredientPantry, 'id'>;
+export type IngredientPantryWithoutId = Omit<IngredientPantry, 'id'>;
 
 //Enums
 
