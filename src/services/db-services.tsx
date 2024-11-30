@@ -1,8 +1,8 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
   Ingredient,
-  ingredientPantry,
-  ingredientPantryWithoutId,
+  IngredientPantry,
+  IngredientPantryWithoutId,
   IngredientWithoutId,
   Pantry,
   PantryWithoutId,
@@ -1018,7 +1018,7 @@ export const createIngredientPantryTable: () => Promise<void> = async () => {
  * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
  */
 export const addIngredientPantry: (
-  ingredientPantry: ingredientPantryWithoutId,
+  ingredientPantry: IngredientPantryWithoutId,
 ) => Promise<void> = async ingredientPantry => {
   try {
     const db = await getDbConnection();
@@ -1063,19 +1063,19 @@ export const addIngredientPantry: (
  * @returns {Promise<ingredientPantry[]>} an array of all the IngredientPantry objects.
  */
 export const getAllIngredientPantries: () => Promise<
-  ingredientPantry[]
+  IngredientPantry[]
 > = async () => {
   try {
     const db = await getDbConnection();
 
     const sqlInsert = `SELECT * FROM ${TABLE_INGREDIENT_PANTRY}`;
 
-    const result: ingredientPantry[] = [];
+    const result: IngredientPantry[] = [];
 
     await db.transaction(tx =>
       tx.executeSql(sqlInsert, [], (tx, resultSet) => {
         if (resultSet.rows.length > 0) {
-          var item: ingredientPantry;
+          var item: IngredientPantry;
           for (var i = 0; i < resultSet.rows.length; i++) {
             item = resultSet.rows.item(i);
             result.push(item);
