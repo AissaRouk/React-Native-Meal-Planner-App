@@ -1100,6 +1100,55 @@ export const getAllIngredientPantries: () => Promise<
   }
 };
 
+/**
+ * Function that updates a specific ingredientPantry, it can't update the ingredientId value
+ *
+ * @param {IngredientPantry} updatedIngredientPantry - The ingredient pantry that will be updated
+ * @returns {Promise<void>} A promise that resolves when the table is created successfully or if it already exists.
+ */
+export const updateIngredientPantry: (
+  updatedIngredientPantry: IngredientPantry,
+) => Promise<void> = async updatedIngredientPantry => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlQuery = `UPDATE ${TABLE_INGREDIENT_PANTRY} SET ${INGREDIENT_PANTRY_INGREDIENT_ID} = ?, ${INGREDIENT_PANTRY_QUANTITY} = ?, ${INGREDIENT_PANTRY_QUANTITY_TYPE} = ? WHERE ${INGREDIENT_PANTRY_ID} = ?`;
+
+    console.log(
+      'updateIngredientPantry -> IngredientPantry update: ' +
+        JSON.stringify(updatedIngredientPantry),
+    );
+
+    await db.transaction(tx =>
+      tx.executeSql(
+        sqlQuery,
+        [
+          updatedIngredientPantry.ingredientId,
+          updatedIngredientPantry.quantity,
+          updatedIngredientPantry.quantityType,
+          updatedIngredientPantry.id,
+        ],
+        (tx, resultSet) => {
+          if (resultSet.rowsAffected > 0)
+            console.log(
+              'updateIngredientPantry -> IngredientPantry updated successfully :) -> ' +
+                JSON.stringify(resultSet.rows.item(0)),
+            );
+          else
+            console.log(
+              "updateIngredientPantry -> couldn't update IngredientPantry :(",
+            );
+        },
+      ),
+    );
+  } catch (error) {
+    throw new Error(
+      'updateIngredientPantry -> error while updating the IngredientPantry: ' +
+        JSON.stringify(error),
+    );
+  }
+};
+
 //
 //
 //
