@@ -97,27 +97,39 @@ export default function MainScreen(): React.JSX.Element {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Recipes */}
-      <Text style={styles.heading}>Recipes</Text>
-      {recipes?.map(recipe => (
-        <View key={`recipe-${recipe.id}`}>{printTableRecipe(recipe)}</View>
-      ))}
+    <View style={[styles.container, {padding: 16}]}>
+      {/* Header */}
+      <View style={{width: '100%'}}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            color: 'black',
+            fontSize: 28,
+          }}>
+          Daily Meals
+        </Text>
+      </View>
+      <ScrollView style={styles.container}>
+        {/* Recipes */}
+        <Text style={styles.heading}>Recipes</Text>
+        {recipes?.map(recipe => (
+          <View key={`recipe-${recipe.id}`}>{printTableRecipe(recipe)}</View>
+        ))}
 
-      {/* Recipe Ingredients */}
-      <Text style={styles.heading}>Recipe Ingredients</Text>
-      {recipeIngredients?.map(recipeIngredient => (
-        <View key={`recipeIngredient-${recipeIngredient.id}`}>
-          {printRecipeIngredientTable(recipeIngredient)}
-        </View>
-      ))}
-    </ScrollView>
+        {/* Recipe Ingredients */}
+        <Text style={styles.heading}>Recipe Ingredients</Text>
+        {recipeIngredients?.map(recipeIngredient => (
+          <View key={`recipeIngredient-${recipeIngredient.id}`}>
+            {printRecipeIngredientTable(recipeIngredient)}
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
     backgroundColor: '#f8f9fa',
     paddingBottom: 10,
     marginBottom: 10,
