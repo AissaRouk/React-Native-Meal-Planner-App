@@ -3,7 +3,11 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {RecipeIngredient} from '../Types/Types';
 
-const printRecipeIngredientTable = (recipeIngredient: RecipeIngredient) => {
+export const IngredientRecipeCard = ({
+  recipeIngredient,
+}: {
+  recipeIngredient: RecipeIngredient;
+}) => {
   return (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>Recipe Ingredient</Text>
