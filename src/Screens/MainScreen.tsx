@@ -36,6 +36,9 @@ import {
   Recipe,
   RecipeIngredient,
 } from '../Types/Types';
+import Header from '../Components/HeaderComponent';
+import RecipeCard from '../Components/RecipeCardComponent';
+import {IngredientRecipeCard} from '../Components/IngredientRecipeCard';
 
 export default function MainScreen(): React.JSX.Element {
   const [recipes, setRecipes] = useState<Recipe[]>();
@@ -60,68 +63,20 @@ export default function MainScreen(): React.JSX.Element {
     initializeDatabase();
   }, []);
 
-  const printTableRecipe = (recipe: Recipe) => {
-    return (
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Recipe</Text>
-        <Text style={styles.text}>ID: {recipe.id}</Text>
-        <Text style={styles.text}>Name: {recipe.name}</Text>
-        <Text style={styles.text}>Link: {recipe.link}</Text>
-        <Text style={styles.text}>
-          Preparation Time: {recipe.preparationTime} mins
-        </Text>
-        <Text style={styles.text}>Serving Size: {recipe.servingSize}</Text>
-      </View>
-    );
-  };
-
-  const printRecipeIngredientTable = (recipeIngredient: RecipeIngredient) => {
-    return (
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Recipe Ingredient</Text>
-        <Text style={styles.text}>ID: {recipeIngredient.id}</Text>
-        <Text style={styles.text}>
-          Recipe ID: {recipeIngredient.recipeId ?? 'N/A'}
-        </Text>
-        <Text style={styles.text}>
-          Ingredient ID: {recipeIngredient.ingredientId ?? 'N/A'}
-        </Text>
-        <Text style={styles.text}>
-          Quantity: {recipeIngredient.quantity ?? 'N/A'}
-        </Text>
-        <Text style={styles.text}>
-          Quantity Type: {recipeIngredient.quantityType ?? 'N/A'}
-        </Text>
-      </View>
-    );
-  };
-
   return (
     <View style={[styles.container, {padding: 16}]}>
-      {/* Header */}
-      <View style={{width: '100%'}}>
-        <Text
-          style={{
-            fontWeight: 'bold',
-            color: 'black',
-            fontSize: 28,
-          }}>
-          Daily Meals
-        </Text>
-      </View>
+      <Header />
       <ScrollView style={styles.container}>
         {/* Recipes */}
         <Text style={styles.heading}>Recipes</Text>
         {recipes?.map(recipe => (
-          <View key={`recipe-${recipe.id}`}>{printTableRecipe(recipe)}</View>
+          <RecipeCard recipe={recipe} />
         ))}
 
         {/* Recipe Ingredients */}
         <Text style={styles.heading}>Recipe Ingredients</Text>
         {recipeIngredients?.map(recipeIngredient => (
-          <View key={`recipeIngredient-${recipeIngredient.id}`}>
-            {printRecipeIngredientTable(recipeIngredient)}
-          </View>
+          <IngredientRecipeCard recipeIngredient={recipeIngredient} />
         ))}
       </ScrollView>
     </View>
@@ -130,30 +85,16 @@ export default function MainScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#ffff',
     paddingBottom: 10,
     marginBottom: 10,
+    flex: 1,
   },
   heading: {
     fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 16,
     color: '#333',
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-    elevation: 2,
-    borderColor: '#ddd',
-    borderWidth: 1,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#555',
   },
   text: {
     fontSize: 16,
