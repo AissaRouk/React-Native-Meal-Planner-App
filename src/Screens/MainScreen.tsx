@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, Text, View, StyleSheet} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {
   getIngredients,
   getTableNames,
@@ -39,44 +45,43 @@ import {
 import Header from '../Components/HeaderComponent';
 import RecipeCard from '../Components/RecipeCardComponent';
 import {IngredientRecipeCard} from '../Components/IngredientRecipeCard';
+import MealTypeComponent from '../Components/MealTypeComponent';
 
 export default function MainScreen(): React.JSX.Element {
+  /**the array with all the recipes fetched**/
   const [recipes, setRecipes] = useState<Recipe[]>();
-  const [recipeIngredients, setRecipeIngredients] =
-    useState<RecipeIngredient[]>();
 
   useEffect(() => {
     // Initialize tables and insert ingredient
-    const initializeDatabase = async () => {
+    async () => {
       try {
         const rcps: Recipe[] = await getRecipes();
         setRecipes(rcps);
-
-        const rcpIngr: RecipeIngredient[] = await getRecipeIngredients();
-        setRecipeIngredients(rcpIngr);
       } catch (error) {
         console.error('Error during initialization:', error);
       }
     };
-
-    // Call the function to initialize the database and add data
-    initializeDatabase();
   }, []);
 
   return (
     <View style={[styles.container, {padding: 16}]}>
       <Header />
+      <MealTypeComponent />
       <ScrollView style={styles.container}>
         {/* Recipes */}
-        <Text style={styles.heading}>Recipes</Text>
+        <Text style={styles.heading}>Breakfast</Text>
         {recipes?.map(recipe => (
           <RecipeCard recipe={recipe} />
         ))}
-
-        {/* Recipe Ingredients */}
-        <Text style={styles.heading}>Recipe Ingredients</Text>
-        {recipeIngredients?.map(recipeIngredient => (
-          <IngredientRecipeCard recipeIngredient={recipeIngredient} />
+        {/* Recipes */}
+        <Text style={styles.heading}>Lunch</Text>
+        {recipes?.map(recipe => (
+          <RecipeCard recipe={recipe} />
+        ))}
+        {/* Recipes */}
+        <Text style={styles.heading}>Dinner</Text>
+        {recipes?.map(recipe => (
+          <RecipeCard recipe={recipe} />
         ))}
       </ScrollView>
     </View>
@@ -99,5 +104,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     color: '#666',
+  },
+  mealType: {},
+  borderRight: {
+    borderRightWidth: 0.5,
+    borderColor: '#6e6f71',
   },
 });
