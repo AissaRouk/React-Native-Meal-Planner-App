@@ -67,13 +67,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 25,
+    marginBottom: 20,
   },
   mealButton: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 20,
-    backgroundColor: 'transparent',
-    borderWidth: 0.5,
+    backgroundColor: 'white',
+    borderWidth: 0.3,
     borderColor: '#ccc',
   },
   selectedMealButton: {
