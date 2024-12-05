@@ -37,6 +37,7 @@ import {
 import {
   Ingredient,
   IngredientPantry,
+  MealType,
   Pantry,
   QuantityType,
   Recipe,
@@ -46,44 +47,47 @@ import Header from '../Components/HeaderComponent';
 import RecipeCard from '../Components/RecipeCardComponent';
 import {IngredientRecipeCard} from '../Components/IngredientRecipeCard';
 import MealTypeComponent from '../Components/MealTypeComponent';
+import {Breakfast, Dinner, Lunch} from './sucio';
 
 export default function MainScreen(): React.JSX.Element {
-  /**the array with all the recipes fetched**/
+  const [selectedMeal, setSelectedMeal] = useState<MealType>(
+    MealType.BREAKFAST,
+  );
+  /**
+   * The array that contains the recipes of the selected MealType
+   */
   const [recipes, setRecipes] = useState<Recipe[]>();
 
   useEffect(() => {
-    // Initialize tables and insert ingredient
-    async () => {
-      try {
-        const rcps: Recipe[] = await getRecipes();
-        setRecipes(rcps);
-      } catch (error) {
-        console.error('Error during initialization:', error);
-      }
-    };
-  }, []);
+    console.log('MealType has changed: ' + selectedMeal);
+
+    switch (selectedMeal) {
+      case null:
+      case MealType.BREAKFAST:
+        setSelectedMeal(MealType.BREAKFAST);
+        setRecipes(Breakfast);
+        break;
+      case MealType.LUNCH:
+        setSelectedMeal(MealType.LUNCH);
+        setRecipes(Lunch);
+        break;
+      case MealType.DINNER:
+        setSelectedMeal(MealType.DINNER);
+        setRecipes(Dinner);
+        break;
+    }
+  }, [selectedMeal]);
 
   return (
     <View style={[styles.container, {padding: 16}]}>
       <Header />
-      <MealTypeComponent />
-      <ScrollView style={styles.container}>
-        {/* Recipes */}
-        <Text style={styles.heading}>Breakfast</Text>
-        {recipes?.map(recipe => (
-          <RecipeCard recipe={recipe} />
-        ))}
-        {/* Recipes */}
-        <Text style={styles.heading}>Lunch</Text>
-        {recipes?.map(recipe => (
-          <RecipeCard recipe={recipe} />
-        ))}
-        {/* Recipes */}
-        <Text style={styles.heading}>Dinner</Text>
-        {recipes?.map(recipe => (
-          <RecipeCard recipe={recipe} />
-        ))}
-      </ScrollView>
+      <MealTypeComponent
+        mealType={selectedMeal}
+        onSelectedMeal={setSelectedMeal}
+      />
+      {recipes?.map(recipe => (
+        <RecipeCard key={recipe.id} recipe={recipe} />
+      ))}
     </View>
   );
 }
