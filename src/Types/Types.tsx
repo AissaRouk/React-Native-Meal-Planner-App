@@ -39,6 +39,14 @@ export type IngredientPantry = {
 };
 export type IngredientPantryWithoutId = Omit<IngredientPantry, 'id'>;
 
+export type WeeklyMeal = {
+  id: number;
+  day: string; // Day of the week (e.g., "Monday")
+  mealType: MealType; // Type of meal (e.g., "Breakfast", "Lunch", "Dinner")
+  recipeId: number; // ID of the recipe assigned
+};
+export type WeeklyMealWithoutId = Omit<WeeklyMeal, 'id'>;
+
 //Enums
 
 export enum QuantityType {
