@@ -1,59 +1,37 @@
 import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {MealType} from '../Types/Types';
 
-export default function MealTypeComponent(): React.JSX.Element {
-  const [selectedMeal, setSelectedMeal] = useState<string>('Breakfast');
-
-  const handleMealPress = (meal: string) => {
-    setSelectedMeal(meal);
+export default function MealTypeComponent({
+  mealType,
+  onSelectedMeal,
+}: {
+  mealType: MealType;
+  onSelectedMeal: (meal: MealType) => void;
+}): React.JSX.Element {
+  const handleMealPress = (meal: MealType) => {
+    onSelectedMeal(meal);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[
-          styles.mealButton,
-          selectedMeal === 'Breakfast' && styles.selectedMealButton,
-        ]}
-        onPress={() => handleMealPress('Breakfast')}>
-        <Text
+      {[MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER].map(meal => (
+        <TouchableOpacity
+          key={meal}
           style={[
-            styles.mealText,
-            selectedMeal === 'Breakfast' && styles.selectedMealText,
-          ]}>
-          Breakfast
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.mealButton,
-          selectedMeal === 'Lunch' && styles.selectedMealButton,
-        ]}
-        onPress={() => handleMealPress('Lunch')}>
-        <Text
-          style={[
-            styles.mealText,
-            selectedMeal === 'Lunch' && styles.selectedMealText,
-          ]}>
-          Lunch
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.mealButton,
-          selectedMeal === 'Dinner' && styles.selectedMealButton,
-        ]}
-        onPress={() => handleMealPress('Dinner')}>
-        <Text
-          style={[
-            styles.mealText,
-            selectedMeal === 'Dinner' && styles.selectedMealText,
-          ]}>
-          Dinner
-        </Text>
-      </TouchableOpacity>
+            styles.mealButton,
+            mealType === meal && styles.selectedMealButton,
+          ]}
+          onPress={() => handleMealPress(meal)}>
+          <Text
+            style={[
+              styles.mealText,
+              mealType === meal && styles.selectedMealText,
+            ]}>
+            {meal}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
