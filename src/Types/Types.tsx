@@ -50,3 +50,9 @@ export enum QuantityType {
   CUPS = 'cups',
   // Add other units as needed
 }
+
+export enum MealType {
+  BREAKFAST = 'Breakfast',
+  LUNCH = 'Lunch',
+  DINNER = 'Dinner',
+}
