@@ -1288,33 +1288,27 @@ export const getWeeklyMealsByDayAndMealType: (
     const db = await getDbConnection();
 
     const sqlQuery = `SELECT * FROM ${TABLE_WEEKLY_MEALS} WHERE ${WEEKLY_MEALS_DAY}=? AND ${WEEKLY_MEALS_MEAL_TYPE}=?`;
-
     const result: WeeklyMeal[] = [];
 
     await db.transaction(tx =>
-      tx.executeSql(sqlQuery, [dayOfWeek, mealType], (tx, resultSet) => {
-        if (resultSet.rows.length > 0) {
-          for (var i = 0; i < resultSet.rows.length; i++) {
-            const item: WeeklyMeal = resultSet.rows.item(i);
-            result.push(item);
+      tx.executeSql(
+        sqlQuery,
+        [dayOfWeek, mealType],
+        (tx, resultSet) => {
+          for (let i = 0; i < resultSet.rows.length; i++) {
+            result.push(resultSet.rows.item(i));
           }
-        } else if (resultSet.rows.length == 0) {
-          console.log(
-            'getWeeklyMealsByDayAndMealType -> There are no WeeklyMeals in that combination',
-          );
-        } else {
-          console.log(
-            "getWeeklyMealsByDayAndMealType -> couldn't retrieve the weeklyMeals",
-          );
-        }
-      }),
+        },
+        error => {
+          console.error('SQL error:', error);
+        },
+      ),
     );
+
     return result;
   } catch (error) {
-    throw new Error(
-      'getWeeklyMealsByDayAndMealType -> Error while retrieving the WeeklyMeals: ' +
-        JSON.stringify(error),
-    );
+    console.error('Error fetching WeeklyMeals:', error);
+    throw new Error('Error fetching WeeklyMeals:' + error);
   }
 };
 
