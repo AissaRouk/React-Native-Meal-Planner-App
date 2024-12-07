@@ -1,9 +1,11 @@
 import {enablePromise, openDatabase} from 'react-native-sqlite-storage';
 import {
+  DaysOfWeek,
   Ingredient,
   IngredientPantry,
   IngredientPantryWithoutId,
   IngredientWithoutId,
+  MealType,
   Pantry,
   PantryWithoutId,
   QuantityType,
@@ -11,6 +13,7 @@ import {
   RecipeIngredient,
   RecipeIngredientWithoutId,
   RecipeWithoutId,
+  WeeklyMeal,
 } from '../Types/Types';
 
 // Function to get the database connection
@@ -1134,7 +1137,8 @@ export const createWeeklyMealsTable: () => Promise<void> = async () => {
         ${WEEKLY_MEALS_DAY} TEXT NOT NULL,
         ${WEEKLY_MEALS_MEAL_TYPE} TEXT NOT NULL,
         ${WEEKLY_MEALS_RECIPE_ID} INTEGER,
-        FOREIGN KEY (${WEEKLY_MEALS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID})
+        FOREIGN KEY (${WEEKLY_MEALS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID}),
+        UNIQUE(${WEEKLY_MEALS_DAY}, ${WEEKLY_MEALS_MEAL_TYPE})
       );
     `;
 
@@ -1176,7 +1180,7 @@ export const createWeeklyMealsTable: () => Promise<void> = async () => {
  */
 export const addWeeklyMeal: (
   day: string,
-  mealType: string,
+  mealType: MealType,
   recipeId: number,
 ) => Promise<void> = async (day, mealType, recipeId) => {
   try {
@@ -1222,10 +1226,9 @@ export const addWeeklyMeal: (
  *
  * @async
  * @function getWeeklyMeals
- * @returns {Promise<any[]>} Resolves with an array of weekly meal entries.
+ * @returns {Promise<WeeklyMeal[]>} Resolves with an array of weekly meal entries.
  */
-
-export const getWeeklyMeals: () => Promise<any[]> = async () => {
+export const getWeeklyMeals: () => Promise<WeeklyMeal[]> = async () => {
   try {
     const db = await getDbConnection();
     const sqlSelect = `SELECT * FROM ${TABLE_WEEKLY_MEALS}`;
@@ -1255,6 +1258,63 @@ export const getWeeklyMeals: () => Promise<any[]> = async () => {
   } catch (error) {
     console.error('getWeeklyMeals -> Transaction error:', error);
     return [];
+  }
+};
+
+/**
+ * Retrieves the WeeklyMeals for a specific DayOfWeek and MealType combination.
+ *
+ * This function fetches all records from the WeeklyMeals table that match the provided
+ * day of the week and meal type. It is useful for retrieving meal plans for specific
+ * days and meal types (e.g., Breakfast on Monday).
+ *
+ * @async
+ * @function getWeeklyMealsByDayAndMealType
+ * @param {DayOfWeek} dayOfWeek - The day of the week for which meals are to be fetched (e.g., Monday, Tuesday).
+ * @param {MealType} mealType - The type of meal for which meals are to be fetched (e.g., Breakfast, Lunch, Dinner).
+ * @returns {Promise<WeeklyMeals[]>} Resolves with an array of WeeklyMeals objects that match the criteria, or an empty array if no matches are found.
+ * @throws {Error} Throws an error if the retrieval operation fails.
+ *
+ * @example
+ * getWeeklyMealsByDayAndMealType(DayOfWeek.MONDAY, MealType.BREAKFAST)
+ *   .then(weeklyMeals => console.log(weeklyMeals))
+ *   .catch(error => console.error('Error fetching weekly meals:', error));
+ */
+export const getWeeklyMealsByDayAndMealType: (
+  dayOfWeek: DaysOfWeek,
+  mealType: MealType,
+) => Promise<WeeklyMeal[]> = async (dayOfWeek, mealType) => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlQuery = `SELECT * FROM ${TABLE_WEEKLY_MEALS} WHERE ${WEEKLY_MEALS_DAY}=? AND ${WEEKLY_MEALS_MEAL_TYPE}=?`;
+
+    const result: WeeklyMeal[] = [];
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlQuery, [dayOfWeek, mealType], (tx, resultSet) => {
+        if (resultSet.rows.length > 0) {
+          for (var i = 0; i < resultSet.rows.length; i++) {
+            const item: WeeklyMeal = resultSet.rows.item(i);
+            result.push(item);
+          }
+        } else if (resultSet.rows.length == 0) {
+          console.log(
+            'getWeeklyMealsByDayAndMealType -> There are no WeeklyMeals in that combination',
+          );
+        } else {
+          console.log(
+            "getWeeklyMealsByDayAndMealType -> couldn't retrieve the weeklyMeals",
+          );
+        }
+      }),
+    );
+    return result;
+  } catch (error) {
+    throw new Error(
+      'getWeeklyMealsByDayAndMealType -> Error while retrieving the WeeklyMeals: ' +
+        JSON.stringify(error),
+    );
   }
 };
 
