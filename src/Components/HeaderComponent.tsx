@@ -6,13 +6,17 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import {daysOfWeekArray} from '../assets/Constants';
+import {DaysOfWeek} from '../Types/Types';
 
-const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-const Header = () => {
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
-
-  const handleDayPress = (day: string) => {
+const Header = ({
+  selectedDay,
+  setSelectedDay,
+}: {
+  selectedDay: DaysOfWeek;
+  setSelectedDay: (day: DaysOfWeek) => void;
+}) => {
+  const handleDayPress = (day: DaysOfWeek) => {
     setSelectedDay(day);
   };
 
@@ -25,7 +29,7 @@ const Header = () => {
         horizontal
         style={styles.scrollView}
         showsHorizontalScrollIndicator={false}>
-        {daysOfWeek.map(day => (
+        {daysOfWeekArray.map(day => (
           <TouchableOpacity
             key={day}
             onPress={() => handleDayPress(day)}
