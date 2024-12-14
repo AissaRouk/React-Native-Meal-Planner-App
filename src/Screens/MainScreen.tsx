@@ -95,12 +95,11 @@ export default function MainScreen(): React.JSX.Element {
 
   // Fetches recipes whenever the weekly meals state is updated
   useEffect(() => {
-    const functions = async () => {
-      await fetchRecipes(); // Fetch recipes corresponding to the current weekly meals
-    };
-    if (weeklyMeals.length >= 1) {
-      console.log('useEffectweeklyMeals -> entered');
-      functions(); // Call the function if weeklyMeals is not empty
+    if (weeklyMeals.length > 0) {
+      console.log('Fetching recipes for weeklyMeals:', weeklyMeals);
+      fetchRecipes();
+    } else {
+      setRecipes([]); // Reset recipes when there are no meals for the selected meal type
     }
   }, [weeklyMeals]);
 
