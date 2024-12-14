@@ -414,6 +414,57 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
 };
 
 /**
+ * Fetches a recipe from the Recipe table by its ID.
+ *
+ * This function retrieves a single recipe from the `Recipe` table based on the provided recipe ID.
+ *
+ * @async
+ * @function getRecipeById
+ * @param {number} id - The ID of the recipe to be fetched.
+ * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
+ */
+export const getRecipeById: (
+  id: number,
+) => Promise<Recipe | null> = async id => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlQuery = `SELECT * FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID} = ?`;
+
+    let recipe: Recipe | null = null;
+
+    await db.transaction(tx => {
+      tx.executeSql(
+        sqlQuery,
+        [id],
+        (tx, resultSet) => {
+          if (resultSet.rows.length > 0) {
+            recipe = resultSet.rows.item(0);
+            console.log(
+              'getRecipeById -> Recipe fetched successfully:',
+              recipe,
+            );
+          } else {
+            console.log('getRecipeById -> No recipe found with ID:', id);
+          }
+        },
+        error => {
+          console.error('getRecipeById -> SQL error fetching recipe:', error);
+        },
+      );
+    });
+
+    return recipe;
+  } catch (error) {
+    console.error(
+      'getRecipeById -> Transaction error:',
+      error instanceof Error ? error : JSON.stringify(error),
+    );
+    return null;
+  }
+};
+
+/**
  * Function to update an existing recipe
  *
  * @param {Recipe} recipe the recipe that will be updated
@@ -446,25 +497,6 @@ export const updateRecipe: (recipe: Recipe) => Promise<void> = async recipe => {
   } catch (error) {
     throw new Error('Error while updating recipe: ' + error);
   }
-};
-
-/**
- * Function that gets a recipe by id
- *
- * @param {number} id te id of the recipe wanted to be fetched
- */
-export const getRecipeById: (id: number) => Promise<void> = async id => {
-  const db = getDbConnection();
-
-  const sqlInsert = `SELECT * FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID}= ?`;
-
-  (await db).transaction(tx =>
-    tx.executeSql(sqlInsert, [id], (tx, resultSet) => {
-      if (resultSet.rows.length > 0) {
-        console.log('Recipe found: ' + JSON.stringify(resultSet.rows.item(0)));
-      } else console.log("Couldn't find any recipe!");
-    }),
-  );
 };
 
 /**
