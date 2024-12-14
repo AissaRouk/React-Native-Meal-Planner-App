@@ -30,13 +30,10 @@ export default function MainScreen(): React.JSX.Element {
   const [selectedMeal, setSelectedMeal] = useState<MealType>(
     MealType.BREAKFAST,
   );
-
   // State to track the currently selected day of the week
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
-
   // State to store the fetched weekly meals based on the selected day and meal type
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
-
   // State to store the recipes corresponding to the fetched weekly meals
   const [recipes, setRecipes] = useState<Recipe[]>();
 
