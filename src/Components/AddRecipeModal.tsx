@@ -198,10 +198,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   {ingredient.name} - {ingredient.category}
                 </Text>
               ))}
-              {/* Button to submit the recipe */}
-              <TouchableOpacity onPress={handleSubmitRecipe}>
-                <Text>Save Recipe</Text>
-              </TouchableOpacity>
             </View>
           )}
 
@@ -213,6 +209,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 onPress={() => setCurrentStep(currentStep - 1)}
                 style={styles.backButton}>
                 <Text>Back</Text>
+              </TouchableOpacity>
+            )}
+            {/* Button to submit the recipe */}
+            {currentStep == 3 && (
+              <TouchableOpacity
+                onPress={handleSubmitRecipe}
+                style={styles.nextButton}>
+                <Text>Save Recipe</Text>
               </TouchableOpacity>
             )}
             {/* Next button (disabled on the last step) */}
