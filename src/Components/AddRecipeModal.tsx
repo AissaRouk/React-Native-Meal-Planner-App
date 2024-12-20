@@ -49,9 +49,11 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     field: keyof IngredientWithoutId,
     value: string,
   ): void => {
-    const updatedIngredients = [...ingredients]; // Create a copy of the ingredients array
-    updatedIngredients[index][field] = value; // Update the specific field for the ingredient at the given index
-    setIngredients(updatedIngredients); // Update the state with the modified array
+    setIngredients(ingredients =>
+      ingredients.map((ingredient, i) =>
+        i === index ? {...ingredient, [field]: value} : ingredient,
+      ),
+    );
   };
 
   // Function to submit the recipe with its details and ingredients
@@ -170,8 +172,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 </View>
               ))}
               {/* Button to add another ingredient */}
-              <TouchableOpacity onPress={addNewIngredientField}>
-                <Text>Add Another Ingredient</Text>
+              <TouchableOpacity
+                onPress={addNewIngredientField}
+                style={styles.addAnotherIngrButton}>
+                <Text style={{color: 'white'}}>Add Another Ingredient</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -264,6 +268,13 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fb7945',
     borderRadius: 5,
+  },
+  addAnotherIngrButton: {
+    backgroundColor: '#fb7945',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
   },
 });
 
