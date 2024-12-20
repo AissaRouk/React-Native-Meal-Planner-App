@@ -70,10 +70,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     onClose(); // Close the modal after submission
   };
 
-  const exitButton = () => {
-    /* Exit button */
-  };
-
   const ModalHeader: React.FC<{text: string; onClose: () => void}> = ({
     text,
     onClose,
