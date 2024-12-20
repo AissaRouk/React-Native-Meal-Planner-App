@@ -6,13 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native';
-import {
-  IngredientWithoutId,
-  RecipeWithoutId,
-  QuantityType,
-} from '../Types/Types';
-import {Picker} from '@react-native-picker/picker';
+import {IngredientWithoutId, RecipeWithoutId} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 
 type AddRecipeModalProps = {
@@ -60,16 +56,30 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   // Function to submit the recipe with its details and ingredients
   const handleSubmitRecipe = (): void => {
+    if (!name.trim()) {
+      Alert.alert('Recipe name is required.');
+      return;
+    }
+    if (isNaN(Number(prepTime)) || Number(prepTime) <= 0) {
+      Alert.alert('Preparation time must be a positive number.');
+      return;
+    }
+    if (isNaN(Number(servings)) || Number(servings) <= 0) {
+      Alert.alert('Serving size must be a positive number.');
+      return;
+    }
+    // Continue with submission...
     onSubmit({
-      name, // Recipe name
-      link, // Recipe link
-      preparationTime: parseInt(prepTime), // Convert preparation time to a number
-      servingSize: parseInt(servings), // Convert serving size to a number
-      ingredients, // Array of ingredients
+      name,
+      link,
+      preparationTime: parseInt(prepTime),
+      servingSize: parseInt(servings),
+      ingredients,
     });
-    onClose(); // Close the modal after submission
+    onClose();
   };
 
+  //The header of the modal (Text + Exit-Button)
   const ModalHeader: React.FC<{text: string; onClose: () => void}> = ({
     text,
     onClose,
