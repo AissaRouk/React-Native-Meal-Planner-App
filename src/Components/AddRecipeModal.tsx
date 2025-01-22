@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Modal,
   View,
@@ -30,13 +30,16 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
   const [link, setLink] = useState<string>(''); // Optional recipe link
-  const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
-  const [servings, setServings] = useState<string>(''); // Number of servings
+  const [prepTime, setPrepTime] = useState<number>(0); // Preparation time
+  const [servings, setServings] = useState<number>(0); // Number of servings
 
   // State for the ingredients in the recipe
   const [ingredients, setIngredients] = useState<IngredientWithoutId[]>([
     {name: '', category: ''}, // Default empty ingredient
   ]);
+
+  //useEffect that renders once
+  useEffect(() => {}, []);
 
   // Function to add a new empty ingredient field
   const addNewIngredientField = (): void => {
@@ -74,11 +77,66 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     onSubmit({
       name,
       link,
-      preparationTime: parseInt(prepTime),
-      servingSize: parseInt(servings),
+      preparationTime: prepTime,
+      servingSize: servings,
       ingredients,
     });
     onClose();
+  };
+
+  //Function to handle the close button
+  const handleOnClose = (): void => {
+    setName('');
+    setLink('');
+    setIngredients([]);
+    setPrepTime(0);
+    setServings(0);
+    onClose();
+  };
+
+  // Validation for Step 1
+  const validateStep1 = (): boolean => {
+    if (!name.trim()) {
+      Alert.alert('Validation Error', 'Recipe name is required.');
+      return false;
+    }
+    if (isNaN(Number(prepTime)) || Number(prepTime) <= 0) {
+      Alert.alert(
+        'Validation Error',
+        'Preparation time must be a positive number.',
+      );
+      return false;
+    }
+    if (isNaN(Number(servings)) || Number(servings) <= 0) {
+      Alert.alert(
+        'Validation Error',
+        'Serving size must be a positive number.',
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // Validation for Step 2
+  const validateStep2 = (): boolean => {
+    const invalidIngredient = ingredients.find(
+      ingredient => !ingredient.name.trim(),
+    );
+    if (invalidIngredient) {
+      Alert.alert(
+        'Validation Error',
+        'All ingredients must have a name. Please fill in the missing fields.',
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // Handle next step with validation
+  const handleNextStep = () => {
+    if (currentStep === 1 && !validateStep1()) return;
+    if (currentStep === 2 && !validateStep2()) return;
+    setCurrentStep(currentStep + 1);
   };
 
   //The header of the modal (Text + Exit-Button)
@@ -102,6 +160,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       </TouchableOpacity>
     </View>
   );
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalOverlay}>
@@ -110,7 +169,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
           {currentStep === 1 && (
             <View>
               {/* <Text style={styles.title}>Recipe Details</Text> */}
-              <ModalHeader text="Recipe Details" onClose={() => onClose()} />
+              <ModalHeader
+                text="Recipe Details"
+                onClose={() => handleOnClose()}
+              />
               {/* Input fields for recipe details */}
               <TextInput
                 placeholder="Recipe Name"
@@ -126,15 +188,15 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               />
               <TextInput
                 placeholder="Preparation Time (in minutes)"
-                value={prepTime}
-                onChangeText={setPrepTime}
+                value={String(prepTime)}
+                onChangeText={value => setPrepTime(Number(value))}
                 keyboardType="numeric"
                 style={styles.input}
               />
               <TextInput
                 placeholder="Serving Size"
-                value={servings}
-                onChangeText={setServings}
+                value={String(servings)}
+                onChangeText={value => setServings(Number(value))}
                 keyboardType="numeric"
                 style={styles.input}
               />
@@ -222,7 +284,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
             {/* Next button (disabled on the last step) */}
             {currentStep < 3 && (
               <TouchableOpacity
-                onPress={() => setCurrentStep(currentStep + 1)}
+                onPress={() => handleNextStep()}
                 style={styles.nextButton}>
                 <Text>Next</Text>
               </TouchableOpacity>
