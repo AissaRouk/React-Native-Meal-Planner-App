@@ -30,8 +30,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
   const [link, setLink] = useState<string>(''); // Optional recipe link
-  const [prepTime, setPrepTime] = useState<number>(0); // Preparation time
-  const [servings, setServings] = useState<number>(0); // Number of servings
+  const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
+  const [servings, setServings] = useState<string>(''); // Number of servings
 
   // State for the ingredients in the recipe
   const [ingredients, setIngredients] = useState<IngredientWithoutId[]>([
@@ -77,8 +77,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     onSubmit({
       name,
       link,
-      preparationTime: prepTime,
-      servingSize: servings,
+      preparationTime: Number(prepTime),
+      servingSize: Number(servings),
       ingredients,
     });
     onClose();
@@ -89,8 +89,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     setName('');
     setLink('');
     setIngredients([]);
-    setPrepTime(0);
-    setServings(0);
+    setPrepTime(prepTime);
+    setServings(servings);
     onClose();
   };
 
@@ -189,14 +189,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               <TextInput
                 placeholder="Preparation Time (in minutes)"
                 value={String(prepTime)}
-                onChangeText={value => setPrepTime(Number(value))}
+                onChangeText={setPrepTime}
                 keyboardType="numeric"
                 style={styles.input}
               />
               <TextInput
                 placeholder="Serving Size"
                 value={String(servings)}
-                onChangeText={value => setServings(Number(value))}
+                onChangeText={setServings}
                 keyboardType="numeric"
                 style={styles.input}
               />
