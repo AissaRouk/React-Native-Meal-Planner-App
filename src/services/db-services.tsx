@@ -8,7 +8,6 @@ import {
   MealType,
   Pantry,
   PantryWithoutId,
-  QuantityType,
   Recipe,
   RecipeIngredient,
   RecipeIngredientWithoutId,
