@@ -181,7 +181,7 @@ export const addIngredient = async (
  * @returns {Promise<Ingredient[]>} A promise that resolves to an array of ingredients or an empty array if an error occurs.
  *
  */
-export const getIngredients: () => Promise<Ingredient[]> = async (): Promise<
+export const getAllIngredients: () => Promise<Ingredient[]> = async (): Promise<
   Ingredient[]
 > => {
   try {
