@@ -24,13 +24,15 @@ import {
   Lunch,
 } from './sucio';
 import {
-  getIngredients,
+  getAllIngredients,
   getRecipeById,
   getRecipes,
   getWeeklyMeals,
   getWeeklyMealsByDayAndMealType,
 } from '../services/db-services';
 import Icon from '@react-native-vector-icons/ionicons';
+import AddRecipeModal from '../Components/AddRecipeModal';
+import {initialise} from '../services/dataManager';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -43,6 +45,8 @@ export default function MainScreen(): React.JSX.Element {
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
   // State to store the recipes corresponding to the fetched weekly meals
   const [recipes, setRecipes] = useState<Recipe[]>();
+  //State to trigger the visibility of the AddRecipeModal
+  const [visible, setVisible] = useState<boolean>(false);
 
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
@@ -65,8 +69,7 @@ export default function MainScreen(): React.JSX.Element {
   // Runs once when the component is mounted to initialize and populate the database
   useEffect(() => {
     const asyncFunctions = async () => {
-      await initialiseTables(); // Initializes the database tables
-      await fillTablesWMockupData(); // Fills the tables with mock data for testing
+      initialise();
     };
     asyncFunctions().catch(error =>
       console.log(
@@ -130,6 +133,7 @@ export default function MainScreen(): React.JSX.Element {
         )}
       </ScrollView>
 
+      {/* Button that shows the Modal to add the Recipes */}
       <TouchableOpacity
         style={[
           styles.addButton,
@@ -140,10 +144,17 @@ export default function MainScreen(): React.JSX.Element {
           },
         ]}
         onPress={() => {
-          // Handle button press logic here
+          setVisible(true);
         }}>
         <Icon name="add" size={40} color="white" />
       </TouchableOpacity>
+
+      {/* Modal to add the Recipes */}
+      <AddRecipeModal
+        visible={visible}
+        onSubmit={() => {}}
+        onClose={() => setVisible(false)}
+      />
     </View>
   );
 }
