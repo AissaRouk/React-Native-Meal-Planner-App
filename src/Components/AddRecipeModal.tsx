@@ -8,9 +8,14 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import {IngredientWithoutId, RecipeWithoutId} from '../Types/Types';
+import {Ingredient, IngredientWithoutId, RecipeWithoutId} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
+import {SearchBar} from '@rneui/themed';
+import {UseMiniSearch, useMiniSearch} from 'react-minisearch';
+import {ingredients} from '../services/dataManager';
+import {Options, Suggestion} from 'minisearch';
 
+// Types of the AddRecipeModal params
 type AddRecipeModalProps = {
   visible: boolean; // Indicates if the modal is visible
   onClose: () => void; // Callback to close the modal
@@ -33,31 +38,25 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
   const [servings, setServings] = useState<string>(''); // Number of servings
 
-  // State for the ingredients in the recipe
-  const [ingredients, setIngredients] = useState<IngredientWithoutId[]>([
-    {name: '', category: ''}, // Default empty ingredient
-  ]);
+  //State for the search
+  const [searchValue, setSearchValue] = useState<string>('');
 
-  //useEffect that renders once
-  useEffect(() => {}, []);
-
-  // Function to add a new empty ingredient field
-  const addNewIngredientField = (): void => {
-    setIngredients([...ingredients, {name: '', category: ''}]);
+  //mini-search hook and parameters
+  const searchParameters: Options = {
+    fields: ['name', 'category'],
+    storeFields: ['name'],
   };
+  const {
+    search,
+    autoSuggest,
+    searchResults,
+    suggestions,
+  }: UseMiniSearch<Ingredient> = useMiniSearch(ingredients, searchParameters);
 
-  // Function to handle changes in the ingredient fields (name or category)
-  const handleIngredientChange = (
-    index: number,
-    field: keyof IngredientWithoutId,
-    value: string,
-  ): void => {
-    setIngredients(ingredients =>
-      ingredients.map((ingredient, i) =>
-        i === index ? {...ingredient, [field]: value} : ingredient,
-      ),
-    );
-  };
+  //(just for testing) useEffect to check the searchresutlts
+  useEffect(() => {
+    console.log('Autosuggestions: ' + JSON.stringify(suggestions));
+  }, [suggestions]);
 
   // Function to submit the recipe with its details and ingredients
   const handleSubmitRecipe = (): void => {
@@ -81,16 +80,16 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       servingSize: Number(servings),
       ingredients,
     });
-    onClose();
+    handleOnClose();
   };
 
   //Function to handle the close button
   const handleOnClose = (): void => {
     setName('');
     setLink('');
-    setIngredients([]);
-    setPrepTime(prepTime);
-    setServings(servings);
+    setPrepTime('');
+    setServings('');
+    setCurrentStep(1);
     onClose();
   };
 
@@ -139,6 +138,21 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     setCurrentStep(currentStep + 1);
   };
 
+  // Handle when the text is being changed in the SearchBar
+  const handleOnchangeText = (text: string) => {
+    setSearchValue(text);
+    autoSuggest(text);
+  };
+
+  // Handle when a suggestion is selected
+  const handleSelectSuggestion = (suggestions: Suggestion) => {
+    //code to handle suggestion clicking
+  };
+
+  //
+  //Components
+  //
+
   //The header of the modal (Text + Exit-Button)
   const ModalHeader: React.FC<{text: string; onClose: () => void}> = ({
     text,
@@ -147,7 +161,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
       <Text style={styles.title}>{text}</Text>
       <TouchableOpacity
-        onPress={onClose}
+        onPress={handleOnClose}
         style={{
           height: 30,
           width: 30,
@@ -208,37 +222,34 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
             <View>
               <ModalHeader
                 text="Step 2: Add Ingredients"
-                onClose={() => onClose()}
+                onClose={() => handleOnClose()}
               />
               {/* Render a field for each ingredient */}
-              {ingredients.map((ingredient, index) => (
-                <View key={index}>
-                  {/* Ingredient name input */}
-                  <TextInput
-                    placeholder="Ingredient Name"
-                    value={ingredient.name}
-                    onChangeText={text =>
-                      handleIngredientChange(index, 'name', text)
-                    }
-                    style={styles.input}
-                  />
-                  {/* Ingredient category input */}
-                  <TextInput
-                    placeholder="Ingredient Category"
-                    value={ingredient.category}
-                    onChangeText={text =>
-                      handleIngredientChange(index, 'category', text)
-                    }
-                    style={styles.input}
-                  />
+              <SearchBar
+                placeholder="Search for ingredients"
+                value={searchValue}
+                onChangeText={handleOnchangeText}
+                lightTheme
+                round
+                searchIcon={<Icon name="search" size={18} color={'grey'} />}
+                clearIcon={false} // Hide the default clear icon
+                inputContainerStyle={styles.searchInputContainer}
+                containerStyle={styles.searchContainer}
+                inputStyle={styles.searchInput}
+              />
+
+              {/* Dropdown of suggestions */}
+              {suggestions && (
+                <View>
+                  {suggestions?.map((suggestion, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleSelectSuggestion(suggestion)}>
+                      <Text>{suggestion.suggestion}</Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
-              ))}
-              {/* Button to add another ingredient */}
-              <TouchableOpacity
-                onPress={addNewIngredientField}
-                style={styles.addAnotherIngrButton}>
-                <Text style={{color: 'white'}}>Add Another Ingredient</Text>
-              </TouchableOpacity>
+              )}
             </View>
           )}
 
@@ -247,7 +258,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
             <View>
               <ModalHeader
                 text="Step 3: Review & Confirm"
-                onClose={() => onClose()}
+                onClose={() => handleOnClose()}
               />
               {/* Display the entered recipe details */}
               <Text>Recipe Name: {name}</Text>
@@ -341,6 +352,28 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 10,
+  },
+  // SeachBar styles
+  searchContainer: {
+    backgroundColor: 'transparent', // Remove background
+    borderColor: 'transparent',
+    paddingHorizontal: 0,
+    marginBottom: 10,
+  },
+
+  searchInputContainer: {
+    backgroundColor: 'white', // Keep background visible
+    borderWidth: 1, // Make border visible
+    borderColor: '#ccc', // Set border color
+    borderRadius: 5, // Match other inputs
+    height: 40, // Match other TextInput fields
+    paddingHorizontal: 10, // Ensure text doesn't touch the border
+    borderBottomWidth: 1, // Ensure bottom border is applied
+  },
+
+  searchInput: {
+    fontSize: 16,
+    color: '#333',
   },
 });
 
