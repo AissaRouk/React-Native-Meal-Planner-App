@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ScrollView,
 } from 'react-native';
 import {Ingredient, IngredientWithoutId, RecipeWithoutId} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
@@ -43,9 +44,11 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   //mini-search hook and parameters
   const searchParameters: Options = {
-    fields: ['name', 'category'],
-    storeFields: ['name'],
+    fields: ['name'], // Fields used for searching
+    storeFields: ['id', 'name'], // Store 'id' and 'name' so they can be returned
+    idField: 'id', // Ensure MiniSearch identifies objects correctly
   };
+
   const {
     search,
     autoSuggest,
@@ -224,7 +227,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 text="Step 2: Add Ingredients"
                 onClose={() => handleOnClose()}
               />
-              {/* Render a field for each ingredient */}
               <SearchBar
                 placeholder="Search for ingredients"
                 value={searchValue}
@@ -232,23 +234,37 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 lightTheme
                 round
                 searchIcon={<Icon name="search" size={18} color={'grey'} />}
-                clearIcon={false} // Hide the default clear icon
-                inputContainerStyle={styles.searchInputContainer}
-                containerStyle={styles.searchContainer}
+                clearIcon={false}
+                containerStyle={{
+                  ...styles.searchContainer,
+                  borderTopWidth: 0,
+                  borderBottomWidth: 0,
+                  margin: 0,
+                  padding: 0,
+                }}
+                inputContainerStyle={[
+                  styles.searchInputContainer,
+                  {
+                    borderBottomWidth: suggestions?.length ? 0 : 1,
+                  },
+                ]}
                 inputStyle={styles.searchInput}
               />
 
-              {/* Dropdown of suggestions */}
-              {suggestions && (
-                <View>
+              {/* Suggestions dropdown */}
+              {suggestions?.length && suggestions?.length > 0 && (
+                <ScrollView style={styles.suggestionsContainer}>
                   {suggestions?.map((suggestion, index) => (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => handleSelectSuggestion(suggestion)}>
-                      <Text>{suggestion.suggestion}</Text>
+                      onPress={() => handleSelectSuggestion(suggestion)}
+                      style={styles.suggestionItem}>
+                      <Text style={styles.suggestionText}>
+                        {suggestion.suggestion}
+                      </Text>
                     </TouchableOpacity>
                   ))}
-                </View>
+                </ScrollView>
               )}
             </View>
           )}
@@ -358,7 +374,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent', // Remove background
     borderColor: 'transparent',
     paddingHorizontal: 0,
-    marginBottom: 10,
   },
 
   searchInputContainer: {
@@ -368,10 +383,31 @@ const styles = StyleSheet.create({
     borderRadius: 5, // Match other inputs
     height: 40, // Match other TextInput fields
     paddingHorizontal: 10, // Ensure text doesn't touch the border
-    borderBottomWidth: 1, // Ensure bottom border is applied
   },
 
   searchInput: {
+    fontSize: 16,
+    color: '#333',
+  },
+
+  //suggestions
+  suggestionsContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderTopWidth: 0, // So it merges with the SearchBar border
+    margin: 0,
+    padding: 0,
+    // If you want the lower corners to be rounded
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+  suggestionItem: {
+    padding: 10,
+    // Possibly no border here if you want it super flush
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  suggestionText: {
     fontSize: 16,
     color: '#333',
   },
