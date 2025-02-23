@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {Ref, useEffect, useRef, useState} from 'react';
 import {
   Modal,
   View,
@@ -39,14 +39,21 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
   const [servings, setServings] = useState<string>(''); // Number of servings
 
+  // State for suggestions visibility
+  const [suggestionsVisible, setSuggestionsVisible] = useState<boolean>(false);
+
+  // References to control components
+  const suggestionTouchableRef = useRef(null);
+  const searchBarRef = useRef<TextInput>(null);
+
   //State for the search
   const [searchValue, setSearchValue] = useState<string>('');
 
   //mini-search hook and parameters
   const searchParameters: Options = {
     fields: ['name'], // Fields used for searching
-    storeFields: ['id', 'name'], // Store 'id' and 'name' so they can be returned
     idField: 'id', // Ensure MiniSearch identifies objects correctly
+    storeFields: ['name'],
   };
 
   const {
@@ -56,10 +63,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     suggestions,
   }: UseMiniSearch<Ingredient> = useMiniSearch(ingredients, searchParameters);
 
+  //(just for testing) useEffect to check the suggestions
+  useEffect(() => {
+    if (suggestions) {
+      console.log('Autosuggestions: ' + JSON.stringify(suggestions));
+      setSuggestionsVisible(true);
+    }
+  }, [suggestions]);
+
   //(just for testing) useEffect to check the searchresutlts
   useEffect(() => {
-    console.log('Autosuggestions: ' + JSON.stringify(suggestions));
-  }, [suggestions]);
+    if (searchResults && searchResults.length) {
+      console.log('searchResults: ' + JSON.stringify(searchResults));
+    }
+  }, [searchResults]);
 
   // Function to submit the recipe with its details and ingredients
   const handleSubmitRecipe = (): void => {
@@ -144,12 +161,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   // Handle when the text is being changed in the SearchBar
   const handleOnchangeText = (text: string) => {
     setSearchValue(text);
-    autoSuggest(text);
+    const results = autoSuggest(text);
+    console.log('Suggestions:', results); // Debugging
   };
 
   // Handle when a suggestion is selected
   const handleSelectSuggestion = (suggestions: Suggestion) => {
-    //code to handle suggestion clicking
+    // search for the suggestion
+    search(suggestions.suggestion);
+    // blur the SearchBar
+    searchBarRef.current?.blur();
+    //autocomplete search text
+    setSearchValue(suggestions.suggestion);
+    // hide suggestions
+    setSuggestionsVisible(false);
   };
 
   //
@@ -245,17 +270,19 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 inputContainerStyle={[
                   styles.searchInputContainer,
                   {
-                    borderBottomWidth: suggestions?.length ? 0 : 1,
+                    borderBottomWidth: suggestionsVisible ? 0 : 1,
                   },
                 ]}
                 inputStyle={styles.searchInput}
+                ref={searchBarRef}
               />
 
               {/* Suggestions dropdown */}
-              {suggestions?.length && suggestions?.length > 0 && (
+              {suggestionsVisible && (
                 <ScrollView style={styles.suggestionsContainer}>
                   {suggestions?.map((suggestion, index) => (
                     <TouchableOpacity
+                      ref={suggestionTouchableRef}
                       key={index}
                       onPress={() => handleSelectSuggestion(suggestion)}
                       style={styles.suggestionItem}>
