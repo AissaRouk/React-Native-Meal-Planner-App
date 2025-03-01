@@ -5,6 +5,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   DaysOfWeek,
@@ -47,6 +48,8 @@ export default function MainScreen(): React.JSX.Element {
   const [recipes, setRecipes] = useState<Recipe[]>();
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
+  //boolean state to track the completion of the data fetching
+  const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
 
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
@@ -71,11 +74,14 @@ export default function MainScreen(): React.JSX.Element {
     const asyncFunctions = async () => {
       initialise();
     };
-    asyncFunctions().catch(error =>
-      console.log(
-        'MainScreen -> error in asyncFunctions : ' + JSON.stringify(error),
-      ),
-    );
+    asyncFunctions()
+      .catch(error =>
+        console.log(
+          'MainScreen -> error in asyncFunctions : ' + JSON.stringify(error),
+        ),
+      )
+      // when finished hide ActivityIndicator
+      .then(() => setIsFetchFinished(true));
   }, []);
 
   // Fetches the weekly meals whenever the selected day or meal type changes
@@ -113,49 +119,59 @@ export default function MainScreen(): React.JSX.Element {
     }
   }, [weeklyMeals]);
 
-  return (
+  return isFetchFinished ? (
     <View style={[styles.container, {padding: 16}]}>
-      {/* Header component to select the day of the week */}
-      <Header selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+      <>
+        {/* Header component to select the day of the week */}
+        <Header selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
 
-      {/* Component to select the meal type */}
-      <MealTypeComponent
-        mealType={selectedMeal}
-        onSelectedMeal={setSelectedMeal}
-      />
+        {/* Component to select the meal type */}
+        <MealTypeComponent
+          mealType={selectedMeal}
+          onSelectedMeal={setSelectedMeal}
+        />
 
-      {/* ScrollView to display the recipes */}
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {recipes === null || recipes?.length === 0 ? (
-          <Text>No Recipes Found</Text>
-        ) : (
-          recipes?.map(recipe => <RecipeCard key={recipe.id} recipe={recipe} />)
-        )}
-      </ScrollView>
+        {/* ScrollView to display the recipes */}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {recipes === null || recipes?.length === 0 ? (
+            <Text>No Recipes Found</Text>
+          ) : (
+            recipes?.map(recipe => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))
+          )}
+        </ScrollView>
 
-      {/* Button that shows the Modal to add the Recipes */}
-      <TouchableOpacity
-        style={[
-          styles.addButton,
-          {
-            position: 'absolute', // Position the button absolutely within its parent
-            bottom: 16, // Distance from the bottom of the screen
-            right: 16, // Distance from the right of the screen
-          },
-        ]}
-        onPress={() => {
-          setVisible(true);
-        }}>
-        <Icon name="add" size={40} color="white" />
-      </TouchableOpacity>
+        {/* Button that shows the Modal to add the Recipes */}
+        <TouchableOpacity
+          style={[
+            styles.addButton,
+            {
+              position: 'absolute', // Position the button absolutely within its parent
+              bottom: 16, // Distance from the bottom of the screen
+              right: 16, // Distance from the right of the screen
+            },
+          ]}
+          onPress={() => {
+            setVisible(true);
+          }}>
+          <Icon name="add" size={40} color="white" />
+        </TouchableOpacity>
 
-      {/* Modal to add the Recipes */}
-      <AddRecipeModal
-        visible={visible}
-        onSubmit={() => {}}
-        onClose={() => setVisible(false)}
-      />
+        {/* Modal to add the Recipes */}
+        <AddRecipeModal
+          visible={visible}
+          onSubmit={() => {}}
+          onClose={() => setVisible(false)}
+        />
+      </>
     </View>
+  ) : (
+    <ActivityIndicator
+      size={100}
+      color={'#fb7945'}
+      style={styles.activityIndicatorStyle}
+    />
   );
 }
 
@@ -192,5 +208,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 5, // Android shadow
+  },
+  activityIndicatorStyle: {
+    flex: 1,
   },
 });
