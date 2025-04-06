@@ -33,7 +33,7 @@ import {
 } from '../services/db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
-import {initialise} from '../services/dataManager';
+import {ingredientsFetched, initialise} from '../services/dataManager';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -83,6 +83,12 @@ export default function MainScreen(): React.JSX.Element {
       // when finished hide ActivityIndicator
       .then(() => setIsFetchFinished(true));
   }, []);
+
+  //Runs when the ingredients are fetched, handles visibility of ActivityIndicator
+  useEffect(() => {
+    setIsFetchFinished(ingredientsFetched);
+    console.log('UseEffect: ' + ingredientsFetched);
+  }, [ingredientsFetched]);
 
   // Fetches the weekly meals whenever the selected day or meal type changes
   useEffect(() => {
