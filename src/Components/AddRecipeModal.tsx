@@ -9,26 +9,35 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {Ingredient, IngredientWithoutId, RecipeWithoutId} from '../Types/Types';
+import {
+  Ingredient,
+  IngredientWithoutId,
+  QuantityType,
+  RecipeIngredient,
+  RecipeWithoutId,
+} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
-import {UseMiniSearch, useMiniSearch} from 'react-minisearch';
-import {ingredients} from '../services/dataManager';
-import {Options, Suggestion} from 'minisearch';
+import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
-  visible: boolean; // Indicates if the modal is visible
-  onClose: () => void; // Callback to close the modal
+  visible: boolean;
+  onClose: () => void;
   onSubmit: (
     recipe: RecipeWithoutId & {ingredients: IngredientWithoutId[]},
-  ) => void; // Callback to submit the recipe with its ingredients
+  ) => void;
+  ingredients: Ingredient[];
+  isFetchFinished: boolean;
 };
 
 const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   visible,
   onClose,
   onSubmit,
+  ingredients,
+  isFetchFinished,
 }) => {
   // Track the current step in the multi-step form (1: Recipe Details, 2: Add Ingredients, 3: Review & Confirm)
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -38,9 +47,18 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [link, setLink] = useState<string>(''); // Optional recipe link
   const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
   const [servings, setServings] = useState<string>(''); // Number of servings
+  const [selectedIngredients, setSelectedIngredients] =
+    useState<Ingredient[]>();
 
-  // State for suggestions visibility
-  const [suggestionsVisible, setSuggestionsVisible] = useState<boolean>(false);
+  // Variables to control the dropdown
+  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
+
+  //variables to save the information of the recipeIngredient
+  const [quantity, setQuantity] = useState<number>(0);
+  const [quantityType, setQuantityType] = useState<QuantityType>(
+    QuantityType.GRAMS,
+  );
+  const quantityTypes: QuantityType[] = Object.values(QuantityType);
 
   // References to control components
   const suggestionTouchableRef = useRef(null);
@@ -48,25 +66,58 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   //State for the search
   const [searchValue, setSearchValue] = useState<string>('');
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  // State for suggestions visibility
+  const [fieldsAdded, setFieldsAdded] = useState<boolean>(false);
+  const [suggestionsVisible, setSuggestionsVisible] = useState<boolean>(false);
 
   //mini-search hook and parameters
   const searchParameters: Options = {
     fields: ['name'], // Fields used for searching
     idField: 'id', // Ensure MiniSearch identifies objects correctly
-    storeFields: ['name'],
+    storeFields: ['name', 'id'],
   };
 
-  const {
-    search,
-    autoSuggest,
-    searchResults,
-    suggestions,
-  }: UseMiniSearch<Ingredient> = useMiniSearch(ingredients, searchParameters);
+  //search engine and it's states
+  // Persistent MiniSearch instance
+  const minisearchRef = useRef<MiniSearch<Ingredient> | null>(null);
+
+  // Initialize MiniSearch only once
+  if (!minisearchRef.current) {
+    minisearchRef.current = new MiniSearch<Ingredient>({
+      fields: ['name'], // Fields used for searching
+      idField: 'id', // Ensure MiniSearch identifies objects correctly
+      storeFields: ['name', 'id'], // Fields to store in the search results
+    });
+  }
+
+  // useEffect to add the data only once
+  useEffect(() => {
+    if (ingredients.length > 0 && !fieldsAdded) {
+      minisearchRef.current?.addAll(ingredients);
+      setFieldsAdded(true);
+      console.log(
+        'UseEffect: ingredients added to the minisearch',
+        ingredients,
+      );
+      console.log('UseEffect: indexed data: ', minisearchRef.current);
+    } else {
+      console.log('UseEffect: ingredients array is empty');
+    }
+  }, [ingredients]);
 
   //(just for testing) useEffect to check the suggestions
   useEffect(() => {
-    if (suggestions) {
-      console.log('Autosuggestions: ' + JSON.stringify(suggestions));
+    if (minisearchRef) {
+      console.log(
+        'UseEffect suggestions -> minisearch content',
+        JSON.stringify(minisearchRef.current),
+      );
+      console.log(
+        'UseEffect suggestions -> Autosuggestions: ' +
+          JSON.stringify(suggestions),
+      );
       setSuggestionsVisible(true);
     }
   }, [suggestions]);
@@ -158,16 +209,38 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     setCurrentStep(currentStep + 1);
   };
 
+  // Handle search
+  const search = (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]); // Clear results if the query is empty
+      return;
+    }
+
+    const results = minisearchRef.current?.search(query) || [];
+    console.log('Search results:', results);
+    setSearchResults(results);
+  };
+
   // Handle when the text is being changed in the SearchBar
   const handleOnchangeText = (text: string) => {
     setSearchValue(text);
-    const results = autoSuggest(text);
-    console.log('Suggestions:', results); // Debugging
+
+    if (text.trim() === '') {
+      setSuggestions([]);
+      setSuggestionsVisible(false);
+      return;
+    }
+
+    const results = minisearchRef.current?.autoSuggest(text) || [];
+    console.log('handleOnchangeText: -> results', results);
+    setSuggestions(results);
+    setSuggestionsVisible(true);
   };
 
   // Handle when a suggestion is selected
+  // and used when the user submits
   const handleSelectSuggestion = (suggestions: Suggestion) => {
-    // search for the suggestion
+    // search for the suggestion or the search value
     search(suggestions.suggestion);
     // blur the SearchBar
     searchBarRef.current?.blur();
@@ -203,6 +276,31 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     </View>
   );
 
+  //Dropdown Button
+  const DropdownButton = () => {
+    return (
+      <DropDownPicker
+        open={isPickerOpen}
+        setOpen={setIsPickerOpen}
+        value={quantityType ?? null}
+        items={quantityTypes.map(type => ({
+          label: type,
+          value: type,
+        }))}
+        placeholder="Select"
+        setValue={setQuantityType}
+        style={{
+          backgroundColor: '#ccc',
+          borderRadius: 5,
+          borderWidth: 0,
+          width: 100,
+        }}
+        textStyle={{fontSize: 16, fontWeight: '500'}}
+      />
+    );
+  };
+
+  //Main return
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalOverlay}>
@@ -256,6 +354,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 placeholder="Search for ingredients"
                 value={searchValue}
                 onChangeText={handleOnchangeText}
+                onSubmitEditing={() => search(searchValue)}
                 lightTheme
                 round
                 searchIcon={<Icon name="search" size={18} color={'grey'} />}
@@ -278,7 +377,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               />
 
               {/* Suggestions dropdown */}
-              {suggestionsVisible && (
+              {
                 <ScrollView style={styles.suggestionsContainer}>
                   {suggestions?.map((suggestion, index) => (
                     <TouchableOpacity
@@ -290,6 +389,50 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                         {suggestion.suggestion}
                       </Text>
                     </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              }
+
+              {/* SearchResults ScrollView */}
+              {searchResults && (
+                <ScrollView>
+                  {/* Ingredient View */}
+                  {searchResults?.map((instance, index) => (
+                    <View key={index} style={styles.ingredientView}>
+                      <Text style={styles.ingredientText}>Hola</Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Icon
+                          name="remove"
+                          size={30}
+                          color="black"
+                          onPress={() => {
+                            setQuantity(quantity - 1);
+                          }}
+                        />
+                        <Text style={{marginHorizontal: 10, fontSize: 18}}>
+                          Hello
+                        </Text>
+                        <Icon
+                          name="add"
+                          size={30}
+                          color="black"
+                          onPress={() => {
+                            setQuantity(quantity + 1);
+                          }}
+                        />
+                        <DropdownButton />
+                      </View>
+                      <Icon
+                        name="checkbox"
+                        size={25}
+                        style={{marginRight: 10}}
+                        onPress={() => {}}
+                      />
+                    </View>
                   ))}
                 </ScrollView>
               )}
@@ -396,6 +539,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
+
   // SeachBar styles
   searchContainer: {
     backgroundColor: 'transparent', // Remove background
@@ -415,6 +559,24 @@ const styles = StyleSheet.create({
   searchInput: {
     fontSize: 16,
     color: '#333',
+  },
+
+  //Ingredient view
+  ingredientView: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+  },
+  ingredientText: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
+    textAlignVertical: 'center',
   },
 
   //suggestions
@@ -437,6 +599,12 @@ const styles = StyleSheet.create({
   suggestionText: {
     fontSize: 16,
     color: '#333',
+  },
+
+  //generic
+  greyBorder: {
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
 });
 
