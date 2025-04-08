@@ -33,7 +33,7 @@ import {
 } from '../services/db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
-import {ingredientsFetched, initialise} from '../services/dataManager';
+import {initialise} from '../services/dataManager';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -48,6 +48,10 @@ export default function MainScreen(): React.JSX.Element {
   const [recipes, setRecipes] = useState<Recipe[]>();
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
+  //state to save the fetched ingredients
+  const [fetchedIngredients, setFetchedIngredients] = useState<Ingredient[]>(
+    [],
+  );
   //boolean state to track the completion of the data fetching
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
 
@@ -72,7 +76,9 @@ export default function MainScreen(): React.JSX.Element {
   // Runs once when the component is mounted to initialize and populate the database
   useEffect(() => {
     const asyncFunctions = async () => {
-      initialise();
+      const ingredients: Ingredient[] = await initialise();
+      setFetchedIngredients(ingredients);
+      setIsFetchFinished(true);
     };
     asyncFunctions()
       .catch(error =>
@@ -83,12 +89,6 @@ export default function MainScreen(): React.JSX.Element {
       // when finished hide ActivityIndicator
       .then(() => setIsFetchFinished(true));
   }, []);
-
-  //Runs when the ingredients are fetched, handles visibility of ActivityIndicator
-  useEffect(() => {
-    setIsFetchFinished(ingredientsFetched);
-    console.log('UseEffect: ' + ingredientsFetched);
-  }, [ingredientsFetched]);
 
   // Fetches the weekly meals whenever the selected day or meal type changes
   useEffect(() => {
@@ -169,6 +169,8 @@ export default function MainScreen(): React.JSX.Element {
           visible={visible}
           onSubmit={() => {}}
           onClose={() => setVisible(false)}
+          ingredients={fetchedIngredients}
+          isFetchFinished={isFetchFinished}
         />
       </>
     </View>
