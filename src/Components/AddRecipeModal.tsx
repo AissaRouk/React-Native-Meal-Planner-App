@@ -13,7 +13,6 @@ import {
   Ingredient,
   IngredientWithoutId,
   QuantityType,
-  RecipeIngredient,
   RecipeWithoutId,
 } from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
