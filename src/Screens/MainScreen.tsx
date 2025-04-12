@@ -30,10 +30,10 @@ import {
   getRecipes,
   getWeeklyMeals,
   getWeeklyMealsByDayAndMealType,
-} from '../services/db-services';
+} from '../Services/db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
-import {initialise} from '../services/dataManager';
+import {initialise} from '../Services/dataManager';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
