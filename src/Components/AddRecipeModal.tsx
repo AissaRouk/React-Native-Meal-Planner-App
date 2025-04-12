@@ -19,6 +19,7 @@ import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import DropDownPicker from 'react-native-dropdown-picker';
+import {handleOnSetQuantity} from '../Utils/utils';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -415,18 +416,18 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                           size={30}
                           color="black"
                           onPress={() => {
-                            setQuantity(quantity - 1);
+                            handleOnSetQuantity(quantity - 1, setQuantity);
                           }}
                         />
                         <Text style={{marginHorizontal: 10, fontSize: 18}}>
-                          Hello
+                          {quantity}
                         </Text>
                         <Icon
                           name="add"
                           size={30}
                           color="black"
                           onPress={() => {
-                            setQuantity(quantity + 1);
+                            handleOnSetQuantity(quantity + 1, setQuantity);
                           }}
                         />
                         <DropdownButton />
