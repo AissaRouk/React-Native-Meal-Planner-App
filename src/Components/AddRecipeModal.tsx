@@ -399,7 +399,11 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   {searchResults?.map((instance, index) => (
                     <View key={index} style={styles.ingredientView}>
                       <Text style={styles.ingredientText}>
-                        {instance.storedFields}
+                        {
+                          ingredients.find(
+                            ingredient => ingredient.id === instance.id,
+                          )?.name
+                        }
                       </Text>
                       <View
                         style={{
