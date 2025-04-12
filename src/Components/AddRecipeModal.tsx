@@ -117,7 +117,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
         'UseEffect suggestions -> Autosuggestions: ' +
           JSON.stringify(suggestions),
       );
-      setSuggestionsVisible(true);
+      // setSuggestionsVisible(true);
     }
   }, [suggestions]);
 
@@ -376,7 +376,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               />
 
               {/* Suggestions dropdown */}
-              {
+              {suggestionsVisible && (
                 <ScrollView style={styles.suggestionsContainer}>
                   {suggestions?.map((suggestion, index) => (
                     <TouchableOpacity
@@ -390,7 +390,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-              }
+              )}
 
               {/* SearchResults ScrollView */}
               {searchResults && (
@@ -398,7 +398,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   {/* Ingredient View */}
                   {searchResults?.map((instance, index) => (
                     <View key={index} style={styles.ingredientView}>
-                      <Text style={styles.ingredientText}>Hola</Text>
+                      <Text style={styles.ingredientText}>
+                        {instance.storedFields}
+                      </Text>
                       <View
                         style={{
                           flexDirection: 'row',
