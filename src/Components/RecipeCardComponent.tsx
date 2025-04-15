@@ -7,7 +7,7 @@ const RecipeCard = ({recipe}: {recipe: Recipe}) => (
   <View style={styles.card}>
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <Image
-        source={require('../assets/icons/breakfast_icon.png')}
+        source={require('../Assets/icons/breakfast_icon.png')}
         style={{height: 100}}
         resizeMode="contain"
       />

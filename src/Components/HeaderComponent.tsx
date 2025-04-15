@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {daysOfWeekArray} from '../assets/Constants';
+import {daysOfWeekArray} from '../Assets/Constants';
 import {DaysOfWeek} from '../Types/Types';
 
 const Header = ({
