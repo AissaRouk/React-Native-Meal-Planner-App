@@ -54,11 +54,6 @@ export function IngredientComponent({
       <View>
         <DropdownButton />
       </View>
-
-      {/* Checkbox */}
-      <View>
-        <Icon name="checkbox" size={25} onPress={() => {}} />
-      </View>
     </View>
   );
 }
