@@ -21,6 +21,7 @@ import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {handleOnSetQuantity} from '../Utils/utils';
 import {IngredientComponent} from './IngredientComponent';
+import {getIngredientById} from '../Services/db-services';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -48,8 +49,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [link, setLink] = useState<string>(''); // Optional recipe link
   const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
   const [servings, setServings] = useState<string>(''); // Number of servings
-  const [selectedIngredients, setSelectedIngredients] =
-    useState<Ingredient[]>();
+  const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>(
+    [],
+  );
 
   // Variables to control the dropdown
   const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
@@ -69,6 +71,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [searchValue, setSearchValue] = useState<string>('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResultsVisible, setSearchResultsVisible] =
+    useState<boolean>(false);
+
+  // State to control the seach selection (when the searchResult > 1)
+  const [ingredientSelectionViewOpen, setIngredientSelectionViewOpen] =
+    useState<boolean>(false);
+
   // State for suggestions visibility
   const [fieldsAdded, setFieldsAdded] = useState<boolean>(false);
   const [suggestionsVisible, setSuggestionsVisible] = useState<boolean>(false);
@@ -102,7 +111,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
         'UseEffect: ingredients added to the minisearch',
         ingredients,
       );
-      console.log('UseEffect: indexed data: ', minisearchRef.current);
+      // console.log('UseEffect: indexed data: ', minisearchRef.current);
     } else {
       console.log('UseEffect: ingredients array is empty');
     }
@@ -111,25 +120,43 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   //(just for testing) useEffect to check the suggestions
   useEffect(() => {
     if (minisearchRef) {
-      console.log(
-        'UseEffect suggestions -> minisearch content',
-        JSON.stringify(minisearchRef.current),
-      );
-      console.log(
-        'UseEffect suggestions -> Autosuggestions: ' +
-          JSON.stringify(suggestions),
-      );
+      // console.log(
+      //   'UseEffect suggestions -> minisearch content',
+      //   JSON.stringify(minisearchRef.current),
+      // );
+      // console.log(
+      //   'UseEffect suggestions -> Autosuggestions: ' +
+      //     JSON.stringify(suggestions),
+      // );
       // setSuggestionsVisible(true);
     }
   }, [suggestions]);
 
   //(just for testing) useEffect to check the searchresutlts
   useEffect(() => {
-    if (searchResults && searchResults.length > 0) {
-      console.log('searchResults: ' + JSON.stringify(searchResults));
-      searchResults.map((value, index) => {});
+    // If we found something
+    if (searchResults) {
+      // console.log('searchResults: ' + JSON.stringify(searchResults));
+      // If we find more than one ingredient
+      if (searchResults.length > 1) {
+        setIngredientSelectionViewOpen(true);
+      } else if (searchResults.length == 1) {
+      }
     }
   }, [searchResults]);
+
+  // to check the selectedIngredients
+  useEffect(() => {
+    if (selectedIngredients)
+      console.log(
+        'useEffect -> selectedIngredients: ' +
+          JSON.stringify(selectedIngredients, null, 1),
+      );
+  });
+
+  //
+  //Functions
+  //
 
   // Function to submit the recipe with its details and ingredients
   const handleSubmitRecipe = (): void => {
@@ -218,8 +245,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       return;
     }
 
+    // hide the suggestions
+    setSuggestionsVisible(false);
+    // hide the searchResults
+    setSearchResultsVisible(false);
+    // search
     const results = minisearchRef.current?.search(query) || [];
     console.log('Search results:', results);
+    // save the results
     setSearchResults(results);
   };
 
@@ -234,7 +267,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     }
 
     const results = minisearchRef.current?.autoSuggest(text) || [];
-    console.log('handleOnchangeText: -> results', results);
+    // console.log('handleOnchangeText: -> results', results);
     setSuggestions(results);
     setSuggestionsVisible(true);
   };
@@ -250,6 +283,35 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     setSearchValue(suggestions.suggestion);
     // hide suggestions
     setSuggestionsVisible(false);
+  };
+
+  // Function to insert ingredients in the selectedIngredients array, it verifies duplicates
+  const handleSelectIngredient = async (id: number) => {
+    // check if the ingredient is already selected
+    if (selectedIngredients?.find(ingredient => ingredient.id == id)) {
+      // if it is, alert it
+      Alert.alert(
+        "You already selected this ingredient.\t it's already added in your list",
+      );
+      console.log('prompmt!!');
+    } else {
+      // if not
+      // fetch the ingredient first
+      const ingredient = await getIngredientById(id);
+      console.log(
+        'Ingredietn obtained from fetch: ' + JSON.stringify(ingredient),
+      );
+      //  add it to the array
+      selectedIngredients?.push(ingredient);
+
+      // if there are two results hide the selection view
+      if (searchResults.length > 1)
+        // hide the view
+        setIngredientSelectionViewOpen(false);
+
+      // show the selectedingredients view
+      setSearchResultsVisible(true);
+    }
   };
 
   //
@@ -395,12 +457,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 </ScrollView>
               )}
 
-              {/* SearchResults ScrollView */}
-              {searchResults && (
+              {/* selectedIngredients ScrollView */}
+              {searchResultsVisible && selectedIngredients && (
                 <ScrollView>
                   {/* Ingredient View */}
-                  {searchResults?.map((instance, index) => (
+                  {selectedIngredients?.map(instance => (
                     <IngredientComponent
+                      key={instance.id}
                       ingredients={ingredients}
                       id={instance.id}
                       quantity={quantity}
@@ -409,6 +472,41 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                     />
                   ))}
                 </ScrollView>
+              )}
+
+              {/* Ingredient View to select*/}
+              {ingredientSelectionViewOpen && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: 'black',
+                      fontWeight: '500',
+                      marginTop: 10,
+                    }}>
+                    Select an ingredient to add
+                  </Text>
+                  <ScrollView style={{marginBottom: 5}}>
+                    {/* Select Ingredient */}
+                    {searchResults.map(instance => (
+                      <TouchableOpacity
+                        onPress={() => handleSelectIngredient(instance.id)}>
+                        <Text
+                          style={{
+                            fontSize: 15,
+                            color: 'black',
+                            marginTop: 5,
+                          }}>
+                          {
+                            ingredients.find(
+                              ingredient => ingredient.id == instance.id,
+                            )?.name
+                          }
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </>
               )}
             </View>
           )}
