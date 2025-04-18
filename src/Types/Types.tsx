@@ -59,6 +59,9 @@ export enum QuantityType {
   // Add other units as needed
 }
 
+//Array of the quantityTypes
+export const quantityTypes: QuantityType[] = Object.values(QuantityType);
+
 export enum MealType {
   BREAKFAST = 'Breakfast',
   LUNCH = 'Lunch',
