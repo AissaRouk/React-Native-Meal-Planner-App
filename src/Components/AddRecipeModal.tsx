@@ -20,6 +20,7 @@ import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {handleOnSetQuantity} from '../Utils/utils';
+import {IngredientComponent} from './IngredientComponent';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -124,8 +125,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   //(just for testing) useEffect to check the searchresutlts
   useEffect(() => {
-    if (searchResults && searchResults.length) {
+    if (searchResults && searchResults.length > 0) {
       console.log('searchResults: ' + JSON.stringify(searchResults));
+      searchResults.map((value, index) => {});
     }
   }, [searchResults]);
 
@@ -398,47 +400,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                 <ScrollView>
                   {/* Ingredient View */}
                   {searchResults?.map((instance, index) => (
-                    <View key={index} style={styles.ingredientView}>
-                      <Text style={styles.ingredientText}>
-                        {
-                          ingredients.find(
-                            ingredient => ingredient.id === instance.id,
-                          )?.name
-                        }
-                      </Text>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        <Icon
-                          name="remove"
-                          size={30}
-                          color="black"
-                          onPress={() => {
-                            handleOnSetQuantity(quantity - 1, setQuantity);
-                          }}
-                        />
-                        <Text style={{marginHorizontal: 10, fontSize: 18}}>
-                          {quantity}
-                        </Text>
-                        <Icon
-                          name="add"
-                          size={30}
-                          color="black"
-                          onPress={() => {
-                            handleOnSetQuantity(quantity + 1, setQuantity);
-                          }}
-                        />
-                        <DropdownButton />
-                      </View>
-                      <Icon
-                        name="checkbox"
-                        size={25}
-                        style={{marginRight: 10}}
-                        onPress={() => {}}
-                      />
-                    </View>
+                    <IngredientComponent
+                      ingredients={ingredients}
+                      id={instance.id}
+                      quantity={quantity}
+                      setQuantity={setQuantity}
+                      DropdownButton={DropdownButton}
+                    />
                   ))}
                 </ScrollView>
               )}
@@ -565,24 +533,6 @@ const styles = StyleSheet.create({
   searchInput: {
     fontSize: 16,
     color: '#333',
-  },
-
-  //Ingredient view
-  ingredientView: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginTop: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-  },
-  ingredientText: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '500',
-    textAlignVertical: 'center',
   },
 
   //suggestions
