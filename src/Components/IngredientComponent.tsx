@@ -1,7 +1,7 @@
 import Icon from '@react-native-vector-icons/ionicons';
-import React, {Dispatch, SetStateAction, useEffect} from 'react';
+import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Ingredient, QuantityType} from '../Types/Types';
+import {Ingredient} from '../Types/Types';
 import {handleOnSetQuantity} from '../Utils/utils';
 
 // Types of the AddRecipeModal params
@@ -22,14 +22,15 @@ export function IngredientComponent({
 }: IngredientComponentProps): JSX.Element {
   return (
     <View style={styles.ingredientView}>
-      <Text style={styles.ingredientText}>
-        {ingredients.find(ingredient => ingredient.id === id)?.name}
-      </Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
+      {/* Ingredient name */}
+      <View>
+        <Text style={styles.ingredientText}>
+          {ingredients.find(ingredient => ingredient.id === id)?.name}
+        </Text>
+      </View>
+
+      {/* Quantity counter */}
+      <View style={styles.counterContainer}>
         <Icon
           name="remove"
           size={30}
@@ -38,7 +39,7 @@ export function IngredientComponent({
             handleOnSetQuantity(quantity - 1, setQuantity);
           }}
         />
-        <Text style={{marginHorizontal: 10, fontSize: 18}}>{quantity}</Text>
+        <Text style={{fontSize: 18, marginHorizontal: 5}}>{quantity}</Text>
         <Icon
           name="add"
           size={30}
@@ -48,22 +49,26 @@ export function IngredientComponent({
           }}
         />
       </View>
-      <DropdownButton />
-      <Icon
-        name="checkbox"
-        size={25}
-        style={{marginRight: 10}}
-        onPress={() => {}}
-      />
+
+      {/* Dropdown */}
+      <View>
+        <DropdownButton />
+      </View>
+
+      {/* Checkbox */}
+      <View>
+        <Icon name="checkbox" size={25} onPress={() => {}} />
+      </View>
     </View>
   );
 }
 
+//Ingredient view
 const styles = StyleSheet.create({
-  //Ingredient view
   ingredientView: {
-    alignItems: 'center',
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
@@ -75,6 +80,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     fontWeight: '500',
-    textAlignVertical: 'center',
+  },
+  counterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
