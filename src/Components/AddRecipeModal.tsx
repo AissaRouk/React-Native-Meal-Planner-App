@@ -285,6 +285,12 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     setSuggestionsVisible(false);
   };
 
+  //function to handle closing the selectSuggestion View
+  const closeSelectSuggestion = () => {
+    setIngredientSelectionViewOpen(false);
+    setSearchResultsVisible(true);
+  };
+
   // Function to insert ingredients in the selectedIngredients array, it verifies duplicates
   const handleSelectIngredient = async (id: number) => {
     // check if the ingredient is already selected
@@ -477,15 +483,29 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               {/* Ingredient View to select*/}
               {ingredientSelectionViewOpen && (
                 <>
-                  <Text
+                  <View
                     style={{
-                      fontSize: 16,
-                      color: 'black',
-                      fontWeight: '500',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                       marginTop: 10,
                     }}>
-                    Select an ingredient to add
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: 'black',
+                        fontWeight: '500',
+                        textAlign: 'center',
+                      }}>
+                      Select an ingredient to add
+                    </Text>
+                    <Icon
+                      name="close-circle-outline"
+                      size={20}
+                      style={{marginRight: 10}}
+                      onPress={closeSelectSuggestion}
+                    />
+                  </View>
                   <ScrollView style={{marginBottom: 5}}>
                     {/* Select Ingredient */}
                     {searchResults.map(instance => (
