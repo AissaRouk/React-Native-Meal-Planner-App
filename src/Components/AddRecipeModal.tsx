@@ -311,6 +311,18 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     }
   };
 
+  // Function to set the quantity of an ingredient in selectedIngredients
+  const setQuantitySelectedIngredient = (id: number, quantity: number) => {
+    if (selectedIngredients.length > 0) {
+      const index: number | undefined = selectedIngredients.findIndex(
+        ingredient => ingredient.id == id,
+      );
+      if (index && index >= 0) {
+        selectedIngredients[index].quantity = quantity;
+      }
+    }
+  };
+
   //
   //Components
   //
@@ -439,6 +451,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       key={index}
                       ingredients={ingredients}
                       id={instance.id}
+                      quantity={instance.quantity}
+                      setQuantity={}
                     />
                   ))}
                 </ScrollView>
