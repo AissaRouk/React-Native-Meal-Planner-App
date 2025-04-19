@@ -293,31 +293,22 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   // Function to insert ingredients in the selectedIngredients array, it verifies duplicates
   const handleSelectIngredient = async (id: number) => {
-    // check if the ingredient is already selected
-    if (selectedIngredients?.find(ingredient => ingredient.id == id)) {
-      // if it is, alert it
+    // Check if the ingredient is already selected
+    if (selectedIngredients.find(ingredient => ingredient.id === id)) {
       Alert.alert(
-        "You already selected this ingredient.\t it's already added in your list",
+        "You already selected this ingredient. It's already added to your list.",
       );
-      console.log('prompmt!!');
-    } else {
-      // if not
-      // fetch the ingredient first
-      const ingredient = await getIngredientById(id);
-      console.log(
-        'Ingredietn obtained from fetch: ' + JSON.stringify(ingredient),
-      );
-      //  add it to the array
-      selectedIngredients?.push(ingredient);
-
-      // if there are two results hide the selection view
-      if (searchResults.length > 1)
-        // hide the view
-        setIngredientSelectionViewOpen(false);
-
-      // show the selectedingredients view
-      setSearchResultsVisible(true);
+      return;
     }
+
+    // Fetch the ingredient
+    const ingredient = await getIngredientById(id);
+
+    // Add the ingredient with default quantity and quantityType
+    setSelectedIngredients(prev => [
+      ...prev,
+      {...ingredient, quantity: 1, quantityType: QuantityType.GRAMS},
+    ]);
   };
 
   //
@@ -347,28 +338,28 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   );
 
   //Dropdown Button
-  const DropdownButton = () => {
-    return (
-      <DropDownPicker
-        open={isPickerOpen}
-        setOpen={setIsPickerOpen}
-        value={quantityType ?? null}
-        items={quantityTypes.map(type => ({
-          label: type,
-          value: type,
-        }))}
-        placeholder="Select"
-        setValue={setQuantityType}
-        style={{
-          backgroundColor: '#ccc',
-          borderRadius: 5,
-          borderWidth: 0,
-          width: 100,
-        }}
-        textStyle={{fontSize: 16, fontWeight: '500'}}
-      />
-    );
-  };
+  // const DropdownButton = () => {
+  //   return (
+  //     <DropDownPicker
+  //       open={isPickerOpen}
+  //       setOpen={setIsPickerOpen}
+  //       value={quantityType ?? null}
+  //       items={quantityTypes.map(type => ({
+  //         label: type,
+  //         value: type,
+  //       }))}
+  //       placeholder="Select"
+  //       setValue={setQuantityType}
+  //       style={{
+  //         backgroundColor: '#ccc',
+  //         borderRadius: 5,
+  //         borderWidth: 0,
+  //         width: 100,
+  //       }}
+  //       textStyle={{fontSize: 16, fontWeight: '500'}}
+  //     />
+  //   );
+  // };
 
   //Main return
   return (
@@ -474,7 +465,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       id={instance.id}
                       quantity={quantity}
                       setQuantity={setQuantity}
-                      DropdownButton={DropdownButton}
+                      // DropdownButton={DropdownButton}
                     />
                   ))}
                 </ScrollView>
