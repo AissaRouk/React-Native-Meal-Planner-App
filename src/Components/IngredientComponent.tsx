@@ -25,7 +25,6 @@ export function IngredientComponent({
   const [quantityType, setQuantityType] = useState<QuantityType>(
     QuantityType.GRAMS,
   );
-  const quantityTypes: QuantityType[] = Object.values(QuantityType);
 
   return (
     <View style={styles.ingredientView}>
