@@ -349,30 +349,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     </View>
   );
 
-  //Dropdown Button
-  // const DropdownButton = () => {
-  //   return (
-  //     <DropDownPicker
-  //       open={isPickerOpen}
-  //       setOpen={setIsPickerOpen}
-  //       value={quantityType ?? null}
-  //       items={quantityTypes.map(type => ({
-  //         label: type,
-  //         value: type,
-  //       }))}
-  //       placeholder="Select"
-  //       setValue={setQuantityType}
-  //       style={{
-  //         backgroundColor: '#ccc',
-  //         borderRadius: 5,
-  //         borderWidth: 0,
-  //         width: 100,
-  //       }}
-  //       textStyle={{fontSize: 16, fontWeight: '500'}}
-  //     />
-  //   );
-  // };
-
   //Main return
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
@@ -477,7 +453,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       id={instance.id}
                       quantity={quantity}
                       setQuantity={setQuantity}
-                      // DropdownButton={DropdownButton}
                     />
                   ))}
                 </ScrollView>
