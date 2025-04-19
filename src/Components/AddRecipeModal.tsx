@@ -49,9 +49,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [link, setLink] = useState<string>(''); // Optional recipe link
   const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
   const [servings, setServings] = useState<string>(''); // Number of servings
-  const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>(
-    [],
-  );
+  const [selectedIngredients, setSelectedIngredients] = useState<
+    (Ingredient & {quantity: number; quantityType: QuantityType})[]
+  >([]);
 
   // Variables to control the dropdown
   const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
