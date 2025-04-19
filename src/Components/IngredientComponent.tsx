@@ -1,25 +1,32 @@
 import Icon from '@react-native-vector-icons/ionicons';
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Ingredient} from '../Types/Types';
+import {Ingredient, QuantityType} from '../Types/Types';
 import {handleOnSetQuantity} from '../Utils/utils';
+import {DropdownButton} from './DropdownButton';
 
 // Types of the AddRecipeModal params
 type IngredientComponentProps = {
   ingredients: Ingredient[];
   id: number;
-  quantity: number;
-  setQuantity: (quantity: number) => void;
-  DropdownButton: () => JSX.Element;
 };
 
 export function IngredientComponent({
   ingredients,
   id,
-  quantity,
-  setQuantity,
-  DropdownButton,
 }: IngredientComponentProps): JSX.Element {
+  // States
+
+  // Variables to control the dropdown
+  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
+
+  //variables to save the information of the recipeIngredient
+  const [quantity, setQuantity] = useState<number>(0);
+  const [quantityType, setQuantityType] = useState<QuantityType>(
+    QuantityType.GRAMS,
+  );
+  const quantityTypes: QuantityType[] = Object.values(QuantityType);
+
   return (
     <View style={styles.ingredientView}>
       {/* Ingredient name */}
@@ -52,7 +59,12 @@ export function IngredientComponent({
 
       {/* Dropdown */}
       <View>
-        <DropdownButton />
+        <DropdownButton
+          quantityType={quantityType}
+          setIsPickerOpen={setIsPickerOpen}
+          isPickerOpen={isPickerOpen}
+          setQuantityType={setQuantityType}
+        />
       </View>
     </View>
   );
