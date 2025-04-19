@@ -147,7 +147,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   // to check the selectedIngredients
   useEffect(() => {
-    if (selectedIngredients)
+    if (selectedIngredients.length >= 1)
       console.log(
         'useEffect -> selectedIngredients: ' +
           JSON.stringify(selectedIngredients, null, 1),
