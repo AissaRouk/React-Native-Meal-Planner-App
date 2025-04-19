@@ -296,19 +296,31 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     // Check if the ingredient is already selected
     if (selectedIngredients.find(ingredient => ingredient.id === id)) {
       Alert.alert(
-        "You already selected this ingredient. It's already added to your list.",
+        "You already selected this ingredient.\t it's already added in your list",
       );
-      return;
+      console.log('prompmt!!');
+    } else {
+      // if not
+      // fetch the ingredient first
+      const ingredient = await getIngredientById(id);
+      console.log(
+        'Ingredietn obtained from fetch: ' + JSON.stringify(ingredient),
+      );
+      //  add it to the array
+      selectedIngredients?.push({
+        ...ingredient,
+        quantity: 1,
+        quantityType: QuantityType.GRAMS,
+      });
+
+      // if there are two results hide the selection view
+      if (searchResults.length > 1)
+        // hide the view
+        setIngredientSelectionViewOpen(false);
+
+      // show the selectedingredients view
+      setSearchResultsVisible(true);
     }
-
-    // Fetch the ingredient
-    const ingredient = await getIngredientById(id);
-
-    // Add the ingredient with default quantity and quantityType
-    setSelectedIngredients(prev => [
-      ...prev,
-      {...ingredient, quantity: 1, quantityType: QuantityType.GRAMS},
-    ]);
   };
 
   //
