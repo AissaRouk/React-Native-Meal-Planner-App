@@ -18,8 +18,6 @@ import {
 import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
-import DropDownPicker from 'react-native-dropdown-picker';
-import {handleOnSetQuantity} from '../Utils/utils';
 import {IngredientComponent} from './IngredientComponent';
 import {getIngredientById} from '../Services/db-services';
 
@@ -52,16 +50,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [selectedIngredients, setSelectedIngredients] = useState<
     (Ingredient & {quantity: number; quantityType: QuantityType})[]
   >([]);
-
-  // Variables to control the dropdown
-  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
-
-  //variables to save the information of the recipeIngredient
-  const [quantity, setQuantity] = useState<number>(0);
-  const [quantityType, setQuantityType] = useState<QuantityType>(
-    QuantityType.GRAMS,
-  );
-  const quantityTypes: QuantityType[] = Object.values(QuantityType);
 
   // References to control components
   const suggestionTouchableRef = useRef(null);
@@ -451,8 +439,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       key={index}
                       ingredients={ingredients}
                       id={instance.id}
-                      quantity={quantity}
-                      setQuantity={setQuantity}
                     />
                   ))}
                 </ScrollView>
