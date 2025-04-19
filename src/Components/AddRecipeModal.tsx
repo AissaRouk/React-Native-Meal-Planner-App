@@ -470,9 +470,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               {searchResultsVisible && selectedIngredients && (
                 <ScrollView>
                   {/* Ingredient View */}
-                  {selectedIngredients?.map(instance => (
+                  {selectedIngredients?.map((instance, index) => (
                     <IngredientComponent
-                      key={instance.id}
+                      key={index}
                       ingredients={ingredients}
                       id={instance.id}
                       quantity={quantity}
