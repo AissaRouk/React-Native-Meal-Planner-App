@@ -16,6 +16,8 @@ type IngredientComponentProps = {
 export function IngredientComponent({
   ingredients,
   id,
+  quantity,
+  setQuantity,
 }: IngredientComponentProps): JSX.Element {
   // States
 
