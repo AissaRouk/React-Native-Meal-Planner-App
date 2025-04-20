@@ -128,7 +128,11 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       // If we find more than one ingredient
       if (searchResults.length > 1) {
         setIngredientSelectionViewOpen(true);
+        // If the search only gets us one ingredient
       } else if (searchResults.length == 1) {
+        // add it to the selectedIngredients
+        handleSelectIngredient(searchResults[0].id);
+        setSearchResultsVisible(true);
       }
     }
   }, [searchResults]);
