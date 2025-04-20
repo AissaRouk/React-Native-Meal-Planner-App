@@ -239,7 +239,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
     // hide the suggestions
     setSuggestionsVisible(false);
-    // hide the searchResults
+    // hide the searchResults because new search started
     setSearchResultsVisible(false);
     // search
     const results = minisearchRef.current?.search(query) || [];
@@ -316,7 +316,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   };
 
   // Function to set the quantity of an ingredient in selectedIngredients
-  const setQuantitySelectedIngredient = (id: number, quantity: number) => {
+  const setQuantityOfSelectedIngredient = (id: number, quantity: number) => {
     if (selectedIngredients.length > 0) {
       const index: number | undefined = selectedIngredients.findIndex(
         ingredient => ingredient.id == id,
@@ -456,7 +456,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       ingredients={ingredients}
                       id={instance.id}
                       quantity={instance.quantity}
-                      setQuantity={}
+                      setQuantity={setQuantityOfSelectedIngredient}
                     />
                   ))}
                 </ScrollView>
@@ -490,8 +490,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   </View>
                   <ScrollView style={{marginBottom: 5}}>
                     {/* Select Ingredient */}
-                    {searchResults.map(instance => (
+                    {searchResults.map((instance, index) => (
                       <TouchableOpacity
+                        key={index}
                         onPress={() => handleSelectIngredient(instance.id)}>
                         <Text
                           style={{
