@@ -25,7 +25,6 @@ export function IngredientComponent({
   const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
 
   //variables to save the information of the recipeIngredient
-  const [quantity, setQuantity] = useState<number>(0);
   const [quantityType, setQuantityType] = useState<QuantityType>(
     QuantityType.GRAMS,
   );
@@ -46,7 +45,7 @@ export function IngredientComponent({
           size={30}
           color="black"
           onPress={() => {
-            handleOnSetQuantity(quantity - 1, setQuantity);
+            setQuantity(id, quantity - 1);
           }}
         />
         <Text style={{fontSize: 18, marginHorizontal: 5}}>{quantity}</Text>
@@ -55,7 +54,7 @@ export function IngredientComponent({
           size={30}
           color="black"
           onPress={() => {
-            handleOnSetQuantity(quantity + 1, setQuantity);
+            setQuantity(id, quantity + 1);
           }}
         />
       </View>
