@@ -77,7 +77,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     storeFields: ['name', 'id'],
   };
 
-  //search engine and it's states
   // Persistent MiniSearch instance
   const minisearchRef = useRef<MiniSearch<Ingredient> | null>(null);
 
