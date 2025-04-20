@@ -20,6 +20,7 @@ import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
 import {getIngredientById} from '../Services/db-services';
+import {handleOnSetQuantity} from '../Utils/utils';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -144,6 +145,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
           JSON.stringify(selectedIngredients, null, 1),
       );
   });
+
+  //(just for testing) checking the value of selectedIngredients
+  useEffect(() => {
+    if (selectedIngredients.length >= 1)
+      console.log(
+        'selectedIngredients: ' + JSON.stringify(selectedIngredients),
+      );
+  }, [selectedIngredients]);
 
   //
   //Functions
@@ -320,8 +329,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       const index: number | undefined = selectedIngredients.findIndex(
         ingredient => ingredient.id == id,
       );
-      if (index && index >= 0) {
-        selectedIngredients[index].quantity = quantity;
+      console.log('index: ' + index);
+      if (index >= 0) {
+        setSelectedIngredients(prevIngredients => {
+          const updatedIngredients = [...prevIngredients];
+          updatedIngredients[index].quantity = handleOnSetQuantity(quantity);
+          return updatedIngredients;
+        });
       }
     }
   };
