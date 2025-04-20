@@ -295,11 +295,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
         'Ingredietn obtained from fetch: ' + JSON.stringify(ingredient),
       );
       //  add it to the array
-      selectedIngredients?.push({
-        ...ingredient,
-        quantity: 1,
-        quantityType: QuantityType.GRAMS,
-      });
+      setSelectedIngredients(prev => [
+        ...prev,
+        {
+          ...ingredient,
+          quantity: 1,
+          quantityType: QuantityType.GRAMS,
+        },
+      ]);
 
       // if there are two results hide the selection view
       if (searchResults.length > 1)
