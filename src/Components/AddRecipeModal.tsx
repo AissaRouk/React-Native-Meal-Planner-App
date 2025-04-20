@@ -83,11 +83,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   // Initialize MiniSearch only once
   if (!minisearchRef.current) {
-    minisearchRef.current = new MiniSearch<Ingredient>({
-      fields: ['name'], // Fields used for searching
-      idField: 'id', // Ensure MiniSearch identifies objects correctly
-      storeFields: ['name', 'id'], // Fields to store in the search results
-    });
+    minisearchRef.current = new MiniSearch<Ingredient>(searchParameters);
   }
 
   // useEffect to add the data only once
@@ -145,14 +141,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
           JSON.stringify(selectedIngredients, null, 1),
       );
   });
-
-  //(just for testing) checking the value of selectedIngredients
-  useEffect(() => {
-    if (selectedIngredients.length >= 1)
-      console.log(
-        'selectedIngredients: ' + JSON.stringify(selectedIngredients),
-      );
-  }, [selectedIngredients]);
 
   //
   //Functions
