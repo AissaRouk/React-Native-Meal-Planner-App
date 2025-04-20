@@ -9,6 +9,8 @@ import {DropdownButton} from './DropdownButton';
 type IngredientComponentProps = {
   ingredients: Ingredient[];
   id: number;
+  quantity: number;
+  setQuantity: (id: number, quantity: number) => void;
 };
 
 export function IngredientComponent({
