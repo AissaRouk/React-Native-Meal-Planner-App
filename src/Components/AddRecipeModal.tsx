@@ -299,7 +299,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
         ...prev,
         {
           ...ingredient,
-          quantity: 1,
+          quantity: 0,
           quantityType: QuantityType.GRAMS,
         },
       ]);
