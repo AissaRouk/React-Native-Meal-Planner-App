@@ -22,8 +22,16 @@ export function IngredientComponent({
   setQuantity,
   setQuantityType,
 }: IngredientComponentProps): JSX.Element {
+  //
+  //States
   // State to manage the text input value for the quantity
   const [textValue, setTextValue] = useState<string>(quantity.toString());
+  // state to manage the visibility of the Picker
+  const [pickerOpen, setPickerOpen] = useState<boolean>(false);
+
+  //
+  // Functions
+  //
 
   // Handles changes in the text input, ensuring only numeric values are allowed
   const handleChange = (text: string): void => {
@@ -91,8 +99,8 @@ export function IngredientComponent({
           setQuantityType={(newType: QuantityType) => {
             setQuantityType(id, newType); // Update the quantity type
           }}
-          isPickerOpen={false} // Placeholder: Manage dropdown state in the parent component
-          setIsPickerOpen={() => {}} // Placeholder: Handle dropdown open/close state
+          isPickerOpen={pickerOpen} // Placeholder: Manage dropdown state in the parent component
+          setIsPickerOpen={setPickerOpen} // Placeholder: Handle dropdown open/close state
         />
       </View>
     </View>
