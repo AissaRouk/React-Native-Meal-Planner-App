@@ -22,7 +22,7 @@ export function IngredientComponent({
   const [textValue, setTextValue] = useState<string>(quantity.toString());
 
   // Handle changes in the TextInput
-  const handleChange = (text: string) => {
+  const handleChange = (text: string): void => {
     // Allow only numbers and a single decimal point
     const numericRegex = /^\d*\.?\d*$/;
     if (numericRegex.test(text)) {
@@ -31,7 +31,7 @@ export function IngredientComponent({
   };
 
   // Handle when the user finishes editing (onBlur)
-  const handleBlur = () => {
+  const handleBlur = (): void => {
     const numericValue = parseFloat(textValue); // Convert the string to a number
     if (!isNaN(numericValue)) {
       setQuantity(id, numericValue); // Update the main state
@@ -61,17 +61,7 @@ export function IngredientComponent({
           }}
         />
         <TextInput
-          style={{
-            fontSize: 18,
-            marginHorizontal: 5,
-            textAlignVertical: 'center',
-            textAlign: 'center',
-            height: 40, // Ensure consistent height
-            width: 60, // Fixed width for alignment
-            borderWidth: 1,
-            borderColor: '#ccc',
-            borderRadius: 5,
-          }}
+          style={styles.textInput}
           value={textValue} // Use the local state for the value
           keyboardType="decimal-pad" // Allow decimal input
           onChangeText={handleChange} // Handle input changes
@@ -113,6 +103,17 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 10,
     paddingVertical: 12,
+  },
+  textInput: {
+    fontSize: 18,
+    marginHorizontal: 5,
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    height: 40, // Ensure consistent height
+    width: 60, // Fixed width for alignment
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
   ingredientText: {
     fontSize: 16,
