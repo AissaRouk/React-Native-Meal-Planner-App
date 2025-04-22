@@ -1,8 +1,8 @@
 import Icon from '@react-native-vector-icons/ionicons';
 import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, View} from 'react-native';
-import {Ingredient, QuantityType} from '../Types/Types';
-import {DropdownButton} from './DropdownButton';
+import {Ingredient, QuantityType, quantityTypes} from '../Types/Types';
+import {CustomPicker} from './CustomPicker'; // Import the new CustomPicker
 
 // Types of the AddRecipeModal params
 type IngredientComponentProps = {
@@ -93,14 +93,15 @@ export function IngredientComponent({
       </View>
 
       {/* Dropdown for selecting the quantity type */}
-      <View>
-        <DropdownButton
-          quantityType={quantityType} // Current quantity type
+      <View style={{position: 'relative'}}>
+        <CustomPicker
+          isPickerOpen={pickerOpen}
+          setIsPickerOpen={setPickerOpen}
+          quantityType={quantityType}
           setQuantityType={(newType: QuantityType) => {
-            setQuantityType(id, newType); // Update the quantity type
+            setQuantityType(id, newType);
           }}
-          isPickerOpen={pickerOpen} // Placeholder: Manage dropdown state in the parent component
-          setIsPickerOpen={setPickerOpen} // Placeholder: Handle dropdown open/close state
+          options={quantityTypes} // Pass the list of quantity types
         />
       </View>
     </View>
