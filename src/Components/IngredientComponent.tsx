@@ -1,8 +1,7 @@
 import Icon from '@react-native-vector-icons/ionicons';
 import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {Ingredient, QuantityType} from '../Types/Types';
-import {handleOnSetQuantity} from '../Utils/utils';
 import {DropdownButton} from './DropdownButton';
 
 // Types of the AddRecipeModal params
@@ -19,15 +18,27 @@ export function IngredientComponent({
   quantity,
   setQuantity,
 }: IngredientComponentProps): JSX.Element {
-  // States
+  // Local state to manage the input value as a string
+  const [textValue, setTextValue] = useState<string>(quantity.toString());
 
-  // Variables to control the dropdown
-  const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
+  // Handle changes in the TextInput
+  const handleChange = (text: string) => {
+    // Allow only numbers and a single decimal point
+    const numericRegex = /^\d*\.?\d*$/;
+    if (numericRegex.test(text)) {
+      setTextValue(text); // Update the local state
+    }
+  };
 
-  //variables to save the information of the recipeIngredient
-  const [quantityType, setQuantityType] = useState<QuantityType>(
-    QuantityType.GRAMS,
-  );
+  // Handle when the user finishes editing (onBlur)
+  const handleBlur = () => {
+    const numericValue = parseFloat(textValue); // Convert the string to a number
+    if (!isNaN(numericValue)) {
+      setQuantity(id, numericValue); // Update the main state
+    } else {
+      setTextValue(quantity.toString()); // Reset to the previous valid value
+    }
+  };
 
   return (
     <View style={styles.ingredientView}>
@@ -45,16 +56,34 @@ export function IngredientComponent({
           size={30}
           color="black"
           onPress={() => {
-            setQuantity(id, quantity - 1);
+            setQuantity(id, Math.max(0, quantity - 1)); // Ensure quantity doesn't go below 0
+            setTextValue(Math.max(0, quantity - 1).toString()); // Update local state
           }}
         />
-        <Text style={{fontSize: 18, marginHorizontal: 5}}>{quantity}</Text>
+        <TextInput
+          style={{
+            fontSize: 18,
+            marginHorizontal: 5,
+            textAlignVertical: 'center',
+            textAlign: 'center',
+            height: 40, // Ensure consistent height
+            width: 60, // Fixed width for alignment
+            borderWidth: 1,
+            borderColor: '#ccc',
+            borderRadius: 5,
+          }}
+          value={textValue} // Use the local state for the value
+          keyboardType="decimal-pad" // Allow decimal input
+          onChangeText={handleChange} // Handle input changes
+          onBlur={handleBlur} // Update the main state on blur
+        />
         <Icon
           name="add"
           size={30}
           color="black"
           onPress={() => {
-            setQuantity(id, quantity + 1);
+            setQuantity(id, quantity + 1); // Increment the quantity
+            setTextValue((quantity + 1).toString()); // Update local state
           }}
         />
       </View>
@@ -62,10 +91,10 @@ export function IngredientComponent({
       {/* Dropdown */}
       <View>
         <DropdownButton
-          quantityType={quantityType}
-          setIsPickerOpen={setIsPickerOpen}
-          isPickerOpen={isPickerOpen}
-          setQuantityType={setQuantityType}
+          quantityType={QuantityType.GRAMS}
+          setIsPickerOpen={() => {}}
+          isPickerOpen={false}
+          setQuantityType={() => {}}
         />
       </View>
     </View>
@@ -93,5 +122,6 @@ const styles = StyleSheet.create({
   counterContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 });
