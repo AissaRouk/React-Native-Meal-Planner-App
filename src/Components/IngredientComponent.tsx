@@ -6,123 +6,131 @@ import {DropdownButton} from './DropdownButton';
 
 // Types of the AddRecipeModal params
 type IngredientComponentProps = {
-  ingredients: Ingredient[];
-  id: number;
-  quantity: number;
-  setQuantity: (id: number, quantity: number) => void;
+  ingredients: Ingredient[]; // List of all available ingredients
+  id: number; // Unique identifier for the ingredient
+  quantity: number; // Current quantity of the ingredient
+  quantityType: QuantityType; // Unit of measurement for the quantity
+  setQuantity: (id: number, quantity: number) => void; // Function to update the quantity
+  setQuantityType: (id: number, quantityType: QuantityType) => void; // Function to update the quantity type
 };
 
 export function IngredientComponent({
   ingredients,
   id,
   quantity,
+  quantityType,
   setQuantity,
+  setQuantityType,
 }: IngredientComponentProps): JSX.Element {
-  // Local state to manage the input value as a string
+  // State to manage the text input value for the quantity
   const [textValue, setTextValue] = useState<string>(quantity.toString());
 
-  // Handle changes in the TextInput
+  // Handles changes in the text input, ensuring only numeric values are allowed
   const handleChange = (text: string): void => {
-    // Allow only numbers and a single decimal point
-    const numericRegex = /^\d*\.?\d*$/;
+    const numericRegex = /^\d*\.?\d*$/; // Regex to allow only numbers and decimal points
     if (numericRegex.test(text)) {
-      setTextValue(text); // Update the local state
+      setTextValue(text); // Update the state if the input is valid
     }
   };
 
-  // Handle when the user finishes editing (onBlur)
+  // Handles the blur event of the text input
   const handleBlur = (): void => {
-    const numericValue = parseFloat(textValue); // Convert the string to a number
+    const numericValue = parseFloat(textValue); // Convert the text to a number
     if (!isNaN(numericValue)) {
-      setQuantity(id, numericValue); // Update the main state
+      setQuantity(id, numericValue); // Update the quantity if the value is valid
     } else {
-      setTextValue(quantity.toString()); // Reset to the previous valid value
+      setTextValue(quantity.toString()); // Reset the input if the value is invalid
     }
   };
 
   return (
     <View style={styles.ingredientView}>
-      {/* Ingredient name */}
+      {/* Display the name of the ingredient */}
       <View>
         <Text style={styles.ingredientText}>
           {ingredients.find(ingredient => ingredient.id === id)?.name}
         </Text>
       </View>
 
-      {/* Quantity counter */}
+      {/* Quantity counter with decrement, text input, and increment */}
       <View style={styles.counterContainer}>
+        {/* Decrement button */}
         <Icon
           name="remove"
           size={30}
           color="black"
           onPress={() => {
-            setQuantity(id, Math.max(0, quantity - 1)); // Ensure quantity doesn't go below 0
-            setTextValue(Math.max(0, quantity - 1).toString()); // Update local state
+            setQuantity(id, Math.max(0, quantity - 1)); // Decrease quantity but ensure it doesn't go below 0
+            setTextValue(Math.max(0, quantity - 1).toString()); // Update the text input value
           }}
         />
+        {/* Text input for manual quantity entry */}
         <TextInput
           style={styles.textInput}
-          value={textValue} // Use the local state for the value
-          keyboardType="decimal-pad" // Allow decimal input
-          onChangeText={handleChange} // Handle input changes
-          onBlur={handleBlur} // Update the main state on blur
+          value={textValue}
+          keyboardType="decimal-pad" // Numeric keyboard for input
+          onChangeText={handleChange} // Handle text changes
+          onBlur={handleBlur} // Handle blur event
         />
+        {/* Increment button */}
         <Icon
           name="add"
           size={30}
           color="black"
           onPress={() => {
-            setQuantity(id, quantity + 1); // Increment the quantity
-            setTextValue((quantity + 1).toString()); // Update local state
+            setQuantity(id, quantity + 1); // Increase quantity
+            setTextValue((quantity + 1).toString()); // Update the text input value
           }}
         />
       </View>
 
-      {/* Dropdown */}
+      {/* Dropdown for selecting the quantity type */}
       <View>
         <DropdownButton
-          quantityType={QuantityType.GRAMS}
-          setIsPickerOpen={() => {}}
-          isPickerOpen={false}
-          setQuantityType={() => {}}
+          quantityType={quantityType} // Current quantity type
+          setQuantityType={(newType: QuantityType) => {
+            setQuantityType(id, newType); // Update the quantity type
+          }}
+          isPickerOpen={false} // Placeholder: Manage dropdown state in the parent component
+          setIsPickerOpen={() => {}} // Placeholder: Handle dropdown open/close state
         />
       </View>
     </View>
   );
 }
 
-//Ingredient view
+// Styles for the component
 const styles = StyleSheet.create({
   ingredientView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginTop: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 12,
+    flexDirection: 'row', // Arrange items in a row
+    alignItems: 'center', // Center items vertically
+    justifyContent: 'space-between', // Space out items evenly
+    borderColor: '#ccc', // Light gray border color
+    borderWidth: 1, // Border width
+    borderRadius: 5, // Rounded corners
+    marginTop: 20, // Top margin
+    paddingHorizontal: 10, // Horizontal padding
+    paddingVertical: 12, // Vertical padding
   },
   textInput: {
-    fontSize: 18,
-    marginHorizontal: 5,
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    height: 40, // Ensure consistent height
+    fontSize: 18, // Font size for the text input
+    marginHorizontal: 5, // Horizontal margin
+    textAlignVertical: 'center', // Center text vertically
+    textAlign: 'center', // Center text horizontally
+    height: 40, // Fixed height
     width: 60, // Fixed width for alignment
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    borderWidth: 1, // Border width
+    borderColor: '#ccc', // Light gray border color
+    borderRadius: 5, // Rounded corners
   },
   ingredientText: {
-    fontSize: 16,
-    color: 'black',
-    fontWeight: '500',
+    fontSize: 16, // Font size for the ingredient name
+    color: 'black', // Black text color
+    fontWeight: '500', // Medium font weight
   },
   counterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row', // Arrange items in a row
+    justifyContent: 'center', // Center items horizontally
+    alignItems: 'center', // Center items vertically
   },
 });
