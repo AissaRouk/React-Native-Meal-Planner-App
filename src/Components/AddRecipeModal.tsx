@@ -142,6 +142,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       );
   });
 
+  // ONLY FOR TESTING
+  useEffect(() => {
+    if (selectedIngredients.length > 1) {
+      console.log(JSON.stringify(selectedIngredients));
+    }
+  }, [selectedIngredients]);
+
   //
   //Functions
   //
@@ -277,6 +284,23 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const closeSelectSuggestion = () => {
     setIngredientSelectionViewOpen(false);
     setSearchResultsVisible(true);
+  };
+
+  // function to change the quantityType value of a specific param
+  const setQuantityTypeOfSelectedIngredient = (
+    id: number,
+    quantityType: QuantityType,
+  ) => {
+    setSelectedIngredients(prevIngredients => {
+      const updatedIngredients = [...prevIngredients];
+      const index = updatedIngredients.findIndex(
+        ingredient => ingredient.id === id,
+      );
+      if (index >= 0) {
+        updatedIngredients[index].quantityType = quantityType;
+      }
+      return updatedIngredients;
+    });
   };
 
   // Function to insert ingredients in the selectedIngredients array, it verifies duplicates
@@ -452,15 +476,19 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
               {/* selectedIngredients ScrollView */}
               {searchResultsVisible && selectedIngredients && (
-                <ScrollView>
-                  {/* Ingredient View */}
-                  {selectedIngredients?.map((instance, index) => (
+                <ScrollView
+                  style={{overflow: 'visible'}}
+                  nestedScrollEnabled={true}
+                  keyboardShouldPersistTaps="handled">
+                  {selectedIngredients?.map(instance => (
                     <IngredientComponent
-                      key={index}
+                      key={instance.id}
                       ingredients={ingredients}
                       id={instance.id}
                       quantity={instance.quantity}
+                      quantityType={instance.quantityType}
                       setQuantity={setQuantityOfSelectedIngredient}
+                      setQuantityType={setQuantityTypeOfSelectedIngredient}
                     />
                   ))}
                 </ScrollView>
@@ -561,7 +589,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
             {currentStep < 3 && (
               <TouchableOpacity
                 onPress={() => handleNextStep()}
-                style={styles.nextButton}>
+                style={[styles.nextButton, {zIndex: 1}]}>
                 <Text>Next</Text>
               </TouchableOpacity>
             )}
