@@ -26,7 +26,6 @@ export const CustomPicker = ({
         <Text style={styles.selectedText}>{quantityType || 'Select'}</Text>
       </TouchableOpacity>
 
-      {/* Render dropdown options when the picker is open */}
       {isPickerOpen && (
         <View style={styles.dropdown}>
           {options.map((item, index) => (
@@ -34,8 +33,8 @@ export const CustomPicker = ({
               key={index}
               style={styles.option}
               onPress={() => {
-                setQuantityType(item); // Update the selected value
-                setIsPickerOpen(false); // Close the dropdown
+                setQuantityType(item);
+                setIsPickerOpen(false);
               }}>
               <Text style={styles.optionText}>{item}</Text>
             </TouchableOpacity>
@@ -49,7 +48,6 @@ export const CustomPicker = ({
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    zIndex: 1, // Ensure the container has a base zIndex
   },
   selectedValue: {
     backgroundColor: '#ccc', // Background color for the selected value
@@ -69,7 +67,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, // Border around the dropdown
     borderColor: '#ccc', // Border color
     width: 100, // Match the width of the picker
-    zIndex: 100, // Ensure the dropdown is above other components
     elevation: 5, // Shadow for Android
   },
   option: {
