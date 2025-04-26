@@ -477,14 +477,15 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
               {/* selectedIngredients ScrollView */}
               {searchResultsVisible && selectedIngredients && (
                 <ScrollView
-                  style={{overflow: 'visible'}}
+                  style={{overflow: 'visible', zIndex: 2}}
                   nestedScrollEnabled={true}
                   keyboardShouldPersistTaps="handled">
-                  {selectedIngredients?.map(instance => (
+                  {selectedIngredients?.map((instance, index) => (
                     <IngredientComponent
-                      key={instance.id}
+                      key={index}
                       ingredients={ingredients}
                       id={instance.id}
+                      number={index}
                       quantity={instance.quantity}
                       quantityType={instance.quantityType}
                       setQuantity={setQuantityOfSelectedIngredient}
@@ -589,7 +590,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
             {currentStep < 3 && (
               <TouchableOpacity
                 onPress={() => handleNextStep()}
-                style={[styles.nextButton, {zIndex: 1}]}>
+                style={styles.nextButton}>
                 <Text>Next</Text>
               </TouchableOpacity>
             )}
