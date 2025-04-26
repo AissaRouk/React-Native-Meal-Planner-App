@@ -56,7 +56,7 @@ export enum QuantityType {
   TABLESPOON = 'tablespoon',
   TEASPOON = 'teaspoon',
   CUPS = 'cups',
-  // Add other units as needed
+  UNIT = 'unit', // Generic unit type
 }
 
 //Array of the quantityTypes
