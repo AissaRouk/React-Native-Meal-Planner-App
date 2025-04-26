@@ -10,6 +10,7 @@ type IngredientComponentProps = {
   id: number; // Unique identifier for the ingredient
   quantity: number; // Current quantity of the ingredient
   quantityType: QuantityType; // Unit of measurement for the quantity
+  number: number; // The key of the component, only used for styling purposes
   setQuantity: (id: number, quantity: number) => void; // Function to update the quantity
   setQuantityType: (id: number, quantityType: QuantityType) => void; // Function to update the quantity type
 };
@@ -21,6 +22,7 @@ export function IngredientComponent({
   quantityType,
   setQuantity,
   setQuantityType,
+  number,
 }: IngredientComponentProps): JSX.Element {
   //
   //States
@@ -52,7 +54,7 @@ export function IngredientComponent({
   };
 
   return (
-    <View style={styles.ingredientView}>
+    <View style={[styles.ingredientView, {zIndex: 100 - number}]}>
       {/* Display the name of the ingredient */}
       <View>
         <Text style={styles.ingredientText}>
