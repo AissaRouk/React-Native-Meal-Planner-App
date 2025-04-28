@@ -1,12 +1,6 @@
 import Icon from '@react-native-vector-icons/ionicons';
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {Ingredient, QuantityType, quantityTypes} from '../Types/Types';
 import {CustomPicker} from './CustomPicker'; // Import the new CustomPicker
 
