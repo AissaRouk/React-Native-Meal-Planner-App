@@ -323,7 +323,18 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     }
   };
 
-  // Function to set the quantity of an ingredient in selectedIngredients
+  // Function to delete an ingredient from selectedIngredients
+  const hanldeDeleteIngredient = (id: number) => {
+    setSelectedIngredients(prevIngredients => {
+      const updatedIngredients = prevIngredients.filter(
+        ingredient => ingredient.id !== id,
+      );
+      console.log('Updated Ingredients: ' + JSON.stringify(updatedIngredients));
+      return updatedIngredients;
+    });
+  };
+
+  // Function to modify the quantity of an ingredient in selectedIngredients
   const setQuantityOfSelectedIngredient = (id: number, quantity: number) => {
     if (selectedIngredients.length > 0) {
       const index: number | undefined = selectedIngredients.findIndex(
@@ -475,6 +486,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       quantityType={instance.quantityType}
                       setQuantity={setQuantityOfSelectedIngredient}
                       setQuantityType={setQuantityTypeOfSelectedIngredient}
+                      onDelete={hanldeDeleteIngredient}
                     />
                   ))}
                 </ScrollView>
