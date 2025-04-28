@@ -41,7 +41,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   isFetchFinished,
 }) => {
   // Track the current step in the multi-step form (1: Recipe Details, 2: Add Ingredients, 3: Review & Confirm)
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [currentStep, setCurrentStep] = useState<number>(2);
 
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
@@ -100,21 +100,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       console.log('UseEffect: ingredients array is empty');
     }
   }, [ingredients]);
-
-  //(just for testing) useEffect to check the suggestions
-  useEffect(() => {
-    if (minisearchRef) {
-      // console.log(
-      //   'UseEffect suggestions -> minisearch content',
-      //   JSON.stringify(minisearchRef.current),
-      // );
-      // console.log(
-      //   'UseEffect suggestions -> Autosuggestions: ' +
-      //     JSON.stringify(suggestions),
-      // );
-      // setSuggestionsVisible(true);
-    }
-  }, [suggestions]);
 
   //(just for testing) useEffect to check the searchresutlts
   useEffect(() => {
