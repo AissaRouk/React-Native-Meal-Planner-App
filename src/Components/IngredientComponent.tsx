@@ -1,6 +1,12 @@
 import Icon from '@react-native-vector-icons/ionicons';
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Ingredient, QuantityType, quantityTypes} from '../Types/Types';
 import {CustomPicker} from './CustomPicker'; // Import the new CustomPicker
 
@@ -13,6 +19,7 @@ type IngredientComponentProps = {
   number: number; // The key of the component, only used for styling purposes
   setQuantity: (id: number, quantity: number) => void; // Function to update the quantity
   setQuantityType: (id: number, quantityType: QuantityType) => void; // Function to update the quantity type
+  onDelete: (id: number) => void; // Function that handles the deletion of the ingredient
 };
 
 export function IngredientComponent({
@@ -22,6 +29,7 @@ export function IngredientComponent({
   quantityType,
   setQuantity,
   setQuantityType,
+  onDelete,
   number,
 }: IngredientComponentProps): JSX.Element {
   //
@@ -106,6 +114,9 @@ export function IngredientComponent({
           options={quantityTypes} // Pass the list of quantity types
         />
       </View>
+      <>
+        <Icon name="trash-outline" size={20} onPress={() => onDelete(id)} />
+      </>
     </View>
   );
 }
