@@ -126,10 +126,11 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 18, // Font size for the text input
     marginHorizontal: 5, // Horizontal margin
+    minWidth: 40,
+    height: 40,
+    paddingHorizontal: 5,
     textAlignVertical: 'center', // Center text vertically
     textAlign: 'center', // Center text horizontally
-    height: 40, // Fixed height
-    width: 60, // Fixed width for alignment
     borderWidth: 1, // Border width
     borderColor: '#ccc', // Light gray border color
     borderRadius: 5, // Rounded corners
