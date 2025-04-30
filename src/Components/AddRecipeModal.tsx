@@ -434,31 +434,55 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   text="Step 2: Add Ingredients"
                   onClose={() => handleOnClose()}
                 />
-                <SearchBar
-                  placeholder="Search for ingredients"
-                  value={searchValue}
-                  onChangeText={handleOnchangeText}
-                  onSubmitEditing={() => search(searchValue)}
-                  lightTheme
-                  round
-                  searchIcon={<Icon name="search" size={18} color={'grey'} />}
-                  clearIcon={false}
-                  containerStyle={{
-                    ...styles.searchContainer,
-                    borderTopWidth: 0,
-                    borderBottomWidth: 0,
-                    margin: 0,
-                    padding: 0,
-                  }}
-                  inputContainerStyle={[
-                    styles.searchInputContainer,
-                    {
-                      borderBottomWidth: suggestionsVisible ? 0 : 1,
-                    },
-                  ]}
-                  inputStyle={styles.searchInput}
-                  ref={searchBarRef}
-                />
+                {/* SearchBar + addIngredientButton */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <SearchBar
+                    placeholder="Search for ingredients"
+                    value={searchValue}
+                    onChangeText={handleOnchangeText}
+                    onSubmitEditing={() => search(searchValue)}
+                    lightTheme
+                    round
+                    searchIcon={<Icon name="search" size={18} color={'grey'} />}
+                    clearIcon={false}
+                    containerStyle={{
+                      ...styles.searchContainer,
+                      borderTopWidth: 0,
+                      borderBottomWidth: 0,
+                      margin: 0,
+                      paddingRight: 10,
+                      flex: 1,
+                    }}
+                    inputContainerStyle={[
+                      styles.searchInputContainer,
+                      {
+                        borderBottomWidth: suggestionsVisible ? 0 : 1,
+                      },
+                      styles.searchContainerHeight,
+                    ]}
+                    inputStyle={styles.searchInput}
+                    ref={searchBarRef}
+                  />
+                  <TouchableOpacity
+                    style={[
+                      {
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderColor: 'black',
+                        borderWidth: 1,
+                        padding: 10,
+                      },
+                      styles.searchContainerHeight,
+                    ]}>
+                    <Icon name="add" size={20} />
+                  </TouchableOpacity>
+                </View>
 
                 {/* Suggestions dropdown */}
                 {suggestionsVisible && (
@@ -669,8 +693,11 @@ const styles = StyleSheet.create({
     borderWidth: 1, // Make border visible
     borderColor: '#ccc', // Set border color
     borderRadius: 5, // Match other inputs
-    height: 40, // Match other TextInput fields
     paddingHorizontal: 10, // Ensure text doesn't touch the border
+  },
+
+  searchContainerHeight: {
+    height: 40, // Match other TextInput fields
   },
 
   searchInput: {
