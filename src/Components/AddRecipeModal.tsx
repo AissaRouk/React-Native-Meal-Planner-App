@@ -21,6 +21,7 @@ import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
 import {getIngredientById} from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
+import AddIngredientModal from './AddIngredientModal';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -381,222 +382,231 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   //Main return
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          {/* Step 1: Enter Recipe Details */}
-          {currentStep === 1 && (
-            <View>
-              {/* <Text style={styles.title}>Recipe Details</Text> */}
-              <ModalHeader
-                text="Recipe Details"
-                onClose={() => handleOnClose()}
-              />
-              {/* Input fields for recipe details */}
-              <TextInput
-                placeholder="Recipe Name"
-                value={name}
-                onChangeText={setName}
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="Recipe Link"
-                value={link}
-                onChangeText={setLink}
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="Preparation Time (in minutes)"
-                value={String(prepTime)}
-                onChangeText={setPrepTime}
-                keyboardType="numeric"
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="Serving Size"
-                value={String(servings)}
-                onChangeText={setServings}
-                keyboardType="numeric"
-                style={styles.input}
-              />
-            </View>
-          )}
+    <>
+      <Modal
+        visible={visible && !isAddIngredientModalVisible}
+        animationType="slide"
+        transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {/* Step 1: Enter Recipe Details */}
+            {currentStep === 1 && (
+              <View>
+                {/* <Text style={styles.title}>Recipe Details</Text> */}
+                <ModalHeader
+                  text="Recipe Details"
+                  onClose={() => handleOnClose()}
+                />
+                {/* Input fields for recipe details */}
+                <TextInput
+                  placeholder="Recipe Name"
+                  value={name}
+                  onChangeText={setName}
+                  style={styles.input}
+                />
+                <TextInput
+                  placeholder="Recipe Link"
+                  value={link}
+                  onChangeText={setLink}
+                  style={styles.input}
+                />
+                <TextInput
+                  placeholder="Preparation Time (in minutes)"
+                  value={String(prepTime)}
+                  onChangeText={setPrepTime}
+                  keyboardType="numeric"
+                  style={styles.input}
+                />
+                <TextInput
+                  placeholder="Serving Size"
+                  value={String(servings)}
+                  onChangeText={setServings}
+                  keyboardType="numeric"
+                  style={styles.input}
+                />
+              </View>
+            )}
 
-          {/* Step 2: Add Ingredients */}
-          {currentStep === 2 && (
-            <View>
-              <ModalHeader
-                text="Step 2: Add Ingredients"
-                onClose={() => handleOnClose()}
-              />
-              <SearchBar
-                placeholder="Search for ingredients"
-                value={searchValue}
-                onChangeText={handleOnchangeText}
-                onSubmitEditing={() => search(searchValue)}
-                lightTheme
-                round
-                searchIcon={<Icon name="search" size={18} color={'grey'} />}
-                clearIcon={false}
-                containerStyle={{
-                  ...styles.searchContainer,
-                  borderTopWidth: 0,
-                  borderBottomWidth: 0,
-                  margin: 0,
-                  padding: 0,
-                }}
-                inputContainerStyle={[
-                  styles.searchInputContainer,
-                  {
-                    borderBottomWidth: suggestionsVisible ? 0 : 1,
-                  },
-                ]}
-                inputStyle={styles.searchInput}
-                ref={searchBarRef}
-              />
+            {/* Step 2: Add Ingredients */}
+            {currentStep === 2 && (
+              <View>
+                <ModalHeader
+                  text="Step 2: Add Ingredients"
+                  onClose={() => handleOnClose()}
+                />
+                <SearchBar
+                  placeholder="Search for ingredients"
+                  value={searchValue}
+                  onChangeText={handleOnchangeText}
+                  onSubmitEditing={() => search(searchValue)}
+                  lightTheme
+                  round
+                  searchIcon={<Icon name="search" size={18} color={'grey'} />}
+                  clearIcon={false}
+                  containerStyle={{
+                    ...styles.searchContainer,
+                    borderTopWidth: 0,
+                    borderBottomWidth: 0,
+                    margin: 0,
+                    padding: 0,
+                  }}
+                  inputContainerStyle={[
+                    styles.searchInputContainer,
+                    {
+                      borderBottomWidth: suggestionsVisible ? 0 : 1,
+                    },
+                  ]}
+                  inputStyle={styles.searchInput}
+                  ref={searchBarRef}
+                />
 
-              {/* Suggestions dropdown */}
-              {suggestionsVisible && (
-                <ScrollView style={styles.suggestionsContainer}>
-                  {suggestions?.map((suggestion, index) => (
-                    <TouchableOpacity
-                      ref={suggestionTouchableRef}
-                      key={index}
-                      onPress={() => handleSelectSuggestion(suggestion)}
-                      style={styles.suggestionItem}>
-                      <Text style={styles.suggestionText}>
-                        {suggestion.suggestion}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              )}
-
-              {/* selectedIngredients ScrollView */}
-              {searchResultsVisible && selectedIngredients && (
-                <ScrollView
-                  style={{overflow: 'visible', zIndex: 2}}
-                  nestedScrollEnabled={true}
-                  keyboardShouldPersistTaps="handled">
-                  {selectedIngredients?.map((instance, index) => (
-                    <IngredientComponent
-                      key={index}
-                      ingredients={ingredients}
-                      id={instance.id}
-                      number={index}
-                      quantity={instance.quantity}
-                      quantityType={instance.quantityType}
-                      setQuantity={setQuantityOfSelectedIngredient}
-                      setQuantityType={setQuantityTypeOfSelectedIngredient}
-                      onDelete={hanldeDeleteIngredient}
-                    />
-                  ))}
-                </ScrollView>
-              )}
-
-              {/* Ingredient View to select*/}
-              {ingredientSelectionViewOpen && (
-                <>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginTop: 10,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: 'black',
-                        fontWeight: '500',
-                        textAlign: 'center',
-                      }}>
-                      Select an ingredient to add
-                    </Text>
-                    <Icon
-                      name="close-circle-outline"
-                      size={20}
-                      style={{marginRight: 10}}
-                      onPress={closeSelectSuggestion}
-                    />
-                  </View>
-                  <ScrollView style={{marginBottom: 5}}>
-                    {/* Select Ingredient */}
-                    {searchResults.map((instance, index) => (
+                {/* Suggestions dropdown */}
+                {suggestionsVisible && (
+                  <ScrollView style={styles.suggestionsContainer}>
+                    {suggestions?.map((suggestion, index) => (
                       <TouchableOpacity
+                        ref={suggestionTouchableRef}
                         key={index}
-                        onPress={() => handleSelectIngredient(instance.id)}>
-                        <Text
-                          style={{
-                            fontSize: 15,
-                            color: 'black',
-                            marginTop: 5,
-                          }}>
-                          {
-                            ingredients.find(
-                              ingredient => ingredient.id == instance.id,
-                            )?.name
-                          }
+                        onPress={() => handleSelectSuggestion(suggestion)}
+                        style={styles.suggestionItem}>
+                        <Text style={styles.suggestionText}>
+                          {suggestion.suggestion}
                         </Text>
                       </TouchableOpacity>
                     ))}
                   </ScrollView>
-                </>
+                )}
+
+                {/* selectedIngredients ScrollView */}
+                {searchResultsVisible && selectedIngredients && (
+                  <ScrollView
+                    style={{overflow: 'visible', zIndex: 2}}
+                    nestedScrollEnabled={true}
+                    keyboardShouldPersistTaps="handled">
+                    {selectedIngredients?.map((instance, index) => (
+                      <IngredientComponent
+                        key={index}
+                        ingredients={ingredients}
+                        id={instance.id}
+                        number={index}
+                        quantity={instance.quantity}
+                        quantityType={instance.quantityType}
+                        setQuantity={setQuantityOfSelectedIngredient}
+                        setQuantityType={setQuantityTypeOfSelectedIngredient}
+                        onDelete={hanldeDeleteIngredient}
+                      />
+                    ))}
+                  </ScrollView>
+                )}
+
+                {/* Ingredient View to select*/}
+                {ingredientSelectionViewOpen && (
+                  <>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginTop: 10,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: 'black',
+                          fontWeight: '500',
+                          textAlign: 'center',
+                        }}>
+                        Select an ingredient to add
+                      </Text>
+                      <Icon
+                        name="close-circle-outline"
+                        size={20}
+                        style={{marginRight: 10}}
+                        onPress={closeSelectSuggestion}
+                      />
+                    </View>
+                    <ScrollView style={{marginBottom: 5}}>
+                      {/* Select Ingredient */}
+                      {searchResults.map((instance, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          onPress={() => handleSelectIngredient(instance.id)}>
+                          <Text
+                            style={{
+                              fontSize: 15,
+                              color: 'black',
+                              marginTop: 5,
+                            }}>
+                            {
+                              ingredients.find(
+                                ingredient => ingredient.id == instance.id,
+                              )?.name
+                            }
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                  </>
+                )}
+              </View>
+            )}
+
+            {/* Step 3: Review and Confirm */}
+            {currentStep === 3 && (
+              <View>
+                <ModalHeader
+                  text="Step 3: Review & Confirm"
+                  onClose={() => handleOnClose()}
+                />
+                {/* Display the entered recipe details */}
+                <Text>Recipe Name: {name}</Text>
+                <Text>Preparation Time: {prepTime} minutes</Text>
+                <Text>Serving Size: {servings}</Text>
+                <Text>Ingredients:</Text>
+                {/* List all added ingredients */}
+                {ingredients.map((ingredient, index) => (
+                  <Text key={index}>
+                    {ingredient.name} - {ingredient.category}
+                  </Text>
+                ))}
+              </View>
+            )}
+
+            {/* Navigation Buttons */}
+            <View style={styles.buttonContainer}>
+              {/* Back button (disabled on the first step) */}
+              {currentStep > 1 && (
+                <TouchableOpacity
+                  onPress={() => setCurrentStep(currentStep - 1)}
+                  style={styles.backButton}>
+                  <Text>Back</Text>
+                </TouchableOpacity>
+              )}
+              {/* Button to submit the recipe */}
+              {currentStep == 3 && (
+                <TouchableOpacity
+                  onPress={handleSubmitRecipe}
+                  style={styles.nextButton}>
+                  <Text>Save Recipe</Text>
+                </TouchableOpacity>
+              )}
+              {/* Next button (disabled on the last step) */}
+              {currentStep < 3 && (
+                <TouchableOpacity
+                  onPress={() => handleNextStep()}
+                  style={styles.nextButton}>
+                  <Text>Next</Text>
+                </TouchableOpacity>
               )}
             </View>
-          )}
-
-          {/* Step 3: Review and Confirm */}
-          {currentStep === 3 && (
-            <View>
-              <ModalHeader
-                text="Step 3: Review & Confirm"
-                onClose={() => handleOnClose()}
-              />
-              {/* Display the entered recipe details */}
-              <Text>Recipe Name: {name}</Text>
-              <Text>Preparation Time: {prepTime} minutes</Text>
-              <Text>Serving Size: {servings}</Text>
-              <Text>Ingredients:</Text>
-              {/* List all added ingredients */}
-              {ingredients.map((ingredient, index) => (
-                <Text key={index}>
-                  {ingredient.name} - {ingredient.category}
-                </Text>
-              ))}
-            </View>
-          )}
-
-          {/* Navigation Buttons */}
-          <View style={styles.buttonContainer}>
-            {/* Back button (disabled on the first step) */}
-            {currentStep > 1 && (
-              <TouchableOpacity
-                onPress={() => setCurrentStep(currentStep - 1)}
-                style={styles.backButton}>
-                <Text>Back</Text>
-              </TouchableOpacity>
-            )}
-            {/* Button to submit the recipe */}
-            {currentStep == 3 && (
-              <TouchableOpacity
-                onPress={handleSubmitRecipe}
-                style={styles.nextButton}>
-                <Text>Save Recipe</Text>
-              </TouchableOpacity>
-            )}
-            {/* Next button (disabled on the last step) */}
-            {currentStep < 3 && (
-              <TouchableOpacity
-                onPress={() => handleNextStep()}
-                style={styles.nextButton}>
-                <Text>Next</Text>
-              </TouchableOpacity>
-            )}
           </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
+      <AddIngredientModal
+        visible={isAddIngredientModalVisible}
+        onClose={() => setAddIngredientModalVisible(false)}
+      />
+    </>
   );
 };
 
