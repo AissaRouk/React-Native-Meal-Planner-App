@@ -353,7 +353,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   //Components
   //
 
-  //The header of the modal (Text + Exit-Button)
+  //The header of the modal (contains Text + Exit-Button)
   const ModalHeader: React.FC<{text: string; onClose: () => void}> = ({
     text,
     onClose,
