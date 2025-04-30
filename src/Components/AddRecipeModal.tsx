@@ -22,6 +22,7 @@ import {IngredientComponent} from './IngredientComponent';
 import {getIngredientById} from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
+import {orangeBackgroundColor} from '../Utils/Styiling';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -295,9 +296,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const handleSelectIngredient = async (id: number) => {
     // Check if the ingredient is already selected
     if (selectedIngredients.find(ingredient => ingredient.id === id)) {
-      Alert.alert(
-        "You already selected this ingredient.\t it's already added in your list",
-      );
+      // Alert.alert(
+      //   "You already selected this ingredient.\t it's already added in your list",
+      // );
       console.log('prompmt!!');
     } else {
       // if not
@@ -372,7 +373,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
           width: 30,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: '#fb7945',
+          backgroundColor: orangeBackgroundColor,
           borderRadius: 15, // Make it circular
         }}>
         <Icon name="close" size={20} color="white" />
@@ -474,13 +475,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       {
                         justifyContent: 'center',
                         alignItems: 'center',
-                        borderColor: 'black',
-                        borderWidth: 1,
                         padding: 10,
+                        backgroundColor: orangeBackgroundColor,
+                        borderRadius: 5,
                       },
                       styles.searchContainerHeight,
                     ]}>
-                    <Icon name="add" size={20} />
+                    <Icon name="add-outline" size={20} color={'white'} />
                   </TouchableOpacity>
                 </View>
 
