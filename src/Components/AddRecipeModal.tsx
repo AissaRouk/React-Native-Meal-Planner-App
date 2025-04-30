@@ -71,6 +71,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [fieldsAdded, setFieldsAdded] = useState<boolean>(false);
   const [suggestionsVisible, setSuggestionsVisible] = useState<boolean>(false);
 
+  // State for addIngredientModal visibility
+  const [isAddIngredientModalVisible, setAddIngredientModalVisible] =
+    useState<boolean>(true);
+
   //mini-search hook and parameters
   const searchParameters: Options = {
     fields: ['name'], // Fields used for searching
