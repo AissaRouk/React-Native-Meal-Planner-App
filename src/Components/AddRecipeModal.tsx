@@ -196,19 +196,17 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     return true;
   };
 
-  // Validation for Step 2
   const validateStep2 = (): boolean => {
-    const invalidIngredient = ingredients.find(
-      ingredient => !ingredient.name.trim(),
-    );
-    if (invalidIngredient) {
+    // don't pass to step3 if there's an ingredient with quantity of 0
+    if (selectedIngredients.some(instance => instance.quantity <= 0)) {
       Alert.alert(
         'Validation Error',
-        'All ingredients must have a name. Please fill in the missing fields.',
+        'All ingredients must have a quantity higher than 0.',
       );
-      return false;
+      console.log('validateStep: ' + false);
+      return false; // Prevents moving to the next step
     }
-    return true;
+    return true; // Allows moving to the next step
   };
 
   // Handle next step with validation
