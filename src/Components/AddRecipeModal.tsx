@@ -19,7 +19,7 @@ import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
-import {getIngredientById} from '../Services/db-services';
+import {addIngredient, getIngredientById} from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
 import {orangeBackgroundColor} from '../Utils/Styiling';
@@ -355,6 +355,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     }
   };
 
+  // Handle the creation of a new ingredient in the database
+  const handleOnSubmitAddIngredient = async (
+    name: string,
+    category: string,
+  ) => {
+    await addIngredient({name, category});
+  };
+
   //
   //Components
   //
@@ -627,9 +635,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
           </View>
         </View>
       </Modal>
+      {/* Modal to add the ingredients */}
       <AddIngredientModal
         visible={isAddIngredientModalVisible}
         onClose={() => setAddIngredientModalVisible(false)}
+        onSubmit={({name, category}) =>
+          handleOnSubmitAddIngredient(name, category)
+        }
       />
     </>
   );
