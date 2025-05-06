@@ -500,8 +500,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   <TouchableOpacity
                     style={[
                       {
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
                         padding: 10,
                         backgroundColor: orangeBackgroundColor,
                         borderRadius: 5,
