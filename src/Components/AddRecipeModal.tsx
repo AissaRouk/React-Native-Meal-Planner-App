@@ -43,7 +43,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   isFetchFinished,
 }) => {
   // Track the current step in the multi-step form (1: Recipe Details, 2: Add Ingredients, 3: Review & Confirm)
-  const [currentStep, setCurrentStep] = useState<number>(2);
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
@@ -75,7 +75,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
 
   // State for addIngredientModal visibility
   const [isAddIngredientModalVisible, setAddIngredientModalVisible] =
-    useState<boolean>(true);
+    useState<boolean>(false);
 
   //mini-search hook and parameters
   const searchParameters: Options = {
@@ -449,66 +449,64 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                     flexDirection: 'row',
                     width: '100%',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
+                    marginBottom: 10,
+                    overflow: 'visible',
                   }}>
-                  <SearchBar
-                    placeholder="Search for ingredients"
-                    value={searchValue}
-                    onChangeText={handleOnchangeText}
-                    onSubmitEditing={() => search(searchValue)}
-                    lightTheme
-                    round
-                    searchIcon={<Icon name="search" size={18} color={'grey'} />}
-                    clearIcon={false}
-                    containerStyle={{
-                      ...styles.searchContainer,
-                      borderTopWidth: 0,
-                      borderBottomWidth: 0,
-                      margin: 0,
-                      paddingRight: 10,
-                      flex: 1,
-                    }}
-                    inputContainerStyle={[
-                      styles.searchInputContainer,
-                      {
-                        borderBottomWidth: suggestionsVisible ? 0 : 1,
-                      },
-                      styles.searchContainerHeight,
-                    ]}
-                    inputStyle={styles.searchInput}
-                    ref={searchBarRef}
-                  />
+                  <View style={{flex: 1}}>
+                    <SearchBar
+                      placeholder="Search for ingredients"
+                      value={searchValue}
+                      onChangeText={handleOnchangeText}
+                      onSubmitEditing={() => search(searchValue)}
+                      lightTheme
+                      round
+                      searchIcon={
+                        <Icon name="search" size={18} color={'grey'} />
+                      }
+                      clearIcon={false}
+                      containerStyle={styles.searchContainer}
+                      inputContainerStyle={[
+                        styles.searchInputContainer,
+                        styles.searchContainerHeight,
+                        {
+                          borderBottomWidth: suggestionsVisible ? 0 : 1,
+                        },
+                      ]}
+                      inputStyle={styles.searchInput}
+                      ref={searchBarRef}
+                    />
+                    {/* Suggestions dropdown */}
+                    {suggestionsVisible && (
+                      <ScrollView style={styles.suggestionsContainer}>
+                        {suggestions?.map((suggestion, index) => (
+                          <TouchableOpacity
+                            ref={suggestionTouchableRef}
+                            key={index}
+                            onPress={() => handleSelectSuggestion(suggestion)}
+                            style={styles.suggestionItem}>
+                            <Text style={styles.suggestionText}>
+                              {suggestion.suggestion}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    )}
+                  </View>
                   <TouchableOpacity
                     style={[
                       {
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        // justifyContent: 'center',
+                        // alignItems: 'center',
                         padding: 10,
                         backgroundColor: orangeBackgroundColor,
                         borderRadius: 5,
+                        margin: 5,
                       },
                       styles.searchContainerHeight,
                     ]}>
                     <Icon name="add-outline" size={20} color={'white'} />
                   </TouchableOpacity>
                 </View>
-
-                {/* Suggestions dropdown */}
-                {suggestionsVisible && (
-                  <ScrollView style={styles.suggestionsContainer}>
-                    {suggestions?.map((suggestion, index) => (
-                      <TouchableOpacity
-                        ref={suggestionTouchableRef}
-                        key={index}
-                        onPress={() => handleSelectSuggestion(suggestion)}
-                        style={styles.suggestionItem}>
-                        <Text style={styles.suggestionText}>
-                          {suggestion.suggestion}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                )}
 
                 {/* selectedIngredients ScrollView */}
                 {searchResultsVisible && selectedIngredients && (
@@ -716,6 +714,9 @@ const styles = StyleSheet.create({
   searchInput: {
     fontSize: 16,
     color: '#333',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    margin: 0,
   },
 
   //suggestions
