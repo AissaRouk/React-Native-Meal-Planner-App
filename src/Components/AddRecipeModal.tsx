@@ -452,7 +452,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                     marginBottom: 10,
                     overflow: 'visible',
                   }}>
-                  <View style={{flex: 1}}>
+                  <View style={{flex: 1, maxWidth: 300}}>
                     <SearchBar
                       placeholder="Search for ingredients"
                       value={searchValue}
@@ -468,8 +468,11 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       inputContainerStyle={[
                         styles.searchInputContainer,
                         styles.searchContainerHeight,
+                        //modify the styling when the suggestions dropdown is open
                         {
                           borderBottomWidth: suggestionsVisible ? 0 : 1,
+                          borderBottomRightRadius: suggestionsVisible ? 0 : 5,
+                          borderBottomLeftRadius: suggestionsVisible ? 0 : 5,
                         },
                       ]}
                       inputStyle={styles.searchInput}
