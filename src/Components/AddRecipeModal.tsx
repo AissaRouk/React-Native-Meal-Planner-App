@@ -250,9 +250,11 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       return;
     }
 
+    // get the ingredient suggestions from minisearch
     const results = minisearchRef.current?.autoSuggest(text) || [];
     // console.log('handleOnchangeText: -> results', results);
     setSuggestions(results);
+    // only show when tere are suggestions
     setSuggestionsVisible(results.length >= 1);
   };
 
