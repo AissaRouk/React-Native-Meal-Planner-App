@@ -253,7 +253,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     const results = minisearchRef.current?.autoSuggest(text) || [];
     // console.log('handleOnchangeText: -> results', results);
     setSuggestions(results);
-    setSuggestionsVisible(true);
+    setSuggestionsVisible(results.length >= 1);
   };
 
   // Handle when a suggestion is selected
@@ -497,7 +497,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                       </ScrollView>
                     )}
                   </View>
+                  {/* AddIngredient Modal Button */}
                   <TouchableOpacity
+                    onPress={() => setAddIngredientModalVisible(true)}
                     style={[
                       {
                         padding: 10,
