@@ -451,6 +451,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                     alignItems: 'center',
                     marginBottom: 10,
                     overflow: 'visible',
+                    position: 'relative',
                   }}>
                   {/* Searchbar which contains: SearchBar + Suggestions dropdown */}
                   <View style={{flex: 1, maxWidth: 300}}>
@@ -725,14 +726,18 @@ const styles = StyleSheet.create({
 
   //suggestions
   suggestionsContainer: {
+    position: 'absolute', // Position dropdown below SearchBar
+    top: 45, // Adjust to match SearchBar height
+    left: 0,
+    right: 0,
+    backgroundColor: 'white', // Dropdown background
     borderWidth: 1,
     borderColor: '#ccc',
-    borderTopWidth: 0, // So it merges with the SearchBar border
-    margin: 0,
-    padding: 0,
-    // If you want the lower corners to be rounded
+    borderTopWidth: 0, // Merge with SearchBar border
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
+    maxHeight: 150, // Limit dropdown height
+    zIndex: 10, // Ensure it appears above other elements
   },
   suggestionItem: {
     padding: 10,
