@@ -452,6 +452,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                     marginBottom: 10,
                     overflow: 'visible',
                   }}>
+                  {/* Searchbar which contains: SearchBar + Suggestions dropdown */}
                   <View style={{flex: 1, maxWidth: 300}}>
                     <SearchBar
                       placeholder="Search for ingredients"
