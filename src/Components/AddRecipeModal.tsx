@@ -736,12 +736,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 0, // Merge with SearchBar border
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
-    maxHeight: 150, // Limit dropdown height
     zIndex: 10, // Ensure it appears above other elements
   },
   suggestionItem: {
     padding: 10,
-    // Possibly no border here if you want it super flush
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
