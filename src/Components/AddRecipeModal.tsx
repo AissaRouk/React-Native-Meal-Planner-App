@@ -182,6 +182,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     setServings('');
     setCurrentStep(1);
     setSelectedIngredients([]);
+    setSearchValue('');
     onClose();
   };
 
