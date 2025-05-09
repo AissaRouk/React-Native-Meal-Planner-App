@@ -72,6 +72,10 @@ export const WEEKLY_MEALS_DAY = 'day';
 export const WEEKLY_MEALS_MEAL_TYPE = 'mealType';
 export const WEEKLY_MEALS_RECIPE_ID = 'recipeId';
 
+//Flags indicating the success or failure of database operations.
+export const SUCCESS = true;
+export const FAILED = false;
+
 //Ingredient CRUD functions
 
 /**
@@ -129,12 +133,12 @@ export const createIngredientTable = async (): Promise<void> => {
  * @function addIngredient
  * @param {string} name - The name of the ingredient to add (must be unique).
  * @param {string} category - The category of the ingredient (e.g., "Spice", "Vegetable").
- * @returns {Promise<void>} Resolves when the ingredient is added or the insertion is ignored if it already exists.
+ * @returns {Promise<{created: boolean, response?: string}>} Resolves when the ingredient is added or the insertion is ignored if it already exists.
  *
  */
 export const addIngredient = async (
   ingredient: IngredientWithoutId,
-): Promise<void> => {
+): Promise<{created: boolean; response?: string}> => {
   try {
     // Get database connection
     const db = await getDbConnection();
@@ -150,6 +154,7 @@ export const addIngredient = async (
         (tx, results) => {
           if (results.rowsAffected > 0) {
             console.log('addIngredient -> Ingredient added successfully!');
+            ret;
           } else {
             console.log(
               'addIngredient -> Ingredient already exists, insertion ignored.',
