@@ -174,13 +174,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     handleOnClose();
   };
 
-  //Function to handle the close button
+  //Function to handle the close button of the AddRecipeModal
   const handleOnClose = (): void => {
     setName('');
     setLink('');
     setPrepTime('');
     setServings('');
     setCurrentStep(1);
+    setSelectedIngredients([]);
     onClose();
   };
 
