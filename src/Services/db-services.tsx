@@ -131,8 +131,7 @@ export const createIngredientTable = async (): Promise<void> => {
  *
  * @async
  * @function addIngredient
- * @param {string} name - The name of the ingredient to add (must be unique).
- * @param {string} category - The category of the ingredient (e.g., "Spice", "Vegetable").
+ * @param {IngredientWithoutId} ingredient The new ingredient added but without id, because the database will assign one for it
  * @returns {Promise<{created: boolean, response?: string}>} Resolves when the ingredient is added or the insertion is ignored if it already exists.
  *
  */
@@ -147,31 +146,50 @@ export const addIngredient = async (
     const insertQuery = `INSERT OR IGNORE INTO ${TABLE_INGREDIENT} (${INGREDIENT_NAME}, ${INGREDIENT_CATEGORY}) VALUES (?, ?);`;
 
     // Execute the query
-    await db.transaction(tx => {
-      tx.executeSql(
-        insertQuery,
-        [ingredient.name, ingredient.category],
-        (tx, results) => {
-          if (results.rowsAffected > 0) {
-            console.log('addIngredient -> Ingredient added successfully!');
-            ret;
-          } else {
-            console.log(
-              'addIngredient -> Ingredient already exists, insertion ignored.',
-            );
-          }
-        },
-        error => {
-          console.error(
-            'addIngredient -> SQL error in adding ingredient:',
-            error,
+    const result = await new Promise<{created: boolean; response?: string}>(
+      (resolve, reject) => {
+        db.transaction(tx => {
+          tx.executeSql(
+            insertQuery,
+            [ingredient.name, ingredient.category],
+            (tx, results) => {
+              if (results.rowsAffected > 0) {
+                console.log('addIngredient -> Ingredient added successfully!');
+                resolve({
+                  created: SUCCESS,
+                  response: 'Ingredient added successfully',
+                });
+              } else {
+                console.log(
+                  'addIngredient -> Ingredient already exists, insertion ignored.',
+                );
+                resolve({
+                  created: FAILED,
+                  response: 'Ingredient already exists',
+                });
+              }
+            },
+            error => {
+              console.error(
+                'addIngredient -> SQL error in adding ingredient:',
+                error,
+              );
+              reject(error);
+            },
           );
-        },
-      );
-    });
+        });
+      },
+    );
+
+    return result;
   } catch (error) {
     console.error('addIngredient -> Transaction failed:', error);
-    throw new Error(`addIngredient: ${error}`);
+    return {
+      created: FAILED,
+      response: `Error: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    };
   }
 };
 
