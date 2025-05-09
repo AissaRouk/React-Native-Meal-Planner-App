@@ -19,7 +19,12 @@ import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
-import {addIngredient, getIngredientById} from '../Services/db-services';
+import {
+  addIngredient,
+  FAILED,
+  getIngredientById,
+  SUCCESS,
+} from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
 import {orangeBackgroundColor} from '../Utils/Styiling';
@@ -358,11 +363,21 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   };
 
   // Handle the creation of a new ingredient in the database
-  const handleOnSubmitAddIngredient = async (
+  const handleOnSubmitAddIngredient: (
     name: string,
     category: string,
-  ) => {
-    await addIngredient({name, category});
+  ) => Promise<boolean> = async (name: string, category: string) => {
+    const response = await addIngredient({name, category});
+    console.log('response: ' + JSON.stringify(response));
+    if (response.created) return response.created;
+    else if (
+      !response.created &&
+      response.response == 'Ingredient already exists'
+    ) {
+      Alert.alert('This ingredient already exists');
+      return FAILED;
+    }
+    return FAILED;
   };
 
   //
