@@ -9,11 +9,12 @@ import {
   Alert,
 } from 'react-native';
 import Icon from '@react-native-vector-icons/ionicons';
+import {SUCCESS} from '../Services/db-services';
 
 type AddIngredientModalProps = {
   visible: boolean;
   onClose?: () => void;
-  onSubmit?: (ingredient: {name: string; category: string}) => void;
+  onSubmit: (ingredient: {name: string; category: string}) => Promise<boolean>;
 };
 
 const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
@@ -26,7 +27,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
   const [category, setCategory] = useState<string>(''); // Ingredient category
 
   // Function to handle submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) {
       Alert.alert('Validation Error', 'Ingredient name is required.');
       return;
@@ -35,10 +36,12 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
       Alert.alert('Validation Error', 'Ingredient category is required.');
       return;
     }
-    onSubmit && onSubmit({name: name, category: category});
+    const response = await onSubmit({name: name, category: category});
+    if (response == SUCCESS) {
+      onClose && onClose();
+    }
     setName('');
     setCategory('');
-    onClose && onClose();
   };
 
   // Function to handle modal close
