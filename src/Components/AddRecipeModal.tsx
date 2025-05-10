@@ -27,7 +27,11 @@ import {
 } from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
-import {orangeBackgroundColor} from '../Utils/Styiling';
+import {
+  genericStyles,
+  greyBorderColor,
+  orangeBackgroundColor,
+} from '../Utils/Styiling';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -48,7 +52,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   isFetchFinished,
 }) => {
   // Track the current step in the multi-step form (1: Recipe Details, 2: Add Ingredients, 3: Review & Confirm)
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [currentStep, setCurrentStep] = useState<number>(3);
 
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
@@ -334,6 +338,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       // show the selectedingredients view
       setSearchResultsVisible(true);
     }
+    setSearchValue('');
   };
 
   // Function to delete an ingredient from selectedIngredients
@@ -614,16 +619,33 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
                   onClose={() => handleOnClose()}
                 />
                 {/* Display the entered recipe details */}
-                <Text>Recipe Name: {name}</Text>
-                <Text>Preparation Time: {prepTime} minutes</Text>
-                <Text>Serving Size: {servings}</Text>
-                <Text>Ingredients:</Text>
-                {/* List all added ingredients */}
-                {ingredients.map((ingredient, index) => (
-                  <Text key={index}>
-                    {ingredient.name} - {ingredient.category}
-                  </Text>
-                ))}
+                <View style={styles.reviewSection}>
+                  <View style={styles.reviewRow}>
+                    <Text style={styles.reviewLabel}>Recipe Name:</Text>
+                    <Text style={styles.reviewValue}>{name}</Text>
+                  </View>
+                  <View style={styles.reviewRow}>
+                    <Icon name="timer" size={20} style={styles.reviewIcon} />
+                    <Text style={styles.reviewValue}>{prepTime} minutes</Text>
+                  </View>
+                  <View style={styles.reviewRow}>
+                    <Text style={styles.reviewLabel}>Serving Size:</Text>
+                    <Text style={styles.reviewValue}>{servings}</Text>
+                  </View>
+                  <Text style={styles.ingredientsHeader}>Ingredients:</Text>
+                  {/* List all added ingredients */}
+                  {selectedIngredients.length > 0 &&
+                    selectedIngredients.map((ingredient, index) => (
+                      <View style={styles.ingredientRow} key={index}>
+                        <Text style={styles.ingredientName}>
+                          - {ingredient.name}
+                        </Text>
+                        <Text style={styles.ingredientDetails}>
+                          {ingredient.quantity} {ingredient.quantityType}
+                        </Text>
+                      </View>
+                    ))}
+                </View>
               </View>
             )}
 
@@ -685,10 +707,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginBottom: 15,
+    fontWeight: 'bold',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: greyBorderColor,
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
@@ -700,7 +723,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 10,
-    backgroundColor: '#ccc',
+    backgroundColor: greyBorderColor,
     borderRadius: 5,
   },
   nextButton: {
@@ -726,7 +749,7 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     backgroundColor: 'white', // Keep background visible
     borderWidth: 1, // Make border visible
-    borderColor: '#ccc', // Set border color
+    borderColor: greyBorderColor, // Set border color
     borderRadius: 5, // Match other inputs
     paddingHorizontal: 10, // Ensure text doesn't touch the border
   },
@@ -751,7 +774,7 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'white', // Dropdown background
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: greyBorderColor,
     borderTopWidth: 0, // Merge with SearchBar border
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
@@ -767,10 +790,60 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 
+  //currentStep3
+  reviewSection: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: greyBorderColor,
+  },
+  reviewRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  reviewLabel: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#333',
+    marginRight: 5,
+  },
+  reviewValue: {
+    fontSize: 16,
+    color: '#555',
+  },
+  reviewIcon: {
+    marginRight: 10,
+    color: '#fb7945',
+  },
+  ingredientsHeader: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#333',
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  ingredientRow: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  ingredientName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginRight: 10,
+  },
+  ingredientDetails: {
+    fontSize: 16,
+    color: '#555',
+  },
+
   //generic
   greyBorder: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: greyBorderColor,
   },
 });
 
