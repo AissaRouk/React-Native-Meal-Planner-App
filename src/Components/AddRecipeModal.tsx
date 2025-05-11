@@ -52,7 +52,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   isFetchFinished,
 }) => {
   // Track the current step in the multi-step form (1: Recipe Details, 2: Add Ingredients, 3: Review & Confirm)
-  const [currentStep, setCurrentStep] = useState<number>(3);
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
