@@ -170,8 +170,6 @@ export default function MainScreen(): React.JSX.Element {
           visible={visible}
           onSubmit={() => {}}
           onClose={() => setVisible(false)}
-          ingredients={ingredients}
-          isFetchFinished={isFetchFinished}
         />
       </>
     </View>
