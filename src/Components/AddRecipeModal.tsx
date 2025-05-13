@@ -106,7 +106,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   }
 
   // Context state to manage the ingredients
-  const {ingredients} = useAppContext();
+  const {ingredients, setIngredients} = useAppContext();
 
   //
   // USEEFFECTS
@@ -388,6 +388,15 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     const response = await addIngredient({name, category});
     console.log('response: ' + JSON.stringify(response));
     if (response.created) {
+      // add the new ingredient to the selectedIngredients
+      if (response.insertedId) {
+        const newIngredient: Ingredient = {
+          name: name,
+          id: response.insertedId,
+          category: category,
+        };
+        setIngredients(prev => [...prev, newIngredient]);
+      }
       return response.created;
     } else if (
       !response.created &&
