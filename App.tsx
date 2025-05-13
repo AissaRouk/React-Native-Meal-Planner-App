@@ -1,6 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MainScreen from './src/Screens/MainScreen';
+import {AppProvider} from './src/Context/Context';
 
 export const MainScreenName = 'MainScreen';
 
@@ -18,9 +19,11 @@ const RootStack = () => {
 
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <AppProvider>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </AppProvider>
   );
 }
 
