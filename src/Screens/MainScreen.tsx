@@ -176,6 +176,8 @@ export default function MainScreen(): React.JSX.Element {
       </>
     </View>
   ) : (
+    // ActivityIndicator to show loading state while fetching data
+    // This is displayed until the data fetching is complete
     <ActivityIndicator
       size={100}
       color={'#fb7945'}
