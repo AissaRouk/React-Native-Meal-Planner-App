@@ -126,12 +126,6 @@ export default function MainScreen(): React.JSX.Element {
     }
   }, [weeklyMeals]);
 
-  // FOR TESTING PURPOSES
-  // Logs the fetched ingredients whenever they change
-  useEffect(() => {
-    if (ingredients) console.log('INGREDIENTS: ' + JSON.stringify(ingredients));
-  }, [ingredients]);
-
   return isFetchFinished ? (
     <View style={[styles.container, {padding: 16}]}>
       <>
