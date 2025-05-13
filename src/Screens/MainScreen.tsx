@@ -34,6 +34,7 @@ import {
 import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
+import {useAppContext} from '../Context/Context';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -48,12 +49,12 @@ export default function MainScreen(): React.JSX.Element {
   const [recipes, setRecipes] = useState<Recipe[]>();
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
-  //state to save the fetched ingredients
-  const [fetchedIngredients, setFetchedIngredients] = useState<Ingredient[]>(
-    [],
-  );
   //boolean state to track the completion of the data fetching
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
+
+  //CONTEXT
+  // Context state to manage the ingredients
+  const {ingredients, setIngredients} = useAppContext();
 
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
@@ -76,8 +77,8 @@ export default function MainScreen(): React.JSX.Element {
   // Runs once when the component is mounted to initialize and populate the database
   useEffect(() => {
     const asyncFunctions = async () => {
-      const ingredients: Ingredient[] = await initialise();
-      setFetchedIngredients(ingredients);
+      const fetingredients: Ingredient[] = await initialise();
+      setIngredients(fetingredients);
       setIsFetchFinished(true);
     };
     asyncFunctions()
@@ -125,6 +126,12 @@ export default function MainScreen(): React.JSX.Element {
     }
   }, [weeklyMeals]);
 
+  // FOR TESTING PURPOSES
+  // Logs the fetched ingredients whenever they change
+  useEffect(() => {
+    if (ingredients) console.log('INGREDIENTS: ' + JSON.stringify(ingredients));
+  }, [ingredients]);
+
   return isFetchFinished ? (
     <View style={[styles.container, {padding: 16}]}>
       <>
@@ -169,7 +176,7 @@ export default function MainScreen(): React.JSX.Element {
           visible={visible}
           onSubmit={() => {}}
           onClose={() => setVisible(false)}
-          ingredients={fetchedIngredients}
+          ingredients={ingredients}
           isFetchFinished={isFetchFinished}
         />
       </>
