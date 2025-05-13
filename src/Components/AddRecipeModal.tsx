@@ -1,4 +1,4 @@
-import React, {Ref, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Modal,
   View,
@@ -32,6 +32,7 @@ import {
   greyBorderColor,
   orangeBackgroundColor,
 } from '../Utils/Styiling';
+import {useAppContext} from '../Context/Context';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -40,17 +41,16 @@ type AddRecipeModalProps = {
   onSubmit: (
     recipe: RecipeWithoutId & {ingredients: IngredientWithoutId[]},
   ) => void;
-  ingredients: Ingredient[];
-  isFetchFinished: boolean;
 };
 
 const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   visible,
   onClose,
   onSubmit,
-  ingredients,
-  isFetchFinished,
 }) => {
+  //
+  //STATES
+  //
   // Track the current step in the multi-step form (1: Recipe Details, 2: Add Ingredients, 3: Review & Confirm)
   const [currentStep, setCurrentStep] = useState<number>(1);
 
@@ -86,6 +86,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   const [isAddIngredientModalVisible, setAddIngredientModalVisible] =
     useState<boolean>(false);
 
+  //
+  // CONSTANTS
+  //
+
   //mini-search hook and parameters
   const searchParameters: Options = {
     fields: ['name'], // Fields used for searching
@@ -100,6 +104,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   if (!minisearchRef.current) {
     minisearchRef.current = new MiniSearch<Ingredient>(searchParameters);
   }
+
+  // Context state to manage the ingredients
+  const {ingredients} = useAppContext();
+
+  //
+  // USEEFFECTS
+  //
 
   // useEffect to add the data only once
   useEffect(() => {
@@ -376,8 +387,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   ) => Promise<boolean> = async (name: string, category: string) => {
     const response = await addIngredient({name, category});
     console.log('response: ' + JSON.stringify(response));
-    if (response.created) return response.created;
-    else if (
+    if (response.created) {
+      return response.created;
+    } else if (
       !response.created &&
       response.response == 'Ingredient already exists'
     ) {
