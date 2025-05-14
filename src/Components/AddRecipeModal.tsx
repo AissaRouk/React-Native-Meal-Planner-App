@@ -95,6 +95,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     fields: ['name'], // Fields used for searching
     idField: 'id', // Ensure MiniSearch identifies objects correctly
     storeFields: ['name', 'id'],
+    searchOptions: {fuzzy: 1, prefix: true},
   };
 
   // Persistent MiniSearch instance
