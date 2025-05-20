@@ -128,20 +128,16 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     }
   }, [ingredients]);
 
-  //(just for testing) useEffect to check the searchresutlts
+  // UseEffect to check the searchResults and modify some states
   useEffect(() => {
     // If we found something
-    if (searchResults) {
-      // console.log('searchResults: ' + JSON.stringify(searchResults));
-      // If we find more than one ingredient
-      if (searchResults.length > 1) {
-        setIngredientSelectionViewOpen(true);
-        // If the search only gets us one ingredient
-      } else if (searchResults.length == 1) {
-        // add it to the selectedIngredients
-        handleSelectIngredient(searchResults[0].id);
-        setSearchResultsVisible(true);
-      }
+    if (searchResults.length > 1) {
+      setIngredientSelectionViewOpen(true);
+      // If the search only gets us one ingredient
+    } else if (searchResults.length == 1) {
+      // add it to the selectedIngredients
+      handleSelectIngredient(searchResults[0].id);
+      setSearchResultsVisible(true);
     }
   }, [searchResults]);
 
@@ -255,10 +251,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
     // hide the suggestions
     setSuggestionsVisible(false);
     // hide the searchResults because new search started
-    setSearchResultsVisible(false);
+    if (searchResults.length > 0) setSearchResultsVisible(false);
     // search
     const results = minisearchRef.current?.search(query) || [];
-    console.log('Search results:', results);
     // save the results
     setSearchResults(results);
   };
