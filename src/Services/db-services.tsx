@@ -433,31 +433,51 @@ export const createRecipeTable: () => Promise<void> = async () => {
  */
 export const addRecipe: (
   recipe: RecipeWithoutId,
-) => Promise<void> = async recipe => {
+) => Promise<{created: boolean; insertedId?: number}> = async recipe => {
   try {
+    // Connect the database
     const db = await getDbConnection();
 
-    // SQL query
+    // Create query
     const insertQuery = `INSERT OR IGNORE INTO ${TABLE_RECIPE} (${RECIPE_NAME}, ${RECIPE_LINK}, ${RECIPE_PREP_TIME}, ${RECIPE_SERVING_SIZE})
     VALUES (?, ?, ?, ?);`;
 
-    // Execute the query
-    await db.transaction(tx =>
-      tx.executeSql(
-        insertQuery,
-        [recipe.name, recipe.link, recipe.preparationTime, recipe.servingSize],
-        (tx, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            console.log('Recipe added successfully!');
-          } else {
-            console.log('Recipe not added; it may already exist.');
-          }
-        },
-        (tx, error) => console.error('Error adding recipe:', error),
-      ),
+    // returns the promise
+    return await new Promise<{created: boolean; insertedId?: number}>(
+      (resolve, reject) => {
+        db.transaction(tx => {
+          // execute the query
+          tx.executeSql(
+            insertQuery,
+            [
+              recipe.name,
+              recipe.link,
+              recipe.preparationTime,
+              recipe.servingSize,
+            ],
+            (tx, resultSet) => {
+              // If added
+              if (resultSet.rowsAffected > 0) {
+                console.log('Recipe added successfully!');
+                // return success and the id of the inserted recipe
+                resolve({created: SUCCESS, insertedId: resultSet.insertId});
+              } else {
+                console.log('Recipe not added; it may already exist.');
+                // if any problem return false
+                resolve({created: FAILED});
+              }
+            },
+            (tx, error) => {
+              console.error('Error adding recipe:', error);
+              reject(error);
+            },
+          );
+        });
+      },
     );
   } catch (error) {
     console.error('addRecipe -> Error adding the recipe:', error);
+    return {created: FAILED};
   }
 };
 
