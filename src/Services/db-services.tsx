@@ -564,6 +564,39 @@ export const getRecipeById: (
 };
 
 /**
+ * Function that gets all the recipes.
+ * @returns an array of all the recipes
+ */
+export const getAllRecipes = async (): Promise<Recipe[]> => {
+  try {
+    const db = await getDbConnection();
+
+    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE}`;
+
+    const resultRecipes: Recipe[] = [];
+
+    await db.transaction(txn =>
+      txn.executeSql(sqlInsert, [], (_unused, resultSet) => {
+        if (resultSet.rows.length > 0) {
+          for (let i = 0; i < resultSet.rows.length; i++) {
+            const recipeItem: Recipe = resultSet.rows.item(i);
+            resultRecipes.push(recipeItem);
+            console.log('Recipes fetched successfully');
+          }
+        } else if (resultSet.rows.length === 0) {
+          console.log('getRecipes -> There are no elements in the table');
+        } else {
+          console.log("getRecipes -> Couldn't retrieve any Recipes");
+        }
+      }),
+    );
+    return resultRecipes;
+  } catch (error) {
+    throw new Error('getRecipes -> Error while retrieving: ' + error);
+  }
+};
+
+/**
  * Function to update an existing recipe
  *
  * @param {Recipe} recipe the recipe that will be updated
@@ -697,7 +730,11 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  */
 export const addRecipeIngredient = async (
   recipeIngredient: RecipeIngredientWithoutId,
-): Promise<{created: boolean; insertedId?: number; responseCode?: ErrorResponseCodes}> => {
+): Promise<{
+  created: boolean;
+  insertedId?: number;
+  responseCode?: ErrorResponseCodes;
+}> => {
   try {
     const db = await getDbConnection();
 
@@ -776,7 +813,7 @@ export const addRecipeIngredientMultiple = async (
         console.log(
           `addRecipeIngredientMultiple -> Ingredient ${ingredient.name} not added for Recipe ID: ${recipeId}`,
         );
-        return {created: FAILED, insertedId: response.};
+        return {created: FAILED};
       }
     }
     return {created: SUCCESS};
