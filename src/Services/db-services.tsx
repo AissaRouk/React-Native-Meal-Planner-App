@@ -697,7 +697,7 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  */
 export const addRecipeIngredient = async (
   recipeIngredient: RecipeIngredientWithoutId,
-): Promise<{created: boolean; responseCode?: ErrorResponseCodes}> => {
+): Promise<{created: boolean; insertedId?: number; responseCode?: ErrorResponseCodes}> => {
   try {
     const db = await getDbConnection();
 
@@ -759,7 +759,11 @@ export const addRecipeIngredientMultiple = async (
   ingredients: Array<
     Ingredient & {quantity: number; quantityType: QuantityType}
   >,
-): Promise<{created: boolean; insertedId?: number}> => {
+): Promise<{
+  created: boolean;
+  insertedId?: number;
+  responseCode?: ErrorResponseCodes;
+}> => {
   try {
     for (const ingredient of ingredients) {
       const response = await addRecipeIngredient({
@@ -772,7 +776,7 @@ export const addRecipeIngredientMultiple = async (
         console.log(
           `addRecipeIngredientMultiple -> Ingredient ${ingredient.name} not added for Recipe ID: ${recipeId}`,
         );
-        return {created: FAILED};
+        return {created: FAILED, insertedId: response.};
       }
     }
     return {created: SUCCESS};
