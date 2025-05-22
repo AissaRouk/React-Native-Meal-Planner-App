@@ -8,10 +8,12 @@ import {
   MealType,
   Pantry,
   PantryWithoutId,
+  QuantityType,
   Recipe,
   RecipeIngredient,
   RecipeIngredientWithoutId,
   RecipeWithoutId,
+  ErrorResponseCodes,
   WeeklyMeal,
 } from '../Types/Types';
 
@@ -695,42 +697,88 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  */
 export const addRecipeIngredient = async (
   recipeIngredient: RecipeIngredientWithoutId,
-): Promise<void> => {
+): Promise<{created: boolean; responseCode?: ErrorResponseCodes}> => {
   try {
     const db = await getDbConnection();
 
     const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_RECIPE_INGREDIENTS} (${RECIPE_INGREDIENTS_RECIPE_ID}, ${RECIPE_INGREDIENTS_INGREDIENT_ID}, ${RECIPE_INGREDIENTS_QUANTITY}, ${RECIPE_INGREDIENTS_QUANTITY_TYPE}) VALUES (?,?,?,?)`;
 
-    await db.transaction(tx =>
-      tx.executeSql(
-        sqlInsert,
-        [
-          recipeIngredient.recipeId,
-          recipeIngredient.ingredientId,
-          recipeIngredient.quantity,
-          recipeIngredient.quantityType,
-        ],
-        (_, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            console.log(
-              `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipeIngredient.recipeId}`,
-            );
-          } else {
-            console.log(
-              `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipeIngredient.recipeId}`,
-            );
-          }
-        },
-        error =>
-          console.error(
-            `addRecipeIngredient -> SQL error for Recipe ID ${recipeIngredient.recipeId}:`,
-            error,
+    // Execute the query
+    const result = await new Promise<{
+      created: boolean;
+      responseCode?: ErrorResponseCodes;
+      insertedId?: number;
+    }>(
+      async resolve =>
+        await db.transaction(tx =>
+          tx.executeSql(
+            sqlInsert,
+            [
+              recipeIngredient.recipeId,
+              recipeIngredient.ingredientId,
+              recipeIngredient.quantity,
+              recipeIngredient.quantityType,
+            ],
+            (_, resultSet) => {
+              if (resultSet.rowsAffected > 0) {
+                console.log(
+                  `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipeIngredient.recipeId}`,
+                );
+                resolve({
+                  created: SUCCESS,
+                  responseCode: ErrorResponseCodes.SUCCESS,
+                  insertedId: resultSet.insertId,
+                });
+              } else {
+                console.log(
+                  `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipeIngredient.recipeId}`,
+                );
+                resolve({
+                  created: SUCCESS,
+                  responseCode: ErrorResponseCodes.ERROR,
+                });
+              }
+            },
+            error =>
+              console.error(
+                `addRecipeIngredient -> SQL error for Recipe ID ${recipeIngredient.recipeId}:`,
+                error,
+              ),
           ),
-      ),
+        ),
     );
+    return result;
   } catch (error) {
     console.error('addRecipeIngredient -> Transaction failed:', error);
     throw new Error(`Failed to add ingredient to recipe: ${error}`);
+  }
+};
+
+export const addRecipeIngredientMultiple = async (
+  recipeId: number,
+  ingredients: Array<
+    Ingredient & {quantity: number; quantityType: QuantityType}
+  >,
+): Promise<{created: boolean; insertedId?: number}> => {
+  try {
+    for (const ingredient of ingredients) {
+      const response = await addRecipeIngredient({
+        recipeId: recipeId,
+        ingredientId: ingredient.id,
+        quantity: ingredient.quantity,
+        quantityType: ingredient.quantityType,
+      });
+      if (response.created === FAILED) {
+        console.log(
+          `addRecipeIngredientMultiple -> Ingredient ${ingredient.name} not added for Recipe ID: ${recipeId}`,
+        );
+        return {created: FAILED};
+      }
+    }
+    return {created: SUCCESS};
+  } catch (error) {
+    console.error('addRecipeIngredientMultiple -> Error:', error);
+    return {created: FAILED};
   }
 };
 
