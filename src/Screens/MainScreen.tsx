@@ -26,6 +26,7 @@ import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
 import {RecipesScreenName} from '../../App';
+import MealsHeader from '../Components/MealsHeader';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -130,7 +131,7 @@ export default function MainScreen(): React.JSX.Element {
     <View style={[styles.container, {padding: 16}]}>
       <>
         {/* Header component to select the day of the week */}
-        <Header
+        <MealsHeader
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
           onButtonPress={() => (navigation as any).navigate(RecipesScreenName)}
