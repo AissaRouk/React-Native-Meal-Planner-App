@@ -77,3 +77,9 @@ export enum DaysOfWeek {
   SATURDAY = 'Sat',
   SUNDAY = 'Sun',
 }
+
+export enum ErrorResponseCodes {
+  SUCCESS = 200,
+  ALREADY_EXISTS = 409,
+  ERROR = 0,
+}
