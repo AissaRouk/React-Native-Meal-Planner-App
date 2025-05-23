@@ -82,6 +82,7 @@ export default function MainScreen(): React.JSX.Element {
 
       const fetchedRecipes = await getAllRecipes();
       console.log('fetchedRecipes: ' + JSON.stringify(fetchedRecipes, null, 1));
+      setIsFetchFinished(true);
     };
     asyncFunctions()
       .catch(error =>
