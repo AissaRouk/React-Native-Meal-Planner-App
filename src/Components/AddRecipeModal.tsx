@@ -95,7 +95,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   const {ingredients, setIngredients} = useAppContext();
 
   //
-  // USEEFFECTS
+  // USE EFFECTS
   //
 
   // useEffect to add the data only once
@@ -234,21 +234,31 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     setCurrentStep(currentStep + 1);
   };
 
-  // Handle search
   const search = (query: string) => {
     if (!query.trim()) {
-      setSearchResults([]); // Clear results if the query is empty
+      setSearchResults([]);
+      // Don't hide selectedIngredients view if query is empty
       return;
     }
 
-    // hide the suggestions
     setSuggestionsVisible(false);
-    // hide the searchResults because new search started
-    if (searchResults.length > 0) setSearchResultsVisible(false);
-    // search
+    setSearchResults([]);
+    // Don't hide selectedIngredients view yet
     const results = minisearchRef.current?.search(query) || [];
-    // save the results
     setSearchResults(results);
+
+    // Only show ingredient selection view if results found
+    if (results.length > 1) {
+      setIngredientSelectionViewOpen(true);
+      setSearchResultsVisible(false);
+    } else if (results.length === 1) {
+      setIngredientSelectionViewOpen(false);
+      setSearchResultsVisible(true);
+    } else {
+      // No results: keep showing selectedIngredients
+      setIngredientSelectionViewOpen(false);
+      setSearchResultsVisible(true); // <-- this keeps the selectedIngredients visible
+    }
   };
 
   // Handle when the text is being changed in the SearchBar
