@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import {daysOfWeekArray} from '../Assets/Constants';
 import {DaysOfWeek} from '../Types/Types';
+import Icon from '@react-native-vector-icons/ionicons';
 
 const Header = ({
   selectedDay,
@@ -24,6 +25,17 @@ const Header = ({
     <View style={styles.headerContainer}>
       <View style={styles.titleContainer}>
         <Text style={styles.titleText}>Daily Meals</Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#fb7945',
+            paddingVertical: 10,
+            paddingHorizontal: 10,
+            borderRadius: 8,
+            alignSelf: 'flex-end',
+          }}
+          onPress={() => {}}>
+          <Icon name="book-outline" color={'white'} size={20} />
+        </TouchableOpacity>
       </View>
       <ScrollView
         horizontal
@@ -57,6 +69,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
   titleText: {
