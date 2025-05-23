@@ -17,23 +17,16 @@ import {
 import Header from '../Components/HeaderComponent';
 import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
-import {
-  Breakfast,
-  Dinner,
-  fillTablesWMockupData,
-  initialiseTables,
-  Lunch,
-} from './sucio';
-import {getAllIngredients} from '../Services/ingredient-db-services';
 import {getAllRecipes} from '../Services/recipe-db-services';
 import {getRecipeById} from '../Services/recipe-db-services';
-import {getRecipes} from '../Services/recipe-db-services';
-import {getWeeklyMeals} from '../Services/weeklyMeals-db-services';
 import {getWeeklyMealsByDayAndMealType} from '../Services/weeklyMeals-db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
+import {NavigationState, useNavigation} from '@react-navigation/native';
+import {RecipesScreen} from './RecipesScreen';
+import {RecipesScreenName} from '../../App';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -54,6 +47,9 @@ export default function MainScreen(): React.JSX.Element {
   //CONTEXT
   // Context state to manage the ingredients
   const {ingredients, setIngredients} = useAppContext();
+
+  // NAVIGATION
+  const navigation = useNavigation();
 
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
@@ -78,8 +74,6 @@ export default function MainScreen(): React.JSX.Element {
     const asyncFunctions = async () => {
       const fetingredients: Ingredient[] = await initialise();
       setIngredients(fetingredients);
-      setIsFetchFinished(true);
-
       const fetchedRecipes = await getAllRecipes();
       console.log('fetchedRecipes: ' + JSON.stringify(fetchedRecipes, null, 1));
       setIsFetchFinished(true);
@@ -93,6 +87,10 @@ export default function MainScreen(): React.JSX.Element {
       // when finished hide ActivityIndicator
       .then(() => setIsFetchFinished(true));
   }, []);
+
+  useEffect(() => {
+    console.log('ingredients array changed: ' + JSON.stringify(ingredients));
+  }, [ingredients]);
 
   // Fetches the weekly meals whenever the selected day or meal type changes
   useEffect(() => {
@@ -133,7 +131,11 @@ export default function MainScreen(): React.JSX.Element {
     <View style={[styles.container, {padding: 16}]}>
       <>
         {/* Header component to select the day of the week */}
-        <Header selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+        <Header
+          selectedDay={selectedDay}
+          setSelectedDay={setSelectedDay}
+          onButtonPress={() => (navigation as any).navigate(RecipesScreenName)}
+        />
 
         {/* Component to select the meal type */}
         <MealTypeComponent
