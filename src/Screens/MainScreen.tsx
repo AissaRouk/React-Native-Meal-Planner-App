@@ -24,13 +24,12 @@ import {
   initialiseTables,
   Lunch,
 } from './sucio';
-import {
-  getAllIngredients,
-  getRecipeById,
-  getRecipes,
-  getWeeklyMeals,
-  getWeeklyMealsByDayAndMealType,
-} from '../Services/db-services';
+import {getAllIngredients} from '../Services/ingredient-db-services';
+import {getAllRecipes} from '../Services/recipe-db-services';
+import {getRecipeById} from '../Services/recipe-db-services';
+import {getRecipes} from '../Services/recipe-db-services';
+import {getWeeklyMeals} from '../Services/weeklyMeals-db-services';
+import {getWeeklyMealsByDayAndMealType} from '../Services/weeklyMeals-db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
@@ -80,6 +79,9 @@ export default function MainScreen(): React.JSX.Element {
       const fetingredients: Ingredient[] = await initialise();
       setIngredients(fetingredients);
       setIsFetchFinished(true);
+
+      const fetchedRecipes = await getAllRecipes();
+      console.log('fetchedRecipes: ' + JSON.stringify(fetchedRecipes, null, 1));
     };
     asyncFunctions()
       .catch(error =>
@@ -166,11 +168,7 @@ export default function MainScreen(): React.JSX.Element {
         </TouchableOpacity>
 
         {/* Modal to add the Recipes */}
-        <AddRecipeModal
-          visible={visible}
-          onSubmit={() => {}}
-          onClose={() => setVisible(false)}
-        />
+        <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
       </>
     </View>
   ) : (
