@@ -14,9 +14,11 @@ import {orangeBackgroundColor} from '../Utils/Styiling';
 const Header = ({
   selectedDay,
   setSelectedDay,
+  onButtonPress,
 }: {
   selectedDay: DaysOfWeek;
   setSelectedDay: (day: DaysOfWeek) => void;
+  onButtonPress: () => void;
 }) => {
   const handleDayPress = (day: DaysOfWeek) => {
     setSelectedDay(day);
@@ -36,7 +38,7 @@ const Header = ({
             borderRadius: 8,
             alignSelf: 'flex-end',
           }}
-          onPress={() => {}}>
+          onPress={() => onButtonPress()}>
           <Icon name="book-outline" color={'white'} size={20} />
         </TouchableOpacity>
       </View>
