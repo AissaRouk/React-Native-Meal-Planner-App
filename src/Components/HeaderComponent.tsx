@@ -24,7 +24,9 @@ const Header = ({
   return (
     <View style={styles.headerContainer}>
       <View style={styles.titleContainer}>
+        {/* Title */}
         <Text style={styles.titleText}>Daily Meals</Text>
+        {/* RecipeScreen Button */}
         <TouchableOpacity
           style={{
             backgroundColor: '#fb7945',
@@ -37,6 +39,7 @@ const Header = ({
           <Icon name="book-outline" color={'white'} size={20} />
         </TouchableOpacity>
       </View>
+      {/* Weekly days */}
       <ScrollView
         horizontal
         style={styles.scrollView}
