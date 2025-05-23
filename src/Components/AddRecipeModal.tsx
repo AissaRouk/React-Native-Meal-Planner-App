@@ -217,7 +217,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   const validateStep2 = (): boolean => {
     // don't pass to step3 if there's an ingredient with quantity of 0
     if (
-      selectedIngredients.length > 0 ||
+      selectedIngredients.length == 0 ||
       selectedIngredients.some(instance => instance.quantity <= 0)
     ) {
       Alert.alert(
