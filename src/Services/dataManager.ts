@@ -1,6 +1,6 @@
 import {fillTablesWMockupData, initialiseTables} from '../Screens/sucio';
 import {Ingredient} from '../Types/Types';
-import {getAllIngredients} from './db-services';
+import {getAllIngredients} from './ingredient-db-services';
 
 //this function will initialize the whole database and fetch all the tables necessary to have everything ready for the program to work
 export const initialise: () => Promise<Ingredient[]> = async () => {
