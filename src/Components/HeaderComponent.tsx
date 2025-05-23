@@ -9,6 +9,7 @@ import {
 import {daysOfWeekArray} from '../Assets/Constants';
 import {DaysOfWeek} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
+import {orangeBackgroundColor} from '../Utils/Styiling';
 
 const Header = ({
   selectedDay,
@@ -29,7 +30,7 @@ const Header = ({
         {/* RecipeScreen Button */}
         <TouchableOpacity
           style={{
-            backgroundColor: '#fb7945',
+            backgroundColor: orangeBackgroundColor,
             paddingVertical: 10,
             paddingHorizontal: 10,
             borderRadius: 8,
