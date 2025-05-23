@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
-import {Ingredient} from '../Types/Types';
+import {Ingredient, Recipe} from '../Types/Types';
 
 // Define the shape of the context
 type ContextProps = {
   ingredients: Ingredient[];
   setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
+  recipes: Recipe[];
+  setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
 };
 
 type AppProviderProps = {
@@ -16,14 +18,18 @@ const AppContext: React.Context<ContextProps> =
   React.createContext<ContextProps>({
     ingredients: [],
     setIngredients: () => {},
+    recipes: [],
+    setRecipes: () => {},
   });
 
 // Create the provider component
 export const AppProvider = ({children}: AppProviderProps) => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   return (
-    <AppContext.Provider value={{ingredients, setIngredients}}>
+    <AppContext.Provider
+      value={{ingredients, setIngredients, recipes, setRecipes}}>
       {children}
     </AppContext.Provider>
   );
