@@ -9,45 +9,30 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {
-  Ingredient,
-  IngredientWithoutId,
-  QuantityType,
-  RecipeWithoutId,
-} from '../Types/Types';
+import {Ingredient, QuantityType} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
-import {
-  addIngredient,
-  FAILED,
-  getIngredientById,
-  SUCCESS,
-} from '../Services/db-services';
+import {FAILED} from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
-import {
-  genericStyles,
-  greyBorderColor,
-  orangeBackgroundColor,
-} from '../Utils/Styiling';
+import {greyBorderColor, orangeBackgroundColor} from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
+import {addRecipe} from '../Services/recipe-db-services';
+import {addRecipeIngredientMultiple} from '../Services/recipeIngredients-db-services';
+import {
+  addIngredient,
+  getIngredientById,
+} from '../Services/ingredient-db-services';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (
-    recipe: RecipeWithoutId & {ingredients: IngredientWithoutId[]},
-  ) => void;
 };
 
-const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
-  visible,
-  onClose,
-  onSubmit,
-}) => {
+const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   //
   //STATES
   //
@@ -57,8 +42,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   // State for recipe details
   const [name, setName] = useState<string>(''); // Recipe name
   const [link, setLink] = useState<string>(''); // Optional recipe link
-  const [prepTime, setPrepTime] = useState<string>(''); // Preparation time
-  const [servings, setServings] = useState<string>(''); // Number of servings
+  const [prepTime, setPrepTime] = useState<string>(''); // Preparation time as string
+  const [servings, setServings] = useState<string>(''); // Number of servings as string
   const [selectedIngredients, setSelectedIngredients] = useState<
     (Ingredient & {quantity: number; quantityType: QuantityType})[]
   >([]);
@@ -162,7 +147,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
   //
 
   // Function to submit the recipe with its details and ingredients
-  const handleSubmitRecipe = (): void => {
+  const handleSubmitRecipe = async (): Promise<void> => {
     if (!name.trim()) {
       Alert.alert('Recipe name is required.');
       return;
@@ -175,15 +160,23 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({
       Alert.alert('Serving size must be a positive number.');
       return;
     }
-    // Continue with submission...
-    onSubmit({
-      name,
-      link,
+
+    const response = await addRecipe({
+      name: name,
+      link: link,
       preparationTime: Number(prepTime),
       servingSize: Number(servings),
-      ingredients,
     });
-    handleOnClose();
+
+    if (response.created && response.insertedId) {
+      console.log('Recipe created successfully');
+      const recipeIngredientsResponse = await addRecipeIngredientMultiple(
+        response.insertedId,
+        selectedIngredients,
+      );
+    }
+
+    // handleOnClose();
   };
 
   //Function to handle the close button of the AddRecipeModal
