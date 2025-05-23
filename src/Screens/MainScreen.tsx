@@ -24,8 +24,7 @@ import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
-import {NavigationState, useNavigation} from '@react-navigation/native';
-import {RecipesScreen} from './RecipesScreen';
+import {useNavigation} from '@react-navigation/native';
 import {RecipesScreenName} from '../../App';
 
 export default function MainScreen(): React.JSX.Element {
