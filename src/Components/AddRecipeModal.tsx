@@ -419,7 +419,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
       <Text style={styles.title}>{text}</Text>
       <TouchableOpacity
-        onPress={handleOnClose}
+        onPress={onClose}
         style={{
           height: 30,
           width: 30,
