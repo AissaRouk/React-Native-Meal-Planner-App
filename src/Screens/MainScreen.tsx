@@ -27,6 +27,7 @@ import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
 import {RecipesScreenName} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
+import {screensBackgroundColor} from '../Utils/Styiling';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -186,7 +187,7 @@ export default function MainScreen(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffff', // Background color for the main container
+    backgroundColor: screensBackgroundColor, // Background color for the main container
     paddingBottom: 10,
     marginBottom: 10,
     flex: 1, // Fills the entire available space
