@@ -1,6 +1,13 @@
 import Icon from '@react-native-vector-icons/ionicons';
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Ingredient, QuantityType, quantityTypes} from '../Types/Types';
 import {CustomPicker} from './CustomPicker'; // Import the new CustomPicker
 
@@ -57,97 +64,117 @@ export function IngredientComponent({
 
   return (
     <View style={[styles.ingredientView, {zIndex: 100 - number}]}>
-      {/* Display the name of the ingredient */}
-      <View>
-        <Text style={styles.ingredientText}>
+      {/* Ingredient name on top */}
+      <TouchableOpacity
+        style={styles.ingredientNameContainer}
+        onPress={() => {
+          const name = ingredients.find(
+            ingredient => ingredient.id === id,
+          )?.name;
+          if (name) Alert.alert('Ingredient', name);
+        }}
+        activeOpacity={0.7}>
+        <Text
+          style={styles.ingredientText}
+          numberOfLines={1}
+          ellipsizeMode="tail">
           {ingredients.find(ingredient => ingredient.id === id)?.name}
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      {/* Quantity counter with decrement, text input, and increment */}
-      <View style={styles.counterContainer}>
-        {/* Decrement button */}
+      {/* Controls below */}
+      <View style={styles.controlsRow}>
+        <View style={styles.counterContainer}>
+          <Icon
+            name="remove"
+            size={30}
+            color="black"
+            style={{marginHorizontal: 6}}
+            onPress={() => {
+              setQuantity(id, Math.max(0, quantity - 1));
+              setTextValue(Math.max(0, quantity - 1).toString());
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            value={textValue}
+            keyboardType="decimal-pad"
+            onChangeText={handleChange}
+            onBlur={handleBlur}
+          />
+          <Icon
+            name="add"
+            size={30}
+            color="black"
+            style={{marginHorizontal: 6}}
+            onPress={() => {
+              setQuantity(id, quantity + 1);
+              setTextValue((quantity + 1).toString());
+            }}
+          />
+        </View>
+        <View style={{marginHorizontal: 8}}>
+          <CustomPicker
+            isPickerOpen={pickerOpen}
+            setIsPickerOpen={setPickerOpen}
+            quantityType={quantityType}
+            setQuantityType={(newType: QuantityType) => {
+              setQuantityType(id, newType);
+            }}
+            options={quantityTypes}
+          />
+        </View>
         <Icon
-          name="remove"
-          size={30}
-          color="black"
-          onPress={() => {
-            setQuantity(id, Math.max(0, quantity - 1)); // Decrease quantity but ensure it doesn't go below 0
-            setTextValue(Math.max(0, quantity - 1).toString()); // Update the text input value
-          }}
-        />
-        {/* Text input for manual quantity entry */}
-        <TextInput
-          style={styles.textInput}
-          value={textValue}
-          keyboardType="decimal-pad" // Numeric keyboard for input
-          onChangeText={handleChange} // Handle text changes
-          onBlur={handleBlur} // Handle blur event
-        />
-        {/* Increment button */}
-        <Icon
-          name="add"
-          size={30}
-          color="black"
-          onPress={() => {
-            setQuantity(id, quantity + 1); // Increase quantity
-            setTextValue((quantity + 1).toString()); // Update the text input value
-          }}
+          name="trash-outline"
+          size={20}
+          style={{marginLeft: 10}}
+          onPress={() => onDelete(id)}
         />
       </View>
-
-      {/* Dropdown for selecting the quantity type */}
-      <View style={{position: 'relative'}}>
-        <CustomPicker
-          isPickerOpen={pickerOpen}
-          setIsPickerOpen={setPickerOpen}
-          quantityType={quantityType}
-          setQuantityType={(newType: QuantityType) => {
-            setQuantityType(id, newType);
-          }}
-          options={quantityTypes} // Pass the list of quantity types
-        />
-      </View>
-      <>
-        <Icon name="trash-outline" size={20} onPress={() => onDelete(id)} />
-      </>
     </View>
   );
 }
 
-// Styles for the component
 const styles = StyleSheet.create({
   ingredientView: {
-    flexDirection: 'row', // Arrange items in a row
-    alignItems: 'center', // Center items vertically
-    justifyContent: 'space-between', // Space out items evenly
-    borderColor: '#ccc', // Light gray border color
-    borderWidth: 1, // Border width
-    borderRadius: 5, // Rounded corners
-    marginTop: 20, // Top margin
-    paddingHorizontal: 10, // Horizontal padding
-    paddingVertical: 12, // Vertical padding
+    flexDirection: 'column', // Stack name on top, controls below
+    alignItems: 'flex-start',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+  },
+  ingredientNameContainer: {
+    width: '100%',
+    marginBottom: 8,
+  },
+  ingredientText: {
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
+  },
+  controlsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
   },
   textInput: {
-    fontSize: 18, // Font size for the text input
-    marginHorizontal: 5, // Horizontal margin
+    fontSize: 18,
+    marginHorizontal: 8,
     minWidth: 40,
     height: 40,
     paddingHorizontal: 5,
-    textAlignVertical: 'center', // Center text vertically
-    textAlign: 'center', // Center text horizontally
-    borderWidth: 1, // Border width
-    borderColor: '#ccc', // Light gray border color
-    borderRadius: 5, // Rounded corners
-  },
-  ingredientText: {
-    fontSize: 16, // Font size for the ingredient name
-    color: 'black', // Black text color
-    fontWeight: '500', // Medium font weight
+    textAlignVertical: 'center',
+    textAlign: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
   },
   counterContainer: {
-    flexDirection: 'row', // Arrange items in a row
-    justifyContent: 'center', // Center items horizontally
-    alignItems: 'center', // Center items vertically
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
   },
 });
