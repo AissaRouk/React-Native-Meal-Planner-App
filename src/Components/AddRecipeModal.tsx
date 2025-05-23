@@ -560,7 +560,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                 {/* selectedIngredients ScrollView */}
                 {searchResultsVisible && selectedIngredients && (
                   <ScrollView
-                    style={{overflow: 'visible', zIndex: 2}}
+                    style={{zIndex: 2, maxHeight: 350}}
                     nestedScrollEnabled={true}
                     keyboardShouldPersistTaps="handled">
                     {selectedIngredients?.map((instance, index) => (
