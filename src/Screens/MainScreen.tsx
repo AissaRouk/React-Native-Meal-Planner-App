@@ -37,8 +37,6 @@ export default function MainScreen(): React.JSX.Element {
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
   // State to store the fetched weekly meals based on the selected day and meal type
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
-  // State to store the recipes corresponding to the fetched weekly meals
-  const [recipes, setRecipes] = useState<Recipe[]>();
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
   //boolean state to track the completion of the data fetching
@@ -46,7 +44,7 @@ export default function MainScreen(): React.JSX.Element {
 
   //CONTEXT
   // Context state to manage the ingredients
-  const {ingredients, setIngredients} = useAppContext();
+  const {ingredients, setIngredients, recipes, setRecipes} = useAppContext();
 
   // NAVIGATION
   const navigation = useNavigation();
@@ -75,6 +73,7 @@ export default function MainScreen(): React.JSX.Element {
       const fetingredients: Ingredient[] = await initialise();
       setIngredients(fetingredients);
       const fetchedRecipes = await getAllRecipes();
+      setRecipes(fetchedRecipes);
       console.log('fetchedRecipes: ' + JSON.stringify(fetchedRecipes, null, 1));
       setIsFetchFinished(true);
     };
