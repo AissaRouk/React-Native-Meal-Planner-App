@@ -5,12 +5,18 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  View,
 } from 'react-native';
 import {Recipe} from '../Types/Types';
 import {useAppContext} from '../Context/Context';
 import {verifyRecipe} from '../Utils/utils';
-import {greyBorderColor, orangeBackgroundColor} from '../Utils/Styiling';
+import {
+  greyBorderColor,
+  orangeBackgroundColor,
+  screensBackgroundColor,
+} from '../Utils/Styiling';
 import Icon from '@react-native-vector-icons/ionicons';
+import AppHeader from '../Components/AppHeader';
 
 type RecipeScreenProps = {
   route: any;
@@ -59,60 +65,62 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Recipe Details</Text>
+      <View style={{marginBottom: 16}}>
+        <AppHeader title={recipe.name} />
+      </View>
+      <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10}}>
+        {/* Name Field */}
+        <Text style={styles.label}>Nombre</Text>
+        {isEditing ? (
+          <TextInput
+            style={styles.input}
+            value={editableRecipe.name}
+            onChangeText={text => handleChange('name', text)}
+          />
+        ) : (
+          <Text style={styles.value}>{editableRecipe.name}</Text>
+        )}
 
-      {/* Name Field */}
-      <Text style={styles.label}>Nombre</Text>
-      {isEditing ? (
-        <TextInput
-          style={styles.input}
-          value={editableRecipe.name}
-          onChangeText={text => handleChange('name', text)}
-        />
-      ) : (
-        <Text style={styles.value}>{editableRecipe.name}</Text>
-      )}
+        {/* Link Field */}
+        <Text style={styles.label}>Enlace</Text>
+        {isEditing ? (
+          <TextInput
+            style={styles.input}
+            value={editableRecipe.link}
+            onChangeText={text => handleChange('link', text)}
+          />
+        ) : (
+          <Text style={styles.value}>{editableRecipe.link}</Text>
+        )}
 
-      {/* Link Field */}
-      <Text style={styles.label}>Enlace</Text>
-      {isEditing ? (
-        <TextInput
-          style={styles.input}
-          value={editableRecipe.link}
-          onChangeText={text => handleChange('link', text)}
-        />
-      ) : (
-        <Text style={styles.value}>{editableRecipe.link}</Text>
-      )}
+        {/* Preparation Time Field */}
+        <Text style={styles.label}>Tiempo de preparación (min)</Text>
+        {isEditing ? (
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={editableRecipe.preparationTime?.toString() || ''}
+            onChangeText={text => handleChange('preparationTime', text)}
+          />
+        ) : (
+          <Text style={styles.value}>
+            {editableRecipe.preparationTime} minutos
+          </Text>
+        )}
 
-      {/* Preparation Time Field */}
-      <Text style={styles.label}>Tiempo de preparación (min)</Text>
-      {isEditing ? (
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={editableRecipe.preparationTime?.toString() || ''}
-          onChangeText={text => handleChange('preparationTime', text)}
-        />
-      ) : (
-        <Text style={styles.value}>
-          {editableRecipe.preparationTime} minutos
-        </Text>
-      )}
-
-      {/* Serving Size Field */}
-      <Text style={styles.label}>Porciones</Text>
-      {isEditing ? (
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={editableRecipe.servingSize?.toString()}
-          onChangeText={text => handleChange('servingSize', text)}
-        />
-      ) : (
-        <Text style={styles.value}>{editableRecipe.servingSize}</Text>
-      )}
-
+        {/* Serving Size Field */}
+        <Text style={styles.label}>Porciones</Text>
+        {isEditing ? (
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={editableRecipe.servingSize?.toString()}
+            onChangeText={text => handleChange('servingSize', text)}
+          />
+        ) : (
+          <Text style={styles.value}>{editableRecipe.servingSize}</Text>
+        )}
+      </View>
       {/* Save/Edit Toggle Button */}
       <TouchableOpacity
         onPress={isEditing ? handleSave : () => setIsEditing(true)}
@@ -133,8 +141,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: 'white',
-    flex: 1,
+    backgroundColor: screensBackgroundColor,
   },
   header: {
     fontSize: 22,
