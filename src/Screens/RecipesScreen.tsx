@@ -1,6 +1,5 @@
-import {ScrollView, Text, View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import AppHeader from '../Components/AppHeader';
-import {useContext} from 'react';
 import {useAppContext} from '../Context/Context';
 import RecipeCard from '../Components/RecipeCardComponent';
 import {screensBackgroundColor} from '../Utils/Styiling';
