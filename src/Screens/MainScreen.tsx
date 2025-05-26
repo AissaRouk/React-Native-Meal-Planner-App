@@ -68,6 +68,11 @@ export default function MainScreen(): React.JSX.Element {
     setRecipes(fetchedRecipes); // Update the state with fetched recipes
   };
 
+  // Handles the navigation
+  const handleNavigate = () => {
+    (navigation as any).navigate(RecipesScreenName);
+  };
+
   // Runs once when the component is mounted to initialize and populate the database
   useEffect(() => {
     const asyncFunctions = async () => {
@@ -134,7 +139,7 @@ export default function MainScreen(): React.JSX.Element {
         <MealsHeader
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
-          onButtonPress={() => (navigation as any).navigate(RecipesScreenName)}
+          onButtonPress={handleNavigate}
         />
 
         {/* Component to select the meal type */}
