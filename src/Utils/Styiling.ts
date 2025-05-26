@@ -2,6 +2,7 @@ import {ColorValue, StyleSheet} from 'react-native';
 
 export const orangeBackgroundColor: ColorValue = '#fb7945';
 export const greyBorderColor: ColorValue = '#ccc';
+export const screensBackgroundColor: ColorValue = '#fff';
 
 export const genericStyles = StyleSheet.create({
   nameBold: {
