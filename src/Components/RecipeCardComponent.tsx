@@ -1,10 +1,16 @@
 // RecipeCard.tsx
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {Recipe} from '../Types/Types';
 
-const RecipeCard = ({recipe}: {recipe: Recipe}) => (
-  <View style={styles.card}>
+const RecipeCard = ({
+  recipe,
+  onPress,
+}: {
+  recipe: Recipe;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity style={styles.card} onPress={() => onPress()}>
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <Image
         source={require('../Assets/icons/breakfast_icon.png')}
@@ -13,7 +19,7 @@ const RecipeCard = ({recipe}: {recipe: Recipe}) => (
       />
       <Text style={styles.cardTitle}>{recipe.name}</Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
