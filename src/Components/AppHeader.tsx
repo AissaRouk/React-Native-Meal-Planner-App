@@ -21,11 +21,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({title, rightComponent}) => (
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
     paddingTop: 8,
   },
   titleText: {
