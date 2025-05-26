@@ -8,9 +8,9 @@ const RecipeCard = ({
   onPress,
 }: {
   recipe: Recipe;
-  onPress: () => void;
+  onPress?: () => any;
 }) => (
-  <TouchableOpacity style={styles.card} onPress={() => onPress()}>
+  <TouchableOpacity style={styles.card} onPress={() => onPress && onPress()}>
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <Image
         source={require('../Assets/icons/breakfast_icon.png')}
