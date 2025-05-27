@@ -31,7 +31,6 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
 
   /** Indicates whether the user is currently editing the form */
   const [isEditing, setIsEditing] = useState(false);
-
   /** Holds the temporary state of the editable recipe during editing */
   const [editableRecipe, setEditableRecipe] = useState<Recipe>(recipe);
   // Title of the header, it was added so it doesn't change inmediately when editing
@@ -74,7 +73,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       </View>
       <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10}}>
         {/* Name Field */}
-        <Text style={styles.label}>Nombre</Text>
+        <Text style={styles.label}>Name</Text>
         {isEditing ? (
           <TextInput
             style={styles.input}
@@ -86,7 +85,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         )}
 
         {/* Link Field */}
-        <Text style={styles.label}>Enlace</Text>
+        <Text style={styles.label}>Link</Text>
         {isEditing ? (
           <TextInput
             style={styles.input}
@@ -98,7 +97,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         )}
 
         {/* Preparation Time Field */}
-        <Text style={styles.label}>Tiempo de preparación (min)</Text>
+        <Text style={styles.label}>Preparation time (min)</Text>
         {isEditing ? (
           <TextInput
             style={styles.input}
@@ -107,13 +106,11 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
             onChangeText={text => handleChange('preparationTime', text)}
           />
         ) : (
-          <Text style={styles.value}>
-            {editableRecipe.preparationTime} minutos
-          </Text>
+          <Text style={styles.value}>{editableRecipe.preparationTime} min</Text>
         )}
 
         {/* Serving Size Field */}
-        <Text style={styles.label}>Porciones</Text>
+        <Text style={styles.label}>Serving Size</Text>
         {isEditing ? (
           <TextInput
             style={styles.input}
@@ -134,9 +131,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           size={20}
           color="white"
         />
-        <Text style={styles.buttonText}>
-          {isEditing ? 'Guardar' : 'Editar'}
-        </Text>
+        <Text style={styles.buttonText}>{isEditing ? 'Save' : 'Edit'}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
