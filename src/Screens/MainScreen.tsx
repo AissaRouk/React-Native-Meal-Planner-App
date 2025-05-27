@@ -25,7 +25,7 @@ import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
-import {RecipesScreenName} from '../../App';
+import {RecipeScreenName, RecipesScreenName} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
 import {screensBackgroundColor} from '../Utils/Styiling';
 
@@ -154,7 +154,11 @@ export default function MainScreen(): React.JSX.Element {
             <Text>No Recipes Found</Text>
           ) : (
             recipes?.map(recipe => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                onPress={() => (navigation as any).navigate(RecipeScreenName)}
+              />
             ))
           )}
         </ScrollView>

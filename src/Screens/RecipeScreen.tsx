@@ -34,6 +34,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
 
   /** Holds the temporary state of the editable recipe during editing */
   const [editableRecipe, setEditableRecipe] = useState<Recipe>(recipe);
+  // Title of the header, it was added so it doesn't change inmediately when editing
+  const [title, setTitle] = useState(recipe.name);
 
   /**
    * Updates a specific field in the editable recipe state
@@ -59,6 +61,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     if (verifyRecipe(editableRecipe)) {
       // update the recipe
       addOrUpdateRecipe(editableRecipe);
+      // update the title so it changes only when clicking on the button of save
+      setTitle(editableRecipe.name);
       setIsEditing(false);
     }
   };
@@ -66,7 +70,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   return (
     <ScrollView style={styles.container}>
       <View style={{marginBottom: 16}}>
-        <AppHeader title={recipe.name} />
+        <AppHeader title={title} />
       </View>
       <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10}}>
         {/* Name Field */}
