@@ -221,34 +221,49 @@ export const getAllRecipes = async (): Promise<Recipe[]> => {
 /**
  * Function to update an existing recipe
  *
- * @param {Recipe} recipe the recipe that will be updated
+ * @param {Recipe} recipe - The recipe that will be updated
+ * @returns {Promise<boolean>} - True if updated successfully, false otherwise
  */
-export const updateRecipe: (recipe: Recipe) => Promise<void> = async recipe => {
+export const updateRecipe = async (recipe: Recipe): Promise<boolean> => {
   try {
     const db = await getDbConnection();
 
-    const sqlInsert = `UPDATE ${TABLE_RECIPE} SET ${RECIPE_NAME}=?, ${RECIPE_LINK}=?, ${RECIPE_PREP_TIME}=?, ${RECIPE_SERVING_SIZE}=? WHERE ${RECIPE_ID}=?`;
+    const sqlUpdate = `
+      UPDATE ${TABLE_RECIPE}
+      SET ${RECIPE_NAME} = ?, ${RECIPE_LINK} = ?, ${RECIPE_PREP_TIME} = ?, ${RECIPE_SERVING_SIZE} = ?
+      WHERE ${RECIPE_ID} = ?
+    `;
 
-    db.transaction(tx =>
-      tx.executeSql(
-        sqlInsert,
-        [
-          recipe.name,
-          recipe.link,
-          recipe.preparationTime,
-          recipe.servingSize,
-          recipe.id,
-        ],
-        (tx, resultset) => {
-          if (resultset.rowsAffected > 0)
-            console.log('Recipe updated successfully!!');
-          else console.log("couldn't updated Recipe successfully!!");
-        },
-        (tx, error) =>
-          console.log('Error in updating Recipe: ' + JSON.stringify(error)),
-      ),
-    );
+    return await new Promise<boolean>((resolve, reject) => {
+      db.transaction(tx => {
+        tx.executeSql(
+          sqlUpdate,
+          [
+            recipe.name,
+            recipe.link,
+            recipe.preparationTime,
+            recipe.servingSize,
+            recipe.id,
+          ],
+          (tx, resultSet) => {
+            if (resultSet.rowsAffected > 0) {
+              console.log('Recipe updated successfully!');
+              resolve(true);
+            } else {
+              console.warn('No recipe was updated. Check the ID.');
+              resolve(false);
+            }
+          },
+          (tx, error) => {
+            console.error('SQL update error:', error);
+            reject(error);
+            return true; // Required to signal error was handled
+          },
+        );
+      });
+    });
   } catch (error) {
+    console.error('Error in updateRecipe:', error);
     throw new Error('Error while updating recipe: ' + error);
   }
 };
