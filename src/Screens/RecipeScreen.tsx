@@ -71,6 +71,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       <View style={{marginBottom: 16}}>
         <AppHeader title={title} />
       </View>
+      {/* Main View with Recipe details for viewing/editing */}
       <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10}}>
         {/* Name Field */}
         <Text style={styles.label}>Name</Text>
