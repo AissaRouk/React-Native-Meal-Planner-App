@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Ingredient, Recipe} from '../Types/Types';
+import {updateRecipe} from '../Services/recipe-db-services';
 
 // Define the shape of the context
 type ContextProps = {
@@ -32,6 +33,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
+  useEffect(() => {
+    console.log('Context-> recipes: ' + JSON.stringify(recipes));
+  }, [recipes]);
+
   // Adds or updates ingredient
   const addOrUpdateIngredient = (newIngredient: Ingredient) => {
     setIngredients(prev => {
@@ -51,19 +56,24 @@ export const AppProvider = ({children}: AppProviderProps) => {
   };
 
   // Adds or updates recipe
-  const addOrUpdateRecipe = (newRecipe: Recipe) => {
-    setRecipes(prev => {
-      const index = prev.findIndex(r => r.id === newRecipe.id);
-      if (index !== -1) {
-        const updated = [...prev];
-        updated[index] = newRecipe;
-        console.log('updated the recipe: ' + JSON.stringify(newRecipe));
-        return updated;
-      } else {
-        console.log('added the recipe: ' + JSON.stringify(newRecipe));
-        return [...prev, newRecipe];
-      }
-    });
+  const addOrUpdateRecipe = async (newRecipe: Recipe) => {
+    const response: boolean = await updateRecipe(newRecipe);
+    if (response) {
+      setRecipes(prev => {
+        const index = prev.findIndex(r => r.id === newRecipe.id);
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = newRecipe;
+          // optional
+          console.log('updated the recipe: ' + JSON.stringify(newRecipe));
+          return updated;
+        } else {
+          // optional
+          console.log('added the recipe: ' + JSON.stringify(newRecipe));
+          return [...prev, newRecipe];
+        }
+      });
+    }
   };
 
   return (
