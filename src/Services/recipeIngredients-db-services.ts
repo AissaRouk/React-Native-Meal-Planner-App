@@ -215,7 +215,9 @@ export const addRecipeIngredientMultiple = async (
  * @function getRecipeIngredients
  * @returns {Promise<RecipeIngredient[]>} Resolves with an array of RecipeIngredient objects.
  */
-export const getRecipeIngredients = async (): Promise<RecipeIngredient[]> => {
+export const getAllRecipeIngredients = async (): Promise<
+  RecipeIngredient[]
+> => {
   try {
     const db = await getDbConnection();
     const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS}`;
@@ -235,6 +237,39 @@ export const getRecipeIngredients = async (): Promise<RecipeIngredient[]> => {
   } catch (error) {
     console.error('getRecipeIngredients -> Transaction failed:', error);
     throw new Error(`getRecipeIngredients: ${error}`);
+  }
+};
+
+/**
+ * Function to get all the ingredients of a specific recipe
+ * @param recipeId the id of the recipe
+ * @returns an array with all the RecipeIngredients, each one contains the ingredient of a Recipe
+ */
+export const getIngredientsFromRecipeId = async (
+  recipeId: number,
+): Promise<RecipeIngredient[]> => {
+  try {
+    const result: RecipeIngredient[] = [];
+
+    if (recipeId < 0) {
+      throw new Error("The recipeId's value is incorrect");
+    }
+    const db = await getDbConnection();
+    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_ID} = ?`;
+
+    await db.transaction(tx =>
+      tx.executeSql(sqlInsert, [recipeId], (tx, resultSet) => {
+        const len = resultSet.rows.length;
+        for (let i = 0; i < len; i++) {
+          const row = resultSet.rows.item(i);
+          result.push(row);
+        }
+      }),
+    );
+    return result;
+  } catch (error) {
+    console.error('getIngredientsFromRecipeId -> Transaction failed:', error);
+    throw new Error(`getIngredientsFromRecipeId: ${error}`);
   }
 };
 
