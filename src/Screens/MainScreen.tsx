@@ -99,7 +99,7 @@ export default function MainScreen(): React.JSX.Element {
 
   // Fetches the weekly meals whenever the selected day or meal type changes
   useEffect(() => {
-    if (selectedDay && selectedMeal) {
+    if (selectedDay && selectedMeal && isFetchFinished == true) {
       const fetchData = async () => {
         try {
           setRecipes([]); // Clear previous recipes to avoid stale data
