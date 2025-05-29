@@ -18,6 +18,7 @@ import {
 import Icon from '@react-native-vector-icons/ionicons';
 import AppHeader from '../Components/AppHeader';
 import {IngredientCard} from '../Components/IngredientCard';
+import {IngredientComponent} from '../Components/IngredientComponent';
 
 type RecipeScreenProps = {
   route: any;
@@ -36,8 +37,10 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const [editableRecipe, setEditableRecipe] = useState<Recipe>(recipe);
   // Title of the header, it was added so it doesn't change inmediately when editing
   const [title, setTitle] = useState(recipe.name);
-  // Ingredients of the Recipe
-  const [ingredients, setIngredients] = useState<
+  /**
+   * recipeIngredients the ingredients of the recipe with the quantity and the quantityType
+   */
+  const [recipeIngredients, setRecipeIngredients] = useState<
     (Ingredient & {quantity: number; quantityType: QuantityType})[]
   >([]);
 
@@ -71,10 +74,35 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     }
   };
 
+  /**
+   * Handle when the changes of the states of a RecipeIngredient
+   */
+  const handleRecipeIngredientChange = async (
+    id: number,
+    field: 'quantity' | 'quantityType',
+    value: string | number,
+  ) => {
+    // Check if id is correct number
+    console.log('REcipeScreen.handleRecipeIngredientChange -> ' + value);
+    if (id >= 0) {
+      // search for the recipeIngredient
+      const index: number = recipeIngredients.findIndex(
+        instance => instance.id == id,
+      );
+      if (index != -1) {
+        const newRecipeIngredients = recipeIngredients;
+        if (field == 'quantity')
+          newRecipeIngredients[index].quantity = Number(value);
+        else newRecipeIngredients[index].quantityType = value as QuantityType;
+        setRecipeIngredients(newRecipeIngredients);
+      }
+    }
+  };
+
   // Fetch the ingredients of the recipe
   useEffect(() => {
     const asyncFunctions = async () => {
-      setIngredients(await getIngredientsOfRecipe(recipe.id));
+      setRecipeIngredients(await getIngredientsOfRecipe(recipe.id));
     };
 
     asyncFunctions();
@@ -138,17 +166,46 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           <Text style={styles.value}>{editableRecipe.servingSize}</Text>
         )}
       </View>
+
+      <Text style={styles.ingredientsHeader}>Ingredients:</Text>
+      {/* ScrollView with all the ingredients of the Recipe */}
       <ScrollView>
-        {ingredients.map((ingredients, index) => (
-          <IngredientCard
-            id={ingredients.id}
-            name={ingredients.name}
-            category={ingredients.category}
-            quantity={ingredients.quantity}
-            quantityType={ingredients.quantityType}
-            key={index}
-          />
-        ))}
+        {!isEditing
+          ? recipeIngredients.map((ingredients, index) => (
+              <IngredientCard
+                id={ingredients.id}
+                name={ingredients.name}
+                category={ingredients.category}
+                quantity={ingredients.quantity}
+                quantityType={ingredients.quantityType}
+                key={index}
+              />
+            ))
+          : recipeIngredients.map((ingredient, index) => (
+              <IngredientComponent
+                key={index}
+                ingredients={recipeIngredients}
+                id={ingredient.id}
+                number={index}
+                quantity={ingredient.quantity}
+                quantityType={ingredient.quantityType}
+                setQuantity={quantity =>
+                  handleRecipeIngredientChange(
+                    ingredient.id,
+                    'quantity',
+                    quantity,
+                  )
+                }
+                setQuantityType={quantityType =>
+                  handleRecipeIngredientChange(
+                    ingredient.id,
+                    'quantityType',
+                    quantityType,
+                  )
+                }
+                onDelete={() => {}}
+              />
+            ))}
       </ScrollView>
       {/* Save/Edit Toggle Button */}
       <TouchableOpacity
