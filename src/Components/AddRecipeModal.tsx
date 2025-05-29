@@ -104,13 +104,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
 
   // useEffect to add the data only once
   useEffect(() => {
-    if (ingredients.length > 0 && !fieldsAdded) {
-      minisearchRef.current?.addAll(ingredients);
-      setFieldsAdded(true);
-      console.log(
-        'UseEffect: ingredients added to the minisearch',
-        ingredients,
-      );
+    if (ingredients.length > 0) {
+      if (!fieldsAdded) {
+        minisearchRef.current?.addAll(ingredients);
+        setFieldsAdded(true);
+      }
+      // optional
+      else {
+        minisearchRef.current?.removeAll();
+        minisearchRef.current?.addAll(ingredients);
+        console.log(
+          'UseEffect: ingredients added to the minisearch',
+          ingredients,
+        );
+      }
       // console.log('UseEffect: indexed data: ', minisearchRef.current);
     } else {
       console.log('UseEffect: ingredients array is empty');
