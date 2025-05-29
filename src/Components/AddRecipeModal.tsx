@@ -593,8 +593,15 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                         number={index}
                         quantity={instance.quantity}
                         quantityType={instance.quantityType}
-                        setQuantity={setQuantityOfSelectedIngredient}
-                        setQuantityType={setQuantityTypeOfSelectedIngredient}
+                        setQuantity={number =>
+                          setQuantityOfSelectedIngredient(instance.id, number)
+                        }
+                        setQuantityType={quantityType =>
+                          setQuantityTypeOfSelectedIngredient(
+                            instance.id,
+                            quantityType,
+                          )
+                        }
                         onDelete={hanldeDeleteIngredient}
                       />
                     ))}
