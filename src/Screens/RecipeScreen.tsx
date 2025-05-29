@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   TextInput,
@@ -7,7 +7,7 @@ import {
   ScrollView,
   View,
 } from 'react-native';
-import {Recipe} from '../Types/Types';
+import {Ingredient, QuantityType, Recipe} from '../Types/Types';
 import {useAppContext} from '../Context/Context';
 import {verifyRecipe} from '../Utils/utils';
 import {
@@ -17,6 +17,7 @@ import {
 } from '../Utils/Styiling';
 import Icon from '@react-native-vector-icons/ionicons';
 import AppHeader from '../Components/AppHeader';
+import {IngredientCard} from '../Components/IngredientCard';
 
 type RecipeScreenProps = {
   route: any;
@@ -27,7 +28,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const recipe: Recipe = route.params.recipe;
 
   /** Global context access for managing recipe list */
-  const {addOrUpdateRecipe} = useAppContext();
+  const {addOrUpdateRecipe, getIngredientsOfRecipe} = useAppContext();
 
   /** Indicates whether the user is currently editing the form */
   const [isEditing, setIsEditing] = useState(false);
@@ -35,6 +36,10 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const [editableRecipe, setEditableRecipe] = useState<Recipe>(recipe);
   // Title of the header, it was added so it doesn't change inmediately when editing
   const [title, setTitle] = useState(recipe.name);
+  // Ingredients of the Recipe
+  const [ingredients, setIngredients] = useState<
+    (Ingredient & {quantity: number; quantityType: QuantityType})[]
+  >([]);
 
   /**
    * Updates a specific field in the editable recipe state
@@ -65,6 +70,15 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       setIsEditing(false);
     }
   };
+
+  // Fetch the ingredients of the recipe
+  useEffect(() => {
+    const asyncFunctions = async () => {
+      setIngredients(await getIngredientsOfRecipe(recipe.id));
+    };
+
+    asyncFunctions();
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -123,6 +137,18 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           <Text style={styles.value}>{editableRecipe.servingSize}</Text>
         )}
       </View>
+      <ScrollView>
+        {ingredients.map((ingredients, index) => (
+          <IngredientCard
+            id={ingredients.id}
+            name={ingredients.name}
+            category={ingredients.category}
+            quantity={ingredients.quantity}
+            quantityType={ingredients.quantityType}
+            key={index}
+          />
+        ))}
+      </ScrollView>
       {/* Save/Edit Toggle Button */}
       <TouchableOpacity
         onPress={isEditing ? handleSave : () => setIsEditing(true)}
