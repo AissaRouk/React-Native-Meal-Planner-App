@@ -22,7 +22,25 @@ type IngredientComponentProps = {
   setQuantityType: (id: number, quantityType: QuantityType) => void; // Function to update the quantity type
   onDelete: (id: number) => void; // Function that handles the deletion of the ingredient
 };
-
+/**
+ * IngredientComponent renders a UI element for managing an individual ingredient
+ * in a recipe. It allows users to:
+ * - View the ingredient's name
+ * - Adjust its quantity using + / - buttons or by typing a number
+ * - Select a unit (e.g., grams, pieces) using a custom picker
+ * - Remove the ingredient from the list
+ *
+ * @param {Ingredient[]} ingredients - List of all available ingredients (used to resolve the name)
+ * @param {number} id - Unique identifier for the specific ingredient this component represents
+ * @param {number} quantity - Current quantity value of the ingredient
+ * @param {QuantityType} quantityType - Unit of measurement for the ingredient (e.g., grams, ml)
+ * @param {number} number - The index of the component in the list, used for zIndex styling
+ * @param {(id: number, quantity: number) => void} setQuantity - Function to update the quantity for the ingredient
+ * @param {(id: number, quantityType: QuantityType) => void} setQuantityType - Function to update the unit type for the ingredient
+ * @param {(id: number) => void} onDelete - Function to handle removal of the ingredient from the list
+ *
+ * @returns {JSX.Element} A visual representation of the ingredient with editable fields
+ */
 export function IngredientComponent({
   ingredients,
   id,
