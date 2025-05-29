@@ -9,7 +9,11 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {Ingredient, QuantityType} from '../Types/Types';
+import {
+  Ingredient,
+  QuantityType,
+  RecipeWithoutId,
+} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
@@ -92,7 +96,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   }
 
   // Context state to manage the ingredients
-  const {ingredients, setIngredients} = useAppContext();
+  const {ingredients, setIngredients, setRecipes} = useAppContext();
 
   //
   // USE EFFECTS
@@ -161,12 +165,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       return;
     }
 
-    const response = await addRecipe({
+    const newRecipe: RecipeWithoutId = {
       name: name,
       link: link,
       preparationTime: Number(prepTime),
       servingSize: Number(servings),
-    });
+    };
+
+    const response = await addRecipe(newRecipe);
 
     if (response.created && response.insertedId) {
       console.log('Recipe created successfully');
@@ -174,9 +180,22 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
         response.insertedId,
         selectedIngredients,
       );
+      if (recipeIngredientsResponse.created) {
+        console.log(
+          'AddRecipemodal -> all the ingredients of the recipe ' +
+            name +
+            ' were added successfully',
+        );
+        if (response.insertedId) {
+          setRecipes(prev => [
+            ...prev,
+            {id: response.insertedId!, ...newRecipe},
+          ]);
+        }
+      }
     }
 
-    // handleOnClose();
+    handleOnClose();
   };
 
   //Function to handle the close button of the AddRecipeModal
