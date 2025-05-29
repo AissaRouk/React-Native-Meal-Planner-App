@@ -85,8 +85,9 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       <View style={{marginBottom: 16}}>
         <AppHeader title={title} />
       </View>
+
       {/* Main View with Recipe details for viewing/editing */}
-      <View style={{flex: 1, justifyContent: 'center', paddingLeft: 10}}>
+      <View style={{flex: 1, justifyContent: 'center'}}>
         {/* Name Field */}
         <Text style={styles.label}>Name</Text>
         {isEditing ? (
@@ -208,6 +209,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  ingredientsHeader: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#444',
+    marginTop: 15,
   },
 });
 
