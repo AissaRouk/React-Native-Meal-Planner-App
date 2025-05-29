@@ -18,8 +18,8 @@ type IngredientComponentProps = {
   quantity: number; // Current quantity of the ingredient
   quantityType: QuantityType; // Unit of measurement for the quantity
   number: number; // The key of the component, only used for styling purposes
-  setQuantity: (id: number, quantity: number) => void; // Function to update the quantity
-  setQuantityType: (id: number, quantityType: QuantityType) => void; // Function to update the quantity type
+  setQuantity: (quantity: number) => void; // Function to update the quantity
+  setQuantityType: (quantityType: QuantityType) => void; // Function to update the quantity type
   onDelete: (id: number) => void; // Function that handles the deletion of the ingredient
 };
 /**
@@ -35,8 +35,8 @@ type IngredientComponentProps = {
  * @param {number} quantity - Current quantity value of the ingredient
  * @param {QuantityType} quantityType - Unit of measurement for the ingredient (e.g., grams, ml)
  * @param {number} number - The index of the component in the list, used for zIndex styling
- * @param {(id: number, quantity: number) => void} setQuantity - Function to update the quantity for the ingredient
- * @param {(id: number, quantityType: QuantityType) => void} setQuantityType - Function to update the unit type for the ingredient
+ * @param {quantity: number => void} setQuantity - Function to update the quantity for the ingredient
+ * @param {( quantityType: QuantityType) => void} setQuantityType - Function to update the unit type for the ingredient
  * @param {(id: number) => void} onDelete - Function to handle removal of the ingredient from the list
  *
  * @returns {JSX.Element} A visual representation of the ingredient with editable fields
@@ -74,7 +74,7 @@ export function IngredientComponent({
   const handleBlur = (): void => {
     const numericValue = parseFloat(textValue); // Convert the text to a number
     if (!isNaN(numericValue)) {
-      setQuantity(id, numericValue); // Update the quantity if the value is valid
+      setQuantity(numericValue); // Update the quantity if the value is valid
     } else {
       setTextValue(quantity.toString()); // Reset the input if the value is invalid
     }
@@ -100,8 +100,9 @@ export function IngredientComponent({
             color="black"
             style={{marginHorizontal: 6}}
             onPress={() => {
-              setQuantity(id, Math.max(0, quantity - 1));
-              setTextValue(Math.max(0, quantity - 1).toString());
+              const newValue = Math.max(0, parseFloat(textValue) || 0) - 1;
+              setQuantity(newValue);
+              setTextValue(newValue.toString());
             }}
           />
           <TextInput
@@ -117,8 +118,9 @@ export function IngredientComponent({
             color="black"
             style={{marginHorizontal: 6}}
             onPress={() => {
-              setQuantity(id, quantity + 1);
-              setTextValue((quantity + 1).toString());
+              const newValue = Math.max(0, parseFloat(textValue) || 0) + 1;
+              setQuantity(newValue);
+              setTextValue(newValue.toString());
             }}
           />
         </View>
@@ -128,7 +130,7 @@ export function IngredientComponent({
             setIsPickerOpen={setPickerOpen}
             quantityType={quantityType}
             setQuantityType={(newType: QuantityType) => {
-              setQuantityType(id, newType);
+              setQuantityType(newType);
             }}
             options={quantityTypes}
           />
@@ -155,14 +157,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
   },
-  ingredientNameContainer: {
-    width: '100%',
-    marginBottom: 8,
-  },
+  ingredientNameContainer: {},
   ingredientText: {
     fontSize: 16,
     color: 'black',
     fontWeight: '500',
+    width: '100%',
+    marginBottom: 8,
   },
   controlsRow: {
     flexDirection: 'row',
