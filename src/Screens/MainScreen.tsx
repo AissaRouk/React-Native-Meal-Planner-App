@@ -157,7 +157,11 @@ export default function MainScreen(): React.JSX.Element {
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
-                onPress={() => (navigation as any).navigate(RecipeScreenName)}
+                onPress={() =>
+                  (navigation as any).navigate(RecipeScreenName, {
+                    recipe: recipe,
+                  })
+                }
               />
             ))
           )}
