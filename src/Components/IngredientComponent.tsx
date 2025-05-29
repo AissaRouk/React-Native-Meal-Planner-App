@@ -83,22 +83,13 @@ export function IngredientComponent({
   return (
     <View style={[styles.ingredientView, {zIndex: 100 - number}]}>
       {/* Ingredient name on top */}
-      <TouchableOpacity
-        style={styles.ingredientNameContainer}
-        onPress={() => {
-          const name = ingredients.find(
-            ingredient => ingredient.id === id,
-          )?.name;
-          if (name) Alert.alert('Ingredient', name);
-        }}
-        activeOpacity={0.7}>
-        <Text
-          style={styles.ingredientText}
-          numberOfLines={1}
-          ellipsizeMode="tail">
-          {ingredients.find(ingredient => ingredient.id === id)?.name}
-        </Text>
-      </TouchableOpacity>
+
+      <Text
+        style={styles.ingredientText}
+        numberOfLines={1}
+        ellipsizeMode="tail">
+        {ingredients.find(ingredient => ingredient.id === id)?.name}
+      </Text>
 
       {/* Controls below */}
       <View style={styles.controlsRow}>
