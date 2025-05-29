@@ -9,11 +9,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import {
-  Ingredient,
-  QuantityType,
-  RecipeWithoutId,
-} from '../Types/Types';
+import {Ingredient, QuantityType, RecipeWithoutId} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
@@ -29,6 +25,7 @@ import {
   addIngredient,
   getIngredientById,
 } from '../Services/ingredient-db-services';
+import {IngredientCard} from './IngredientCard';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -248,7 +245,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     ) {
       Alert.alert(
         'Validation Error',
-        'All ingredients must have a quantity higher than 0.',
+        selectedIngredients.length == 0
+          ? 'You must select at least one ingredient'
+          : 'All ingredients must have a quantity higher than 0.',
       );
       console.log('validateStep: ' + false);
       return false; // Prevents moving to the next step
@@ -881,21 +880,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 10,
   },
-  ingredientRow: {
-    flexDirection: 'row',
-    marginBottom: 5,
-  },
-  ingredientName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginRight: 10,
-  },
-  ingredientDetails: {
-    fontSize: 16,
-    color: '#555',
-  },
-
   //generic
   greyBorder: {
     borderWidth: 1,
