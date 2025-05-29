@@ -692,14 +692,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                   {/* List all added ingredients */}
                   {selectedIngredients.length > 0 &&
                     selectedIngredients.map((ingredient, index) => (
-                      <View style={styles.ingredientRow} key={index}>
-                        <Text style={styles.ingredientName}>
-                          - {ingredient.name}
-                        </Text>
-                        <Text style={styles.ingredientDetails}>
-                          {ingredient.quantity} {ingredient.quantityType}
-                        </Text>
-                      </View>
+                      <IngredientCard
+                        key={index}
+                        id={ingredient.id}
+                        name={ingredient.name}
+                        category={ingredient.category}
+                        quantity={ingredient.quantity}
+                        quantityType={ingredient.quantityType}
+                      />
                     ))}
                 </View>
               </View>
