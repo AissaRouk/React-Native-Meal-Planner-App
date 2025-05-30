@@ -76,6 +76,67 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
   };
 
+  // Get ingredients of a recipe
+  const getIngredientsOfRecipe = async (recipeId: number) => {
+    const result: Array<
+      Ingredient & {
+        quantity: number;
+        quantityType: QuantityType;
+      }
+    > = [];
+
+    if (recipeId < 0) throw new Error('recipeId value invalid');
+
+    const rows = await getIngredientsFromRecipeId(recipeId);
+
+    if (rows.length === 0) {
+      Alert.alert("The selected recipe doesn't contain any ingredients");
+      return result;
+    }
+
+    for (const ri of rows) {
+      // 👇 match on ingredientId, not recipeId
+      const idx = ingredients.findIndex(i => i.id === ri.ingredientId);
+      if (idx === -1) {
+        console.warn(`Ingredient ${ri.ingredientId} not found in context`);
+        continue; // or throw
+      }
+
+      const ing = ingredients[idx];
+      result.push({
+        ...ing,
+        quantity: ri.quantity,
+        quantityType: ri.quantityType,
+      });
+    }
+
+    return result;
+  };
+
+  const updateRecipeIngredient = async (
+    recipeId: number,
+    ingredient: Ingredient,
+    quantity: number,
+    quantityType: QuantityType,
+  ) => {
+    //function that given a recipeId and one ingredient, it updates the recipeIngredient of both
+    const response: number = await getIdFromRecipeId(recipeId);
+    if (response >= 0) {
+      await updateRecipeIngredient(
+        recipeId,
+        ingredient,
+        quantity,
+        quantityType,
+      ).then(() => {
+        console.log(
+          'context.updateRecipeIngredient -> recipeIngredient updated',
+        );
+      });
+    } else {
+      throw new Error('context.updateRecipeIngredient -> Something went wrong');
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
