@@ -19,6 +19,10 @@ import Icon from '@react-native-vector-icons/ionicons';
 import AppHeader from '../Components/AppHeader';
 import {IngredientCard} from '../Components/IngredientCard';
 import {IngredientComponent} from '../Components/IngredientComponent';
+import {
+  getIdFromRecipeId,
+  updateRecipeIngredient,
+} from '../Services/recipeIngredients-db-services';
 
 type RecipeScreenProps = {
   route: any;
@@ -104,7 +108,15 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         // if it's the quantityType
         else newRecipeIngredients[index].quantityType = value as QuantityType;
         // save the changes
-        setRecipeIngredients(newRecipeIngredients);
+        const instance = newRecipeIngredients[index];
+        const recipeIngredientId: number = await getIdFromRecipeId(recipe.id);
+        await updateRecipeIngredient({
+          id: recipeIngredientId,
+          ingredientId: id,
+          quantity: instance.quantity,
+          quantityType: instance.quantityType,
+          recipeId: recipe.id,
+        }).then(() => setRecipeIngredients(newRecipeIngredients));
         // save that a change has been done
         setChanged(true);
       }
