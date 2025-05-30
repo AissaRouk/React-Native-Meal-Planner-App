@@ -19,10 +19,6 @@ import Icon from '@react-native-vector-icons/ionicons';
 import AppHeader from '../Components/AppHeader';
 import {IngredientCard} from '../Components/IngredientCard';
 import {IngredientComponent} from '../Components/IngredientComponent';
-import {
-  getIdFromRecipeId,
-  updateRecipeIngredient,
-} from '../Services/recipeIngredients-db-services';
 
 type RecipeScreenProps = {
   route: any;
@@ -33,7 +29,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const recipe: Recipe = route.params.recipe;
 
   /** Global context access for managing recipe list */
-  const {addOrUpdateRecipe, getIngredientsOfRecipe} = useAppContext();
+  const {addOrUpdateRecipe, getIngredientsOfRecipe, updateRecipeIngredient} =
+    useAppContext();
 
   /** Indicates whether the user is currently editing the form */
   const [isEditing, setIsEditing] = useState(false);
@@ -108,17 +105,15 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         // if it's the quantityType
         else newRecipeIngredients[index].quantityType = value as QuantityType;
         // save the changes
+        // created an instance for better legibility
         const instance = newRecipeIngredients[index];
-        const recipeIngredientId: number = await getIdFromRecipeId(recipe.id);
-        await updateRecipeIngredient({
-          id: recipeIngredientId,
-          ingredientId: id,
-          quantity: instance.quantity,
-          quantityType: instance.quantityType,
-          recipeId: recipe.id,
-        }).then(() => setRecipeIngredients(newRecipeIngredients));
-        // save that a change has been done
-        setChanged(true);
+        // updating the recipeIngredient
+        updateRecipeIngredient(
+          recipe.id,
+          instance,
+          instance.quantity,
+          instance.quantityType,
+        );
       }
     }
   };
