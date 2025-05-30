@@ -1,6 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Ingredient, Recipe} from '../Types/Types';
+import {Ingredient, QuantityType, Recipe} from '../Types/Types';
 import {updateRecipe} from '../Services/recipe-db-services';
+import {
+  getIdFromRecipeId,
+  getIngredientsFromRecipeId,
+  updateRecipeIngredientDb,
+} from '../Services/recipeIngredients-db-services';
+import {Alert} from 'react-native';
+import {addIngredient} from '../Services/ingredient-db-services';
 
 // Define the shape of the context
 type ContextProps = {
@@ -11,6 +18,15 @@ type ContextProps = {
   recipes: Recipe[];
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
   addOrUpdateRecipe: (recipe: Recipe) => void;
+  getIngredientsOfRecipe: (
+    recipeId: number,
+  ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
+  updateRecipeIngredient: (
+    recipeId: number,
+    ingredient: Ingredient,
+    quantity: number,
+    quantityType: QuantityType,
+  ) => void;
 };
 
 type AppProviderProps = {
@@ -26,6 +42,8 @@ const AppContext = React.createContext<ContextProps>({
   recipes: [],
   setRecipes: () => {},
   addOrUpdateRecipe: () => {},
+  getIngredientsOfRecipe: async () => [],
+  updateRecipeIngredient: async () => {},
 });
 
 // Create the provider component
@@ -43,14 +61,24 @@ export const AppProvider = ({children}: AppProviderProps) => {
       const index = prev.findIndex(i => i.id === newIngredient.id);
       if (index !== -1) {
         // update
+
         const updated = [...prev];
         updated[index] = newIngredient;
+
         console.log('updated the ingredient: ' + JSON.stringify(newIngredient));
         return updated;
       } else {
         // add
-        console.log('added the ingredient: ' + JSON.stringify(newIngredient));
-        return [...prev, newIngredient];
+        async () => {
+          const response = await addIngredient(newIngredient);
+          if (response.created) {
+            console.log(
+              'added the ingredient: ' + JSON.stringify(newIngredient),
+            );
+            return [...prev, newIngredient];
+          }
+        };
+        return [...prev];
       }
     });
   };
@@ -119,21 +147,25 @@ export const AppProvider = ({children}: AppProviderProps) => {
     quantity: number,
     quantityType: QuantityType,
   ) => {
-    //function that given a recipeId and one ingredient, it updates the recipeIngredient of both
-    const response: number = await getIdFromRecipeId(recipeId);
-    if (response >= 0) {
-      await updateRecipeIngredient(
-        recipeId,
-        ingredient,
-        quantity,
-        quantityType,
-      ).then(() => {
-        console.log(
-          'context.updateRecipeIngredient -> recipeIngredient updated',
-        );
-      });
-    } else {
-      throw new Error('context.updateRecipeIngredient -> Something went wrong');
+    try {
+      //function that given a recipeId and one ingredient, it updates the recipeIngredient of both
+      const recipeIngredientId: number = await getIdFromRecipeId(recipeId);
+      console.log('updating this recipeIngredient: ' + recipeIngredientId);
+      if (recipeIngredientId >= 0) {
+        await updateRecipeIngredientDb({
+          id: recipeIngredientId,
+          recipeId,
+          ingredientId: ingredient.id,
+          quantity,
+          quantityType,
+        }).then(() => {
+          console.log(
+            'context.updateRecipeIngredient -> recipeIngredient updated',
+          );
+        });
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -146,6 +178,8 @@ export const AppProvider = ({children}: AppProviderProps) => {
         recipes,
         setRecipes,
         addOrUpdateRecipe,
+        getIngredientsOfRecipe,
+        updateRecipeIngredient,
       }}>
       {children}
     </AppContext.Provider>
