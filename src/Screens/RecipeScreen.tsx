@@ -37,6 +37,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const [editableRecipe, setEditableRecipe] = useState<Recipe>(recipe);
   // Title of the header, it was added so it doesn't change inmediately when editing
   const [title, setTitle] = useState(recipe.name);
+  // Boolean to record if there were some changes made in the recipe
+  const [changed, setChanged] = useState<boolean>(false);
   /**
    * recipeIngredients the ingredients of the recipe with the quantity and the quantityType
    */
@@ -57,6 +59,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           ? Number(value)
           : value,
     }));
+    setChanged(true);
   };
 
   /**
@@ -65,13 +68,14 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
    */
   const handleSave = () => {
     // verify the recipe is correct
-    if (verifyRecipe(editableRecipe)) {
+    if (verifyRecipe(editableRecipe) && changed) {
+      console.log('uploading recipe and recipeIngredient');
       // update the recipe
       addOrUpdateRecipe(editableRecipe);
       // update the title so it changes only when clicking on the button of save
       setTitle(editableRecipe.name);
-      setIsEditing(false);
     }
+    setIsEditing(false);
   };
 
   /**
@@ -89,15 +93,28 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       const index: number = recipeIngredients.findIndex(
         instance => instance.id == id,
       );
+      // If the ingredient was found
       if (index != -1) {
+        // get the array
         const newRecipeIngredients = recipeIngredients;
+        // if the quantity is modifies
         if (field == 'quantity')
+          // add it
           newRecipeIngredients[index].quantity = Number(value);
+        // if it's the quantityType
         else newRecipeIngredients[index].quantityType = value as QuantityType;
+        // save the changes
         setRecipeIngredients(newRecipeIngredients);
+        // save that a change has been done
+        setChanged(true);
       }
     }
   };
+
+  /**
+   * Handle when an ingredient is deleted
+   */
+  const handleDeleteIngredient = (id: number) => {};
 
   // Fetch the ingredients of the recipe
   useEffect(() => {
