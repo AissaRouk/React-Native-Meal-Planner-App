@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Ingredient, QuantityType, Recipe} from '../Types/Types';
+import {
+  Ingredient,
+  QuantityType,
+  Recipe,
+  RecipeIngredientWithoutId,
+} from '../Types/Types';
 import {updateRecipe} from '../Services/recipe-db-services';
 import {
   getIdFromRecipeId,
@@ -22,10 +27,7 @@ type ContextProps = {
     recipeId: number,
   ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
   updateRecipeIngredient: (
-    recipeId: number,
-    ingredient: Ingredient,
-    quantity: number,
-    quantityType: QuantityType,
+    newRecipeIngredient: RecipeIngredientWithoutId,
   ) => void;
 };
 
@@ -141,23 +143,26 @@ export const AppProvider = ({children}: AppProviderProps) => {
     return result;
   };
 
+  /**
+   * function that given the
+   * @param recipeId
+   * @param ingredient
+   * @param quantity
+   * @param quantityType
+   */
   const updateRecipeIngredient = async (
-    recipeId: number,
-    ingredient: Ingredient,
-    quantity: number,
-    quantityType: QuantityType,
+    newRecipeIngredient: RecipeIngredientWithoutId,
   ) => {
     try {
       //function that given a recipeId and one ingredient, it updates the recipeIngredient of both
-      const recipeIngredientId: number = await getIdFromRecipeId(recipeId);
+      const recipeIngredientId: number = await getIdFromRecipeId(
+        newRecipeIngredient.recipeId,
+      );
       console.log('updating this recipeIngredient: ' + recipeIngredientId);
       if (recipeIngredientId >= 0) {
         await updateRecipeIngredientDb({
           id: recipeIngredientId,
-          recipeId,
-          ingredientId: ingredient.id,
-          quantity,
-          quantityType,
+          ...newRecipeIngredient,
         }).then(() => {
           console.log(
             'context.updateRecipeIngredient -> recipeIngredient updated',
