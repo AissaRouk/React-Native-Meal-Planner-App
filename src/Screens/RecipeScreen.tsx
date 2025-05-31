@@ -157,7 +157,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         {isEditing ? (
           <TextInput
             style={styles.input}
-            value={editableRecipe.link}
+            value={editableRecipe.link || '-'}
             onChangeText={text => handleChange('link', text)}
           />
         ) : (
@@ -170,7 +170,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           <TextInput
             style={styles.input}
             keyboardType="numeric"
-            value={editableRecipe.preparationTime?.toString() || ''}
+            value={editableRecipe.preparationTime?.toString() || '-'}
             onChangeText={text => handleChange('preparationTime', text)}
           />
         ) : (
