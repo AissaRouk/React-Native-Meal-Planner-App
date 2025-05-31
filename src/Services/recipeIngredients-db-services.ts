@@ -242,6 +242,58 @@ export const getIdFromRecipeId = async (recipeId: number): Promise<number> => {
 };
 
 /**
+ * Function that gets the RecipeIngredient ID from both recipeId and ingredientId
+ * @param {number} recipeId - The ID of the recipe
+ * @param {number} ingredientId - The ID of the ingredient
+ * @returns {Promise<number>} - Returns the ID of the matching RecipeIngredient, or -1 if not found
+ */
+export const getIdFromRecipeIdAndIngredientId = async (
+  recipeId: number,
+  ingredientId: number,
+): Promise<number> => {
+  try {
+    let response = -1;
+    const db = await getDbConnection();
+    const sqlQuery = `
+      SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} 
+      WHERE ${RECIPE_ID} = ? AND ${INGREDIENT_ID} = ?
+    `;
+
+    await db.transaction(tx => {
+      tx.executeSql(
+        sqlQuery,
+        [recipeId, ingredientId],
+        (tx, resultSet) => {
+          if (resultSet.rows.length > 0) {
+            const result: RecipeIngredient = resultSet.rows.item(0);
+            console.log(
+              'getIdFromRecipeIdAndIngredientId -> Found RecipeIngredient ID:',
+              result.id,
+            );
+            response = result.id;
+          } else {
+            console.log(
+              'getIdFromRecipeIdAndIngredientId -> No match found for recipeId and ingredientId',
+            );
+          }
+        },
+        (tx, error) => {
+          console.error('SQL Error:', error);
+          return false;
+        },
+      );
+    });
+
+    return response;
+  } catch (error) {
+    throw new Error(
+      'Error while getting the RecipeIngredient by recipeId and ingredientId: ' +
+        error,
+    );
+  }
+};
+
+/**
  * Fetches all the RecipeIngredients from the database.
  *
  * @async
