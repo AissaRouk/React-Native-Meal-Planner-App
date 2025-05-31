@@ -256,7 +256,7 @@ export const getIdFromRecipeIdAndIngredientId = async (
     const db = await getDbConnection();
     const sqlQuery = `
       SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} 
-      WHERE ${RECIPE_INGREDIENTS_RECIPE_ID} = ? AND ${INGREDIENT_ID} = ?
+      WHERE ${RECIPE_INGREDIENTS_RECIPE_ID} = ? AND ${RECIPE_INGREDIENTS_INGREDIENT_ID} = ?
     `;
 
     await db.transaction(tx => {
