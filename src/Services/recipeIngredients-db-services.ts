@@ -414,10 +414,11 @@ export const updateRecipeIngredientDb: (
  * @param {number} id
  * @returns {Promise<void>} Resolves with a void
  */
-export const deleteRecipeIngredient: (
+export const deleteRecipeIngredientDb: (
   id: number,
-) => Promise<void> = async id => {
+) => Promise<boolean> = async id => {
   try {
+    var deleted = false;
     const db = await getDbConnection();
 
     const sqlInsert = `DELETE FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_INGREDIENTS_ID} = ?`;
@@ -428,12 +429,14 @@ export const deleteRecipeIngredient: (
           console.log(
             'deleteRecipeIngredient -> RecipeIngredient deleted successfully',
           );
+          return deleted;
         } else
           console.log(
             'deleteRecipeIngredient -> could not delete RecipeIngredient',
           );
       }),
     );
+    return deleted;
   } catch (error) {
     throw new Error(
       'deleteRecipeIngredient -> could not delete RecipeIngredient: ' + error,
