@@ -686,6 +686,12 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                   <View style={styles.reviewRow}>
                     <Text style={styles.reviewLabel}>Serving Size:</Text>
                     <Text style={styles.reviewValue}>{servings}</Text>
+                    <Icon
+                      name="person"
+                      size={15}
+                      style={{marginLeft: 5}}
+                      color={'#333'}
+                    />
                   </View>
                   <Text style={styles.ingredientsHeader}>Ingredients:</Text>
                   {/* List all added ingredients */}
