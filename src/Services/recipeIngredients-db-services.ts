@@ -215,6 +215,7 @@ export const addRecipeIngredientMultiple = async (
  */
 export const getIdFromRecipeId = async (recipeId: number): Promise<number> => {
   try {
+    var response = -1;
     const db = await getDbConnection();
     const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_ID} = ?`;
     var result: RecipeIngredient | undefined;
@@ -227,7 +228,7 @@ export const getIdFromRecipeId = async (recipeId: number): Promise<number> => {
             'getIdFromRecipeId -> returning this id of the RecipeIngredient' +
               JSON.stringify(result?.id),
           );
-          return result;
+          response = result?.id!;
         }
         console.log(
           'getIdFromRecipeId -> The Recipe id provided does not exist in the RecipeIngredient table',
@@ -237,7 +238,7 @@ export const getIdFromRecipeId = async (recipeId: number): Promise<number> => {
   } catch (error) {
     throw new Error('Error while getting the recipeIngredient ' + error);
   }
-  return -1;
+  return response;
 };
 
 /**
@@ -313,7 +314,7 @@ export const getIngredientsFromRecipeId = async (
  * @param {RecipeIngredient} recipeIngredient the RecipeIngredient with the data that will be updated and the same id
  * @returns {Promise<void>} Resolves with a void
  */
-export const updateRecipeIngredient: (
+export const updateRecipeIngredientDb: (
   recipeIngredient: RecipeIngredient,
 ) => Promise<void> = async recipeIngredient => {
   try {
@@ -340,7 +341,9 @@ export const updateRecipeIngredient: (
           if (resultSet.rowsAffected > 0) {
             console.log('updateRecipeIngredient -> RecipeIngredient updated');
           } else {
-            console.log('updateRecipeIngredient -> RecipeIngredient updated');
+            console.log(
+              'updateRecipeIngredient -> RecipeIngredient not updated',
+            );
           }
         },
       ),
