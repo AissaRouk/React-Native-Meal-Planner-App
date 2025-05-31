@@ -340,7 +340,7 @@ export const getIngredientsFromRecipeId = async (
       throw new Error("The recipeId's value is incorrect");
     }
     const db = await getDbConnection();
-    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_ID} = ?`;
+    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_INGREDIENTS_RECIPE_ID} = ?`;
 
     await db.transaction(tx =>
       tx.executeSql(sqlInsert, [recipeId], (tx, resultSet) => {
@@ -351,6 +351,7 @@ export const getIngredientsFromRecipeId = async (
         }
       }),
     );
+    console.log('getIngredientsFromRecipeId -> ' + JSON.stringify(result));
     return result;
   } catch (error) {
     console.error('getIngredientsFromRecipeId -> Transaction failed:', error);
