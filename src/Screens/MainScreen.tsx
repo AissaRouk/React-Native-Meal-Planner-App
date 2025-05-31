@@ -14,13 +14,11 @@ import {
   Recipe,
   WeeklyMeal,
 } from '../Types/Types';
-import Header from '../Components/HeaderComponent';
 import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
 import {getAllRecipes} from '../Services/recipe-db-services';
 import {getRecipeById} from '../Services/recipe-db-services';
 import {getWeeklyMealsByDayAndMealType} from '../Services/weeklyMeals-db-services';
-import Icon from '@react-native-vector-icons/ionicons';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
@@ -28,6 +26,8 @@ import {useNavigation} from '@react-navigation/native';
 import {RecipeScreenName, RecipesScreenName} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
 import {screensBackgroundColor} from '../Utils/Styiling';
+import {getAllRecipeIngredients} from '../Services/recipeIngredients-db-services';
+import {FloatingButton} from '../Components/FloatingButton';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -167,21 +167,15 @@ export default function MainScreen(): React.JSX.Element {
           )}
         </ScrollView>
 
-        {/* Button that shows the Modal to add the Recipes */}
-        <TouchableOpacity
-          style={[
-            styles.addButton,
-            {
-              position: 'absolute', // Position the button absolutely within its parent
-              bottom: 16, // Distance from the bottom of the screen
-              right: 16, // Distance from the right of the screen
-            },
-          ]}
-          onPress={() => {
-            setVisible(true);
-          }}>
-          <Icon name="add" size={40} color="white" />
-        </TouchableOpacity>
+        {/*
+          Replace your old inline TouchableOpacity with our reusable FloatingButton:
+        */}
+        <FloatingButton
+          iconName="add"
+          iconSize={32}
+          iconColor="white"
+          onPress={() => setVisible(true)}
+        />
 
         {/* Modal to add the Recipes */}
         <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
@@ -218,19 +212,6 @@ const styles = StyleSheet.create({
   borderRight: {
     borderRightWidth: 0.5,
     borderColor: '#6e6f71',
-  },
-  addButton: {
-    backgroundColor: '#fb7945', // Button color
-    height: 60, // Height of the button
-    width: 60, // Width of the button
-    justifyContent: 'center', // Center the content vertically
-    alignItems: 'center', // Center the content horizontally
-    borderRadius: 30, // Full circle for a round button
-    shadowColor: '#000', // Shadow for a floating effect
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5, // Android shadow
   },
   activityIndicatorStyle: {
     flex: 1,
