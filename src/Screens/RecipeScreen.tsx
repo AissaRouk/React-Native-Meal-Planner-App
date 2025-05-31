@@ -29,8 +29,12 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const recipe: Recipe = route.params.recipe;
 
   /** Global context access for managing recipe list */
-  const {addOrUpdateRecipe, getIngredientsOfRecipe, updateRecipeIngredient} =
-    useAppContext();
+  const {
+    addOrUpdateRecipe,
+    getIngredientsOfRecipe,
+    updateRecipeIngredient,
+    deleteRecipeIngredient,
+  } = useAppContext();
 
   /** Indicates whether the user is currently editing the form */
   const [isEditing, setIsEditing] = useState(false);
@@ -40,6 +44,9 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   const [title, setTitle] = useState(recipe.name);
   // Boolean to record if there were some changes made in the recipe
   const [changed, setChanged] = useState<boolean>(false);
+  // Falg that triggers the fetch of the recipeIngredients of the recipe
+  // Normally it's triggered when the recipeIngredients change
+  const [fetchFlag, setFetchFlag] = useState<boolean>(false);
   /**
    * recipeIngredients the ingredients of the recipe with the quantity and the quantityType
    */
@@ -121,16 +128,35 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   /**
    * Handle when an ingredient is deleted
    */
-  const handleDeleteIngredient = (id: number) => {};
+  const handleDeleteIngredient = async (ingredientId: number) => {
+    // delete the RecipeIngredient in the DB
+    const response: boolean = await deleteRecipeIngredient(
+      ingredientId,
+      recipe.id,
+    );
+    // trigger the fetching to have the new data locally as well
+    setFetchFlag(!fetchFlag);
+  };
 
-  // Fetch the ingredients of the recipe
+  // async function that fethces all the ingredients of a recipe
+  const fetchIngredients = async (): Promise<
+    (Ingredient & {quantity: number; quantityType: QuantityType})[]
+  > => {
+    return await getIngredientsOfRecipe(recipe.id);
+  };
+
   useEffect(() => {
-    const asyncFunctions = async () => {
-      setRecipeIngredients(await getIngredientsOfRecipe(recipe.id));
+    const loadIngredients = async () => {
+      try {
+        console.log('fetching the RecipeIngredient');
+        const response = await fetchIngredients();
+        setRecipeIngredients(response);
+      } catch (error) {
+        console.error('Error fetching ingredients:', error);
+      }
     };
-
-    asyncFunctions();
-  }, []);
+    loadIngredients();
+  }, [fetchFlag]);
 
   return (
     <ScrollView style={styles.container}>
@@ -227,7 +253,9 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
                     quantityType,
                   )
                 }
-                onDelete={() => {}}
+                onDelete={() => {
+                  handleDeleteIngredient(ingredient.id);
+                }}
               />
             ))}
       </ScrollView>
