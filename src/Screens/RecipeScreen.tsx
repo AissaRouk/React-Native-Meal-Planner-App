@@ -108,12 +108,12 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         // created an instance for better legibility
         const instance = newRecipeIngredients[index];
         // updating the recipeIngredient
-        updateRecipeIngredient(
-          recipe.id,
-          instance,
-          instance.quantity,
-          instance.quantityType,
-        );
+        updateRecipeIngredient({
+          recipeId: recipe.id,
+          ingredientId: instance.id,
+          quantity: instance.quantity,
+          quantityType: instance.quantityType,
+        });
       }
     }
   };
