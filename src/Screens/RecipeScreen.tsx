@@ -19,6 +19,7 @@ import Icon from '@react-native-vector-icons/ionicons';
 import AppHeader from '../Components/AppHeader';
 import {IngredientCard} from '../Components/IngredientCard';
 import {IngredientComponent} from '../Components/IngredientComponent';
+import {FloatingButton} from '../Components/FloatingButton';
 
 type RecipeScreenProps = {
   route: any;
@@ -160,6 +161,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Header of the app */}
       <View style={{marginBottom: 16}}>
         <AppHeader title={title} />
       </View>
@@ -217,7 +219,32 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         )}
       </View>
 
-      <Text style={styles.ingredientsHeader}>Ingredients:</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <Text style={styles.ingredientsHeader}>Ingredients:</Text>
+        <FloatingButton
+          iconName="add"
+          onPress={() => {}}
+          containerStyle={{
+            backgroundColor: orangeBackgroundColor,
+            width: 30,
+            height: 30,
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 5, // Android shadow
+            shadowColor: '#000', // iOS shadow
+            shadowOffset: {width: 0, height: 2},
+            shadowOpacity: 0.3,
+            shadowRadius: 3,
+          }}
+          iconSize={20}
+        />
+      </View>
       {/* ScrollView with all the ingredients of the Recipe */}
       <ScrollView>
         {!isEditing
