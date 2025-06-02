@@ -18,7 +18,12 @@ import {addIngredient} from '../Services/ingredient-db-services';
 type ContextProps = {
   ingredients: Ingredient[];
   setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
-  addOrUpdateIngredient: (ingredient: Ingredient) => void;
+  /**
+   * adds or updates an ingredient depending if it already exists in the system
+   * @param {Ingredient} ingredient - Ingredient to be added, if it's a RecipeIngredient add id:-1
+   * @returns
+   */
+  addOrUpdateIngredient: (ingredient: Ingredient) => Promise<number>;
 
   recipes: Recipe[];
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
@@ -39,7 +44,7 @@ type AppProviderProps = {
 const AppContext = React.createContext<ContextProps>({
   ingredients: [],
   setIngredients: () => {},
-  addOrUpdateIngredient: () => {},
+  addOrUpdateIngredient: async () => 0,
 
   recipes: [],
   setRecipes: () => {},
@@ -58,7 +63,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
   }, [recipes]);
 
   // Adds or updates ingredient
-  const addOrUpdateIngredient = (newIngredient: Ingredient) => {
+  const addOrUpdateIngredient = async (
+    newIngredient: Ingredient,
+  ): Promise<number> => {
+    var res = -1;
     setIngredients(prev => {
       const index = prev.findIndex(i => i.id === newIngredient.id);
       if (index !== -1) {
