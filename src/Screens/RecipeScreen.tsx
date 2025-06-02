@@ -297,6 +297,58 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         />
         <Text style={styles.buttonText}>{isEditing ? 'Save' : 'Edit'}</Text>
       </TouchableOpacity>
+
+      {/* Modal to add the RecipeIngredient */}
+      <Modal visible={isIngredientModalVisible} transparent>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 20,
+              borderRadius: 10,
+              width: '90%', // Modal width relative to the screen
+            }}>
+            {/* The header of the modal */}
+            <ModalHeader
+              text={'Add an ingredient to the recipe'}
+              onClose={onCloseModal}
+            />
+
+            {/* The SearchBar Component */}
+            <IngredientSearchSelector
+              onAddIngredient={handleAddRecipeIngredient}
+              onChangeQuantity={(ingredientId, quantity) => {
+                handleRecipeIngredientChange(
+                  ingredientId,
+                  'quantity',
+                  quantity,
+                );
+              }}
+              onChangeQuantityType={(id, quantityType) => {
+                handleRecipeIngredientChange(id, 'quantityType', quantityType);
+              }}
+              onRemoveIngredient={() => {}}
+              selectedIngredients={recipeIngredients}
+              onOpenAddIngredientModal={() => {
+                setAddIngredientModalVisible(true);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      {/* The button for opening the modal */}
+      <AddIngredientModal
+        visible={false}
+        onSubmit={handleCallHandleAddIngredient}
+        onClose={onCloseModal}
+      />
     </ScrollView>
   );
 };
