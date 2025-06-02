@@ -7,12 +7,16 @@ import {
 } from '../Types/Types';
 import {updateRecipe} from '../Services/recipe-db-services';
 import {
+  addRecipeIngredientDb,
+  deleteRecipeIngredientDb,
   getIdFromRecipeId,
+  getIdFromRecipeIdAndIngredientId,
   getIngredientsFromRecipeId,
   updateRecipeIngredientDb,
 } from '../Services/recipeIngredients-db-services';
 import {Alert} from 'react-native';
 import {addIngredient} from '../Services/ingredient-db-services';
+import {verifyRecipeIngredientWithoutId} from '../Utils/utils';
 
 // Define the shape of the context
 type ContextProps = {
@@ -28,12 +32,20 @@ type ContextProps = {
   recipes: Recipe[];
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
   addOrUpdateRecipe: (recipe: Recipe) => void;
+
+  addRecipeIngredient: (
+    newRecIng: RecipeIngredientWithoutId,
+  ) => Promise<number>;
   getIngredientsOfRecipe: (
     recipeId: number,
   ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
   updateRecipeIngredient: (
     newRecipeIngredient: RecipeIngredientWithoutId,
-  ) => void;
+  ) => Promise<void>;
+  deleteRecipeIngredient: (
+    ingredientId: number,
+    recipeId: number,
+  ) => Promise<boolean>;
 };
 
 type AppProviderProps = {
@@ -49,8 +61,11 @@ const AppContext = React.createContext<ContextProps>({
   recipes: [],
   setRecipes: () => {},
   addOrUpdateRecipe: () => {},
+
+  addRecipeIngredient: async () => 0,
   getIngredientsOfRecipe: async () => [],
   updateRecipeIngredient: async () => {},
+  deleteRecipeIngredient: async () => false,
 });
 
 // Create the provider component
@@ -85,12 +100,16 @@ export const AppProvider = ({children}: AppProviderProps) => {
             console.log(
               'added the ingredient: ' + JSON.stringify(newIngredient),
             );
+            if (response.insertedId) {
+              res = response.insertedId;
+            }
             return [...prev, newIngredient];
           }
         };
         return [...prev];
       }
     });
+    return res;
   };
 
   // Adds or updates recipe
@@ -114,41 +133,27 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
   };
 
-  // Get ingredients of a recipe
-  const getIngredientsOfRecipe = async (recipeId: number) => {
-    const result: Array<
-      Ingredient & {
-        quantity: number;
-        quantityType: QuantityType;
-      }
-    > = [];
-
-    if (recipeId < 0) throw new Error('recipeId value invalid');
-
-    const rows = await getIngredientsFromRecipeId(recipeId);
-
-    if (rows.length === 0) {
-      Alert.alert("The selected recipe doesn't contain any ingredients");
-      return result;
+  /**
+   * Function that adds a new RecipeIngredient
+   */
+  const addRecipeIngredient = async (
+    newRecIng: RecipeIngredientWithoutId,
+  ): Promise<number> => {
+    const response = verifyRecipeIngredientWithoutId(newRecIng);
+    console.log(
+      'Context.addRecipeIngredient -> response of the verify: ' + response,
+    );
+    var result;
+    if (response) {
+      result = await addRecipeIngredientDb(newRecIng);
+      if (result.created && result.insertedId) return result.insertedId!;
+      else
+        console.error(
+          'Context -> something went wrong while adding the recipeIngredient ' +
+            JSON.stringify(result),
+        );
     }
-
-    for (const ri of rows) {
-      // 👇 match on ingredientId, not recipeId
-      const idx = ingredients.findIndex(i => i.id === ri.ingredientId);
-      if (idx === -1) {
-        console.warn(`Ingredient ${ri.ingredientId} not found in context`);
-        continue; // or throw
-      }
-
-      const ing = ingredients[idx];
-      result.push({
-        ...ing,
-        quantity: ri.quantity,
-        quantityType: ri.quantityType,
-      });
-    }
-
-    return result;
+    return -1;
   };
 
   /**
@@ -182,6 +187,69 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
   };
 
+  // Get ingredients of a recipe
+  const getIngredientsOfRecipe = async (recipeId: number) => {
+    const result: Array<
+      Ingredient & {
+        quantity: number;
+        quantityType: QuantityType;
+      }
+    > = [];
+
+    if (recipeId < 0) throw new Error('recipeId value invalid');
+
+    const rows = await getIngredientsFromRecipeId(recipeId);
+
+    if (rows.length === 0) {
+      // Alert.alert("The selected recipe doesn't contain any ingredients");
+      return result;
+    }
+
+    for (const ri of rows) {
+      // 👇 match on ingredientId, not recipeId
+      const idx = ingredients.findIndex(i => i.id === ri.ingredientId);
+      if (idx === -1) {
+        console.warn(`Ingredient ${ri.ingredientId} not found in context`);
+        continue; // or throw
+      }
+
+      const ing = ingredients[idx];
+      result.push({
+        ...ing,
+        quantity: ri.quantity,
+        quantityType: ri.quantityType,
+      });
+    }
+
+    return result;
+  };
+
+  const deleteRecipeIngredient = async (
+    ingredientId: number,
+    recipeId: number,
+  ): Promise<boolean> => {
+    try {
+      const recipeIngredientId = await getIdFromRecipeIdAndIngredientId(
+        recipeId,
+        ingredientId,
+      );
+      const deleted = await deleteRecipeIngredientDb(recipeIngredientId);
+      if (recipeIngredientId == -1) {
+        if (deleted) {
+          console.log(
+            'deleted recipeIngredient with id: ' + recipeIngredientId,
+          );
+        }
+      }
+      return deleted;
+    } catch (error) {
+      throw new Error(
+        'Context.deleteRecipeIngredient -> error while deleting the recipeId ' +
+          error,
+      );
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -191,8 +259,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
         recipes,
         setRecipes,
         addOrUpdateRecipe,
+        addRecipeIngredient,
         getIngredientsOfRecipe,
         updateRecipeIngredient,
+        deleteRecipeIngredient,
       }}>
       {children}
     </AppContext.Provider>
