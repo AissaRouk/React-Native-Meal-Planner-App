@@ -144,13 +144,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       );
   });
 
-  // ONLY FOR TESTING
-  useEffect(() => {
-    if (selectedIngredients.length > 1) {
-      console.log(JSON.stringify(selectedIngredients));
-    }
-  }, [selectedIngredients]);
-
   //
   //Functions
   //
