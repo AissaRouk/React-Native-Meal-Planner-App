@@ -51,7 +51,7 @@ export const FloatingButton: React.FC<FloatingButtonProps> = ({
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
-      style={[styles.defaultContainer, containerStyle]}>
+      style={containerStyle || styles.defaultContainer}>
       <Icon
         name={iconName}
         size={iconSize}
