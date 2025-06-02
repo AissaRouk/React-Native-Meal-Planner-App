@@ -10,11 +10,12 @@ import {
 } from 'react-native';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SUCCESS} from '../Services/db-services';
+import {IngredientWithoutId} from '../Types/Types';
 
 type AddIngredientModalProps = {
   visible: boolean;
   onClose?: () => void;
-  onSubmit: (ingredient: {name: string; category: string}) => Promise<boolean>;
+  onSubmit: (ingredient: IngredientWithoutId) => Promise<boolean>;
 };
 
 const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
