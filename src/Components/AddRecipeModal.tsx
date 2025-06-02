@@ -26,6 +26,7 @@ import {
   getIngredientById,
 } from '../Services/ingredient-db-services';
 import {IngredientCard} from './IngredientCard';
+import {ModalHeader} from './ModalHeareComponent';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -439,28 +440,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   //Components
   //
 
-  //The header of the modal (contains Text + Exit-Button)
-  const ModalHeader: React.FC<{text: string; onClose: () => void}> = ({
-    text,
-    onClose,
-  }) => (
-    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-      <Text style={styles.title}>{text}</Text>
-      <TouchableOpacity
-        onPress={onClose}
-        style={{
-          height: 30,
-          width: 30,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: orangeBackgroundColor,
-          borderRadius: 15, // Make it circular
-        }}>
-        <Icon name="close" size={20} color="white" />
-      </TouchableOpacity>
-    </View>
-  );
-
   //Main return
   return (
     <>
@@ -764,11 +743,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '90%', // Modal width relative to the screen
-  },
-  title: {
-    fontSize: 20,
-    marginBottom: 15,
-    fontWeight: 'bold',
   },
   input: {
     borderWidth: 1,
