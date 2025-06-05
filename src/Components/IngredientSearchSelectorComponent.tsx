@@ -65,7 +65,6 @@ export const IngredientSearchSelector: React.FC<
     searchOptions: {fuzzy: 1, prefix: true},
   };
   const minisearchRef = useRef<MiniSearch<Ingredient> | null>(null);
-  const [fieldsAdded, setFieldsAdded] = useState(false);
 
   //— Search states
   const [searchValue, setSearchValue] = useState('');
@@ -86,7 +85,6 @@ export const IngredientSearchSelector: React.FC<
     if (ingredients.length > 0) {
       minisearchRef.current.removeAll();
       minisearchRef.current.addAll(ingredients);
-      setFieldsAdded(true);
     }
   }, [ingredients]);
 
