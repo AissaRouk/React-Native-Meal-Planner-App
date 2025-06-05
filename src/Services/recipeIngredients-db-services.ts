@@ -94,7 +94,7 @@ export const createRecipeIngredientTable = async (): Promise<void> => {
  *   .then(() => console.log('Ingredient added successfully'))
  *   .catch(error => console.error('Error adding ingredient:', error));
  */
-export const addRecipeIngredient = async (
+export const addRecipeIngredientDb = async (
   recipeIngredient: RecipeIngredientWithoutId,
 ): Promise<{
   created: boolean;
@@ -189,7 +189,7 @@ export const addRecipeIngredientMultiple = async (
 }> => {
   try {
     for (const ingredient of ingredients) {
-      const response = await addRecipeIngredient({
+      const response = await addRecipeIngredientDb({
         recipeId: recipeId,
         ingredientId: ingredient.id,
         quantity: ingredient.quantity,
