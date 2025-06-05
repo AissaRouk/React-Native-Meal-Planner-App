@@ -6,8 +6,14 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Modal,
 } from 'react-native';
-import {Ingredient, QuantityType, Recipe} from '../Types/Types';
+import {
+  Ingredient,
+  IngredientWithoutId,
+  QuantityType,
+  Recipe,
+} from '../Types/Types';
 import {useAppContext} from '../Context/Context';
 import {verifyRecipe} from '../Utils/utils';
 import {
