@@ -185,6 +185,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     var response = -1;
     const check = verifyIngredientWithoutId(ingredient);
     if (check) {
+      // the ingredient added is without id, so give it a temporal one
       response == (await addOrUpdateIngredient({...ingredient, id: -1}));
       if (response >= 0) {
         onCloseModal();
@@ -209,7 +210,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
    * Handle modal closing
    */
   const onCloseModal = () => {
-    setIsIngredientModalVisible(false);
+    setAddIngredientModalVisible(false);
   };
 
   // async function that fethces all the ingredients of a recipe
@@ -420,7 +421,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
 
       {/* The button for opening the modal */}
       <AddIngredientModal
-        visible={false}
+        visible={isAddIngredientModalVisible}
         onSubmit={handleCallHandleAddIngredient}
         onClose={onCloseModal}
       />
