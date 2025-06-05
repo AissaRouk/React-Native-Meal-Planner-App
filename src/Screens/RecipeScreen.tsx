@@ -15,7 +15,7 @@ import {
   Recipe,
 } from '../Types/Types';
 import {useAppContext} from '../Context/Context';
-import {verifyRecipe} from '../Utils/utils';
+import {verifyIngredientWithoutId, verifyRecipe} from '../Utils/utils';
 import {
   greyBorderColor,
   orangeBackgroundColor,
@@ -26,6 +26,9 @@ import AppHeader from '../Components/AppHeader';
 import {IngredientCard} from '../Components/IngredientCard';
 import {IngredientComponent} from '../Components/IngredientComponent';
 import {FloatingButton} from '../Components/FloatingButton';
+import AddIngredientModal from '../Components/AddIngredientModal';
+import {IngredientSearchSelector} from '../Components/IngredientSearchSelectorComponent';
+import {ModalHeader} from '../Components/ModalHeareComponent';
 
 type RecipeScreenProps = {
   route: any;
@@ -41,6 +44,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     getIngredientsOfRecipe,
     updateRecipeIngredient,
     deleteRecipeIngredient,
+    addOrUpdateIngredient,
+    addRecipeIngredient,
   } = useAppContext();
 
   /** Indicates whether the user is currently editing the form */
@@ -54,6 +59,12 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   // Falg that triggers the fetch of the recipeIngredients of the recipe
   // Normally it's triggered when the recipeIngredients change
   const [fetchFlag, setFetchFlag] = useState<boolean>(false);
+  //state to control the visibility of the IngredientSearchSelector
+  const [isIngredientModalVisible, setIsIngredientModalVisible] =
+    useState<boolean>(false);
+  //state to control the visibility of the AddIngredientModal
+  const [isAddIngredientModalVisible, setAddIngredientModalVisible] =
+    useState<boolean>(false);
   /**
    * recipeIngredients the ingredients of the recipe with the quantity and the quantityType
    */
@@ -145,6 +156,62 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     setFetchFlag(!fetchFlag);
   };
 
+  /**
+   * Handles when a recipeIngredient is added
+   */
+  const handleAddRecipeIngredient = async (
+    recipeIngredient: Ingredient & {
+      quantity: number;
+      quantityType: QuantityType;
+    },
+  ) => {
+    const response = await addRecipeIngredient({
+      ingredientId: recipeIngredient.id,
+      recipeId: recipe.id,
+      quantity: recipeIngredient.quantity,
+      quantityType: recipeIngredient.quantityType,
+    });
+    if (response != -1) {
+      setFetchFlag(prev => !prev);
+    }
+  };
+
+  /**
+   * Handle when an ingredient is added from the AddRecipeModal
+   */
+  const handleAddIngredient = async (
+    ingredient: IngredientWithoutId,
+  ): Promise<number> => {
+    var response = -1;
+    const check = verifyIngredientWithoutId(ingredient);
+    if (check) {
+      response == (await addOrUpdateIngredient({...ingredient, id: -1}));
+      if (response >= 0) {
+        onCloseModal();
+      }
+    }
+
+    return response;
+  };
+
+  /**
+   * Function to call handleAddIngredient in the AddIngredientModal so it doesn't have a type error
+   */
+  const handleCallHandleAddIngredient = async (
+    ingredient: IngredientWithoutId,
+  ): Promise<boolean> => {
+    const response = await handleAddIngredient(ingredient);
+    return response ? true : false;
+  };
+
+  /**
+   *
+   * Handle modal closing
+   */
+  const onCloseModal = () => {
+    setIsIngredientModalVisible(false);
+  };
+
   // async function that fethces all the ingredients of a recipe
   const fetchIngredients = async (): Promise<
     (Ingredient & {quantity: number; quantityType: QuantityType})[]
@@ -234,7 +301,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         <Text style={styles.ingredientsHeader}>Ingredients:</Text>
         <FloatingButton
           iconName="add"
-          onPress={() => {}}
+          onPress={() => setIsIngredientModalVisible(true)}
           containerStyle={{
             backgroundColor: orangeBackgroundColor,
             width: 30,
@@ -251,6 +318,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           iconSize={20}
         />
       </View>
+
       {/* ScrollView with all the ingredients of the Recipe */}
       <ScrollView>
         {!isEditing
@@ -292,6 +360,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
               />
             ))}
       </ScrollView>
+
       {/* Save/Edit Toggle Button */}
       <TouchableOpacity
         onPress={isEditing ? handleSave : () => setIsEditing(true)}
