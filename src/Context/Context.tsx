@@ -94,7 +94,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
         return updated;
       } else {
         // add
-        async () => {
+        const asyncfunctions = async () => {
           const response = await addIngredient(newIngredient);
           if (response.created) {
             console.log(
@@ -104,8 +104,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
               res = response.insertedId;
             }
             return [...prev, newIngredient];
-          }
+          } else console.log("Couldn't create the ingredient");
         };
+        asyncfunctions();
         return [...prev];
       }
     });
