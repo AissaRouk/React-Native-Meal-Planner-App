@@ -77,40 +77,43 @@ export const AppProvider = ({children}: AppProviderProps) => {
     console.log('Context-> recipes: ' + JSON.stringify(recipes));
   }, [recipes]);
 
-  // Adds or updates ingredient
+  // In your Context (AppProvider), replace the old addOrUpdateIngredient with:
+
   const addOrUpdateIngredient = async (
     newIngredient: Ingredient,
   ): Promise<number> => {
-    var res = -1;
-    setIngredients(prev => {
-      const index = prev.findIndex(i => i.id === newIngredient.id);
-      if (index !== -1) {
-        // update
+    // First, see if this ingredient already exists in state by ID:
+    const existingIndex = ingredients.findIndex(i => i.id === newIngredient.id);
 
-        const updated = [...prev];
-        updated[index] = newIngredient;
+    if (existingIndex >= 0) {
+      //––> Update path: simply update in‐place (no DB insert required)
+      const updatedList = [...ingredients];
+      updatedList[existingIndex] = newIngredient;
+      setIngredients(updatedList);
+      return newIngredient.id;
+    } else {
+      //––> “Add” path:
+      // 1) Send to SQLite
+      const response = await addIngredient(newIngredient);
+      if (response.created && response.insertedId != null) {
+        const realId = response.insertedId;
 
-        console.log('updated the ingredient: ' + JSON.stringify(newIngredient));
-        return updated;
-      } else {
-        // add
-        const asyncfunctions = async () => {
-          const response = await addIngredient(newIngredient);
-          if (response.created) {
-            console.log(
-              'added the ingredient: ' + JSON.stringify(newIngredient),
-            );
-            if (response.insertedId) {
-              res = response.insertedId;
-            }
-            return [...prev, newIngredient];
-          } else console.log("Couldn't create the ingredient");
+        // 2) Build a brand‐new object with the real ID
+        const insertedIngredient: Ingredient = {
+          id: realId,
+          name: newIngredient.name,
+          category: newIngredient.category,
         };
-        asyncfunctions();
-        return [...prev];
+
+        // 3) Append it to context state (ingredients array)
+        setIngredients(prev => [...prev, insertedIngredient]);
+
+        return realId;
+      } else {
+        console.error('Could not insert ingredient:', response);
+        return -1;
       }
-    });
-    return res;
+    }
   };
 
   // Adds or updates recipe
