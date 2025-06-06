@@ -64,7 +64,7 @@ export default function MainScreen(): React.JSX.Element {
       const item: Recipe | null = await getRecipeById(weeklyMeals[i].recipeId);
       if (item) fetchedRecipes.push(item); // Only add recipes that exist
     }
-    setRecipes(fetchedRecipes); // Update the state with fetched recipes
+    setCurrentWeeklyMeals(fetchedRecipes); // Update the state with fetched recipes
   };
 
   // Handles the navigation
@@ -79,7 +79,6 @@ export default function MainScreen(): React.JSX.Element {
       setIngredients(fetingredients);
       const fetchedRecipes = await getAllRecipes();
       setRecipes(fetchedRecipes);
-      console.log('fetchedRecipes: ' + JSON.stringify(fetchedRecipes, null, 1));
       setIsFetchFinished(true);
     };
     asyncFunctions()
@@ -149,16 +148,16 @@ export default function MainScreen(): React.JSX.Element {
 
         {/* ScrollView to display the recipes */}
         <ScrollView showsVerticalScrollIndicator={false}>
-          {recipes === null || recipes?.length === 0 ? (
+          {currentWeeklyMeals === null || currentWeeklyMeals?.length === 0 ? (
             <Text>No Recipes Found</Text>
           ) : (
-            recipes?.map(recipe => (
+            currentWeeklyMeals.map(weeklyMeal => (
               <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
+                key={weeklyMeal.id}
+                recipe={weeklyMeal}
                 onPress={() =>
                   (navigation as any).navigate(RecipeScreenName, {
-                    recipe: recipe,
+                    recipe: weeklyMeal,
                   })
                 }
               />
