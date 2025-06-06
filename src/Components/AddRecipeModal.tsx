@@ -17,7 +17,13 @@ import {IngredientComponent} from './IngredientComponent';
 import {FAILED} from '../Services/db-services';
 import {handleOnSetQuantity} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
-import {greyBorderColor, orangeBackgroundColor} from '../Utils/Styiling';
+import {
+  greyBorderColor,
+  modalBorderRadius,
+  modalSemiTransparentBg,
+  modalWhiteBg,
+  orangeBackgroundColor,
+} from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
 import {addRecipe} from '../Services/recipe-db-services';
 import {addRecipeIngredientMultiple} from '../Services/recipeIngredients-db-services';
@@ -729,10 +735,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: modalSemiTransparentBg, // Semi-transparent background
   },
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: modalWhiteBg,
     padding: 20,
     borderRadius: 10,
     width: '90%', // Modal width relative to the screen
@@ -740,7 +746,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: greyBorderColor,
-    borderRadius: 5,
+    borderRadius: modalBorderRadius,
     padding: 10,
     marginBottom: 10,
   },
