@@ -301,6 +301,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
+          marginBottom: 10,
         }}>
         <Text style={styles.ingredientsHeader}>Ingredients:</Text>
         <FloatingButton
