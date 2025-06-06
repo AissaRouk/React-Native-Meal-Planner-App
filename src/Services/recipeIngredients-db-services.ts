@@ -210,39 +210,6 @@ export const addRecipeIngredientMultiple = async (
 };
 
 /**
- * Function that gets the recipeIngredient from the id of the recipe
- * @param {number} recipeId the id of the recipe
- * @returns {number} returns the number of the id of a random RecipeIngredient that contains the id of that recipe or -1 if it doesn't exist
- */
-export const getIdFromRecipeId = async (recipeId: number): Promise<number> => {
-  try {
-    var response = -1;
-    const db = await getDbConnection();
-    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_ID} = ?`;
-    var result: RecipeIngredient | undefined;
-    await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [recipeId], (tx, resultSet) => {
-        const len = resultSet.rows.length;
-        if (len > 0) {
-          result = resultSet.rows.item(0);
-          console.log(
-            'getIdFromRecipeId -> returning this id of the RecipeIngredient' +
-              JSON.stringify(result?.id),
-          );
-          response = result?.id!;
-        }
-        console.log(
-          'getIdFromRecipeId -> The Recipe id provided does not exist in the RecipeIngredient table',
-        );
-      }),
-    );
-  } catch (error) {
-    throw new Error('Error while getting the recipeIngredient ' + error);
-  }
-  return response;
-};
-
-/**
  * Function that gets the RecipeIngredient ID from both recipeId and ingredientId
  * @param {number} recipeId - The ID of the recipe
  * @param {number} ingredientId - The ID of the ingredient
