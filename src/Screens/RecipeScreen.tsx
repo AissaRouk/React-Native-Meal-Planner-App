@@ -132,7 +132,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           };
 
           // 2) Sync React state right away
-          +setRecipeIngredients(newList);
+          setRecipeIngredients(newList);
 
           // 3) Then send it to your DB
           await updateRecipeIngredient({
