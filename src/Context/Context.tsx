@@ -10,7 +10,6 @@ import {updateRecipe} from '../Services/recipe-db-services';
 import {
   addRecipeIngredientDb,
   deleteRecipeIngredientDb,
-  getIdFromRecipeId,
   getIdFromRecipeIdAndIngredientId,
   getIngredientsFromRecipeId,
   updateRecipeIngredientDb,
@@ -250,8 +249,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
   ) => {
     try {
       // Look up the RecipeIngredient row ID from recipeId alone
-      const recipeIngredientId = await getIdFromRecipeId(
+      const recipeIngredientId = await getIdFromRecipeIdAndIngredientId(
         newRecipeIngredient.recipeId,
+        newRecipeIngredient.ingredientId,
       );
       console.log(
         'Context.updateRecipeIngredient -> found ID:',
