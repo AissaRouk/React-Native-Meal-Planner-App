@@ -396,7 +396,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
             {/* The header of the modal */}
             <ModalHeader
               text={'Add an ingredient to the recipe'}
-              onClose={onCloseModal}
+              onClose={() => setIsIngredientModalVisible(false)}
             />
 
             {/* The SearchBar Component */}
