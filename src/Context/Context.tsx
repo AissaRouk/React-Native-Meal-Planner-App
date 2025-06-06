@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {Alert} from 'react-native';
 import {
   Ingredient,
   QuantityType,
@@ -14,7 +15,6 @@ import {
   getIngredientsFromRecipeId,
   updateRecipeIngredientDb,
 } from '../Services/recipeIngredients-db-services';
-import {Alert} from 'react-native';
 import {addIngredient} from '../Services/ingredient-db-services';
 import {verifyRecipeIngredientWithoutId} from '../Utils/utils';
 
@@ -25,23 +25,50 @@ type ContextProps = {
   /**
    * adds or updates an ingredient depending if it already exists in the system
    * @param {Ingredient} ingredient - Ingredient to be added, if it's a RecipeIngredient add id:-1
-   * @returns
+   * @returns {Promise<number>} - returns new ingredient ID on success, -1 on failure
    */
   addOrUpdateIngredient: (ingredient: Ingredient) => Promise<number>;
 
   recipes: Recipe[];
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
-  addOrUpdateRecipe: (recipe: Recipe) => void;
+  /**
+   * adds or updates a recipe in the database and context
+   * @param {Recipe} recipe - Recipe to upsert
+   */
+  addOrUpdateRecipe: (recipe: Recipe) => Promise<void>;
 
+  /**
+   * adds a new RecipeIngredient
+   * @param {RecipeIngredientWithoutId} newRecIng - recipeId, ingredientId, quantity, quantityType
+   * @returns {Promise<number>} - new RecipeIngredient ID on success, -1 on failure
+   */
   addRecipeIngredient: (
     newRecIng: RecipeIngredientWithoutId,
   ) => Promise<number>;
+
+  /**
+   * fetches all ingredients (with quantity & type) for a specific recipe
+   * @param {number} recipeId
+   * @returns Promise of array of Ingredient + { quantity, quantityType }
+   */
   getIngredientsOfRecipe: (
     recipeId: number,
   ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
+
+  /**
+   * updates a specific RecipeIngredient
+   * @param {RecipeIngredientWithoutId} newRecipeIngredient
+   */
   updateRecipeIngredient: (
     newRecipeIngredient: RecipeIngredientWithoutId,
   ) => Promise<void>;
+
+  /**
+   * deletes a RecipeIngredient by ingredientId & recipeId
+   * @param {number} ingredientId
+   * @param {number} recipeId
+   * @returns Promise<boolean> - true if deletion succeeded
+   */
   deleteRecipeIngredient: (
     ingredientId: number,
     recipeId: number,
@@ -55,14 +82,14 @@ type AppProviderProps = {
 // Create the context
 const AppContext = React.createContext<ContextProps>({
   ingredients: [],
-  setIngredients: () => {},
-  addOrUpdateIngredient: async () => 0,
+  setIngredients: () => Promise.resolve(),
+  addOrUpdateIngredient: async () => -1,
 
   recipes: [],
   setRecipes: () => {},
-  addOrUpdateRecipe: () => {},
+  addOrUpdateRecipe: async () => {},
 
-  addRecipeIngredient: async () => 0,
+  addRecipeIngredient: async () => -1,
   getIngredientsOfRecipe: async () => [],
   updateRecipeIngredient: async () => {},
   deleteRecipeIngredient: async () => false,
@@ -74,160 +101,210 @@ export const AppProvider = ({children}: AppProviderProps) => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
-    console.log('Context-> recipes: ' + JSON.stringify(recipes));
+    console.log('Context -> recipes:', JSON.stringify(recipes));
   }, [recipes]);
 
-  // In your Context (AppProvider), replace the old addOrUpdateIngredient with:
-
+  /**
+   * Adds or updates an ingredient in SQLite and context state.
+   * Returns the real ID if successful, or -1 on failure.
+   */
   const addOrUpdateIngredient = async (
     newIngredient: Ingredient,
   ): Promise<number> => {
-    // First, see if this ingredient already exists in state by ID:
+    // Check if it already exists in context by ID
     const existingIndex = ingredients.findIndex(i => i.id === newIngredient.id);
 
-    if (existingIndex >= 0) {
-      //––> Update path: simply update in‐place (no DB insert required)
-      const updatedList = [...ingredients];
-      updatedList[existingIndex] = newIngredient;
-      setIngredients(updatedList);
-      return newIngredient.id;
-    } else {
-      //––> “Add” path:
-      // 1) Send to SQLite
-      const response = await addIngredient(newIngredient);
-      if (response.created && response.insertedId != null) {
-        const realId = response.insertedId;
-
-        // 2) Build a brand‐new object with the real ID
-        const insertedIngredient: Ingredient = {
-          id: realId,
-          name: newIngredient.name,
-          category: newIngredient.category,
-        };
-
-        // 3) Append it to context state (ingredients array)
-        setIngredients(prev => [...prev, insertedIngredient]);
-
-        return realId;
+    try {
+      if (existingIndex >= 0) {
+        // Update path: update in context array
+        const updatedList = [...ingredients];
+        updatedList[existingIndex] = newIngredient;
+        setIngredients(updatedList);
+        return newIngredient.id;
       } else {
-        console.error('Could not insert ingredient:', response);
-        return -1;
-      }
-    }
-  };
+        // Add path: insert into SQLite first
+        const response = await addIngredient(newIngredient);
 
-  // Adds or updates recipe
-  const addOrUpdateRecipe = async (newRecipe: Recipe) => {
-    const response: boolean = await updateRecipe(newRecipe);
-    if (response) {
-      setRecipes(prev => {
-        const index = prev.findIndex(r => r.id === newRecipe.id);
-        if (index !== -1) {
-          const updated = [...prev];
-          updated[index] = newRecipe;
-          // optional
-          console.log('updated the recipe: ' + JSON.stringify(newRecipe));
-          return updated;
+        if (response.created && response.insertedId != null) {
+          const realId = response.insertedId;
+
+          // Build the full object with real ID
+          const insertedIngredient: Ingredient = {
+            id: realId,
+            name: newIngredient.name,
+            category: newIngredient.category,
+          };
+
+          // Append to context state
+          setIngredients(prev => [...prev, insertedIngredient]);
+          return realId;
         } else {
-          // optional
-          console.log('added the recipe: ' + JSON.stringify(newRecipe));
-          return [...prev, newRecipe];
+          console.error('Failed to insert ingredient:', response);
+          Alert.alert('Error', 'Could not add ingredient. Please try again.');
         }
-      });
+      }
+    } catch (error) {
+      console.error('addOrUpdateIngredient -> Exception:', error);
+      Alert.alert('Error', 'Unexpected error while adding ingredient.');
     }
-  };
 
-  /**
-   * Function that adds a new RecipeIngredient
-   */
-  const addRecipeIngredient = async (
-    newRecIng: RecipeIngredientWithoutId,
-  ): Promise<number> => {
-    const response = verifyRecipeIngredientWithoutId(newRecIng);
-    console.log(
-      'Context.addRecipeIngredient -> response of the verify: ' + response,
-    );
-    var result;
-    if (response) {
-      result = await addRecipeIngredientDb(newRecIng);
-      if (result.created && result.insertedId) return result.insertedId!;
-      else
-        console.error(
-          'Context -> something went wrong while adding the recipeIngredient ' +
-            JSON.stringify(result),
-        );
-    }
     return -1;
   };
 
   /**
-   * function that given the
-   * @param recipeId
-   * @param ingredient
-   * @param quantity
-   * @param quantityType
+   * Adds or updates a recipe in SQLite and context.
+   * If updateRecipe (SQLite) returns false, logs and alerts.
+   */
+  const addOrUpdateRecipe = async (newRecipe: Recipe) => {
+    try {
+      const response = await updateRecipe(newRecipe);
+      if (response) {
+        setRecipes(prev => {
+          const index = prev.findIndex(r => r.id === newRecipe.id);
+          if (index !== -1) {
+            const updated = [...prev];
+            updated[index] = newRecipe;
+            console.log('Updated recipe in context:', newRecipe);
+            return updated;
+          } else {
+            console.log('Added new recipe in context:', newRecipe);
+            return [...prev, newRecipe];
+          }
+        });
+      } else {
+        console.error('SQLite updateRecipe returned false for', newRecipe);
+        Alert.alert('Error', `Could not save recipe "${newRecipe.name}".`);
+      }
+    } catch (error) {
+      console.error('addOrUpdateRecipe -> Exception:', error);
+      Alert.alert('Error', 'Unexpected error while saving recipe.');
+    }
+  };
+
+  /**
+   * Adds a new RecipeIngredient in SQLite. Returns inserted ID or -1 on failure.
+   */
+  const addRecipeIngredient = async (
+    newRecIng: RecipeIngredientWithoutId,
+  ): Promise<number> => {
+    const isValid = verifyRecipeIngredientWithoutId(newRecIng);
+    console.log('Context.addRecipeIngredient -> verify result:', isValid);
+
+    if (!isValid) {
+      Alert.alert('Validation error', 'Invalid recipe‐ingredient data.');
+      return -1;
+    }
+
+    try {
+      const result = await addRecipeIngredientDb(newRecIng);
+      if (result.created && result.insertedId != null) {
+        return result.insertedId;
+      } else {
+        console.error('addRecipeIngredientDb did not create row:', result);
+        Alert.alert('Error', 'Could not add ingredient to recipe.');
+      }
+    } catch (error) {
+      console.error('addRecipeIngredient -> Exception:', error);
+      Alert.alert(
+        'Error',
+        'Unexpected error while adding ingredient to recipe.',
+      );
+    }
+
+    return -1;
+  };
+
+  /**
+   * Updates an existing RecipeIngredient by first finding its internal ID,
+   * then calling SQLite update. Alerts/logs on failure.
    */
   const updateRecipeIngredient = async (
     newRecipeIngredient: RecipeIngredientWithoutId,
   ) => {
     try {
-      //function that given a recipeId and one ingredient, it updates the recipeIngredient of both
-      const recipeIngredientId: number = await getIdFromRecipeId(
+      const recipeIngredientId = await getIdFromRecipeId(
         newRecipeIngredient.recipeId,
       );
-      console.log('updating this recipeIngredient: ' + recipeIngredientId);
+      console.log(
+        'Context.updateRecipeIngredient -> found ID:',
+        recipeIngredientId,
+      );
+
       if (recipeIngredientId >= 0) {
         await updateRecipeIngredientDb({
           id: recipeIngredientId,
           ...newRecipeIngredient,
-        }).then(() => {
-          console.log(
-            'context.updateRecipeIngredient -> recipeIngredient updated',
-          );
         });
+        console.log('Updated RecipeIngredient in SQLite:', newRecipeIngredient);
+      } else {
+        console.error(
+          'No matching RecipeIngredient found for:',
+          newRecipeIngredient,
+        );
+        Alert.alert(
+          'Error',
+          'Could not locate the ingredient in recipe for update.',
+        );
       }
     } catch (error) {
-      console.error(error);
+      console.error('updateRecipeIngredient -> Exception:', error);
+      Alert.alert(
+        'Error',
+        'Unexpected error while updating recipe ingredient.',
+      );
     }
   };
 
-  // Get ingredients of a recipe
-  const getIngredientsOfRecipe = async (recipeId: number) => {
+  /**
+   * Fetches all ingredients (with quantity & type) belonging to a given recipe.
+   * Returns an empty array if none found. Alerts/logs on DB errors.
+   */
+  const getIngredientsOfRecipe = async (
+    recipeId: number,
+  ): Promise<
+    (Ingredient & {quantity: number; quantityType: QuantityType})[]
+  > => {
     const result: Array<
-      Ingredient & {
-        quantity: number;
-        quantityType: QuantityType;
-      }
+      Ingredient & {quantity: number; quantityType: QuantityType}
     > = [];
 
-    if (recipeId < 0) throw new Error('recipeId value invalid');
-
-    const rows = await getIngredientsFromRecipeId(recipeId);
-
-    if (rows.length === 0) {
-      // Alert.alert("The selected recipe doesn't contain any ingredients");
+    if (recipeId < 0) {
+      console.error('getIngredientsOfRecipe -> invalid recipeId:', recipeId);
       return result;
     }
 
-    for (const ri of rows) {
-      // 👇 match on ingredientId, not recipeId
-      const idx = ingredients.findIndex(i => i.id === ri.ingredientId);
-      if (idx === -1) {
-        console.warn(`Ingredient ${ri.ingredientId} not found in context`);
-        continue; // or throw
+    try {
+      const rows = await getIngredientsFromRecipeId(recipeId);
+      if (rows.length === 0) {
+        // No ingredients for this recipe; return empty
+        return result;
       }
 
-      const ing = ingredients[idx];
-      result.push({
-        ...ing,
-        quantity: ri.quantity,
-        quantityType: ri.quantityType,
-      });
+      for (const ri of rows) {
+        const idx = ingredients.findIndex(i => i.id === ri.ingredientId);
+        if (idx === -1) {
+          console.warn(`Ingredient ${ri.ingredientId} not in context list`);
+          continue;
+        }
+        const ing = ingredients[idx];
+        result.push({
+          ...ing,
+          quantity: ri.quantity,
+          quantityType: ri.quantityType,
+        });
+      }
+      return result;
+    } catch (error) {
+      console.error('getIngredientsOfRecipe -> DB Exception:', error);
+      Alert.alert('Error', 'Could not load ingredients for recipe.');
+      return result;
     }
-
-    return result;
   };
 
+  /**
+   * Deletes a RecipeIngredient by looking up its internal ID first,
+   * then calling SQLite delete. Returns true/false.
+   */
   const deleteRecipeIngredient = async (
     ingredientId: number,
     recipeId: number,
@@ -237,20 +314,32 @@ export const AppProvider = ({children}: AppProviderProps) => {
         recipeId,
         ingredientId,
       );
+
+      if (recipeIngredientId < 0) {
+        console.warn(
+          'deleteRecipeIngredient -> no matching ID for',
+          recipeId,
+          ingredientId,
+        );
+        return false;
+      }
+
       const deleted = await deleteRecipeIngredientDb(recipeIngredientId);
-      if (recipeIngredientId == -1) {
-        if (deleted) {
-          console.log(
-            'deleted recipeIngredient with id: ' + recipeIngredientId,
-          );
-        }
+      if (!deleted) {
+        console.error(
+          'deleteRecipeIngredientDb returned false for ID:',
+          recipeIngredientId,
+        );
+        Alert.alert('Error', 'Could not remove ingredient from recipe.');
       }
       return deleted;
     } catch (error) {
-      throw new Error(
-        'Context.deleteRecipeIngredient -> error while deleting the recipeId ' +
-          error,
+      console.error('deleteRecipeIngredient -> Exception:', error);
+      Alert.alert(
+        'Error',
+        'Unexpected error while deleting ingredient from recipe.',
       );
+      return false;
     }
   };
 
