@@ -2,6 +2,7 @@ import React from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {QuantityType} from '../Types/Types';
 import {modalSemiTransparentBg, modalWhiteBg} from '../Utils/Styiling';
+import {ModalHeader} from './ModalHeareComponent';
 
 type CustomPickerProps = {
   isPickerOpen: boolean;
@@ -31,6 +32,12 @@ export const CustomPicker = ({
       <Modal transparent visible={isPickerOpen} animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
+            <View style={{marginHorizontal: 10, marginTop: 5}}>
+              <ModalHeader
+                text="Select option"
+                onClose={() => setIsPickerOpen(false)}
+              />
+            </View>
             {options.map((item, index) => {
               const isSelected = item === quantityType;
               return (
