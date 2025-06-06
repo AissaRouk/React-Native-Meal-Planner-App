@@ -121,24 +121,27 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       );
       // If the ingredient was found
       if (index != -1) {
-        // get the array
-        const newRecipeIngredients = recipeIngredients;
-        // if the quantity is modifies
-        if (field == 'quantity')
-          // add it
-          newRecipeIngredients[index].quantity = Number(value);
-        // if it's the quantityType
-        else newRecipeIngredients[index].quantityType = value as QuantityType;
-        // save the changes
-        // created an instance for better legibility
-        const instance = newRecipeIngredients[index];
-        // updating the recipeIngredient
-        updateRecipeIngredient({
-          recipeId: recipe.id,
-          ingredientId: instance.id,
-          quantity: instance.quantity,
-          quantityType: instance.quantityType,
-        });
+        const index = recipeIngredients.findIndex(inst => inst.id === id);
+        if (index !== -1) {
+          // 1) Build a fresh copy of recipeIngredients, mutating only the one entry:
+          const newList = [...recipeIngredients];
+          newList[index] = {
+            ...newList[index],
+            [field]:
+              field === 'quantity' ? Number(value) : (value as QuantityType),
+          };
+
+          // 2) Sync React state right away
+          +setRecipeIngredients(newList);
+
+          // 3) Then send it to your DB
+          await updateRecipeIngredient({
+            recipeId: recipe.id,
+            ingredientId: newList[index].id,
+            quantity: newList[index].quantity,
+            quantityType: newList[index].quantityType,
+          });
+        }
       }
     }
   };
