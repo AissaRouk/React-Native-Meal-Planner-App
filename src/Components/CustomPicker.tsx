@@ -1,13 +1,14 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {QuantityType} from '../Types/Types';
+import {modalSemiTransparentBg, modalWhiteBg} from '../Utils/Styiling';
 
 type CustomPickerProps = {
-  isPickerOpen: boolean; // State to track if the dropdown is open
-  setIsPickerOpen: (open: boolean) => void; // Function to toggle dropdown visibility
-  quantityType: QuantityType; // Currently selected quantity type
-  setQuantityType: (quantityType: QuantityType) => void; // Function to update the selected quantity type
-  options: QuantityType[]; // List of available options for the dropdown
+  isPickerOpen: boolean;
+  setIsPickerOpen: (open: boolean) => void;
+  quantityType: QuantityType;
+  setQuantityType: (quantityType: QuantityType) => void;
+  options: QuantityType[];
 };
 
 export const CustomPicker = ({
@@ -19,28 +20,40 @@ export const CustomPicker = ({
 }: CustomPickerProps) => {
   return (
     <View style={styles.container}>
-      {/* Display the currently selected value */}
+      {/* Currently selected value */}
       <TouchableOpacity
         style={styles.selectedValue}
         onPress={() => setIsPickerOpen(!isPickerOpen)}>
         <Text style={styles.selectedText}>{quantityType || 'Select'}</Text>
       </TouchableOpacity>
 
-      {isPickerOpen && (
-        <View style={styles.dropdown}>
-          {options.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.option}
-              onPress={() => {
-                setQuantityType(item);
-                setIsPickerOpen(false);
-              }}>
-              <Text style={styles.optionText}>{item}</Text>
-            </TouchableOpacity>
-          ))}
+      {/* Transparent Modal for dropdown */}
+      <Modal transparent visible={isPickerOpen} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {options.map((item, index) => {
+              const isSelected = item === quantityType;
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[styles.option, isSelected && styles.optionSelected]}
+                  onPress={() => {
+                    setQuantityType(item);
+                    setIsPickerOpen(false);
+                  }}>
+                  <Text
+                    style={[
+                      styles.optionText,
+                      isSelected && styles.optionTextSelected,
+                    ]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
-      )}
+      </Modal>
     </View>
   );
 };
@@ -50,29 +63,59 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   selectedValue: {
-    backgroundColor: '#ccc', // Background color for the selected value
-    borderRadius: 5, // Rounded corners
-    padding: 10, // Padding inside the button
-    width: 100, // Fixed width for the picker
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    width: 100,
   },
   selectedText: {
-    fontSize: 16, // Font size for the selected text
-    fontWeight: '500', // Medium font weight
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center',
   },
-  dropdown: {
-    position: 'absolute',
-    top: 50, // Position the dropdown below the selected value
-    backgroundColor: 'white', // Background color for the dropdown
-    borderRadius: 5, // Rounded corners
-    borderWidth: 1, // Border around the dropdown
-    borderColor: '#ccc', // Border color
-    width: 100, // Match the width of the picker
-    elevation: 5, // Shadow for Android
+
+  /* Modal overlay (semi‐transparent black) */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: modalSemiTransparentBg,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+
+  /* White container in center */
+  modalContainer: {
+    backgroundColor: modalWhiteBg,
+    borderRadius: 8,
+    width: '80%',
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    // add a subtle shadow on iOS/Android:
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+
+  /* Each option row */
   option: {
-    padding: 10, // Padding for each dropdown option
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    marginVertical: 4,
+    backgroundColor: 'white',
   },
   optionText: {
-    fontSize: 16, // Font size for dropdown option text
+    fontSize: 16,
+    color: '#333',
+  },
+
+  /* Highlighted style for the selected option */
+  optionSelected: {
+    backgroundColor: '#fb7945', // same accent color you use elsewhere
+  },
+  optionTextSelected: {
+    color: 'white',
+    fontWeight: '600',
   },
 });
