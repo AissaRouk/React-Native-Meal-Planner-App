@@ -18,56 +18,58 @@ import {
 import {addIngredient} from '../Services/ingredient-db-services';
 import {verifyRecipeIngredientWithoutId} from '../Utils/utils';
 
-// Define the shape of the context
+// Define the shape of the entire context, including methods and state values.
 type ContextProps = {
   ingredients: Ingredient[];
   setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
+
   /**
-   * adds or updates an ingredient depending if it already exists in the system
-   * @param {Ingredient} ingredient - Ingredient to be added, if it's a RecipeIngredient add id:-1
-   * @returns {Promise<number>} - returns new ingredient ID on success, -1 on failure
+   * Adds a new ingredient to SQLite (or updates if it already exists)
+   * @param newIngredient - The ingredient object (id:-1 if new)
+   * @returns Promise<number> - the new or updated ingredient ID, or -1 on failure
    */
   addOrUpdateIngredient: (ingredient: Ingredient) => Promise<number>;
 
   recipes: Recipe[];
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
+
   /**
-   * adds or updates a recipe in the database and context
-   * @param {Recipe} recipe - Recipe to upsert
+   * Adds or updates a recipe in SQLite and in context state.
+   * @param newRecipe - The recipe to insert/update
    */
   addOrUpdateRecipe: (recipe: Recipe) => Promise<void>;
 
   /**
-   * adds a new RecipeIngredient
-   * @param {RecipeIngredientWithoutId} newRecIng - recipeId, ingredientId, quantity, quantityType
-   * @returns {Promise<number>} - new RecipeIngredient ID on success, -1 on failure
+   * Adds a new RecipeIngredient record linking an ingredient to a recipe.
+   * @param newRecIng - Object containing recipeId, ingredientId, quantity, quantityType
+   * @returns Promise<number> - new row ID on success, or -1 on failure
    */
   addRecipeIngredient: (
     newRecIng: RecipeIngredientWithoutId,
   ) => Promise<number>;
 
   /**
-   * fetches all ingredients (with quantity & type) for a specific recipe
-   * @param {number} recipeId
-   * @returns Promise of array of Ingredient + { quantity, quantityType }
+   * Fetches all ingredients (with quantity & type) for a given recipe.
+   * @param recipeId - ID of the recipe to fetch ingredients for
+   * @returns Promise of an array of Ingredient plus { quantity, quantityType }
    */
   getIngredientsOfRecipe: (
     recipeId: number,
   ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
 
   /**
-   * updates a specific RecipeIngredient
-   * @param {RecipeIngredientWithoutId} newRecipeIngredient
+   * Updates an existing RecipeIngredient entry in the database.
+   * @param newRecipeIngredient - Object with recipeId, ingredientId, quantity, quantityType
    */
   updateRecipeIngredient: (
     newRecipeIngredient: RecipeIngredientWithoutId,
   ) => Promise<void>;
 
   /**
-   * deletes a RecipeIngredient by ingredientId & recipeId
-   * @param {number} ingredientId
-   * @param {number} recipeId
-   * @returns Promise<boolean> - true if deletion succeeded
+   * Deletes a RecipeIngredient by looking up its internal row ID via recipeId and ingredientId.
+   * @param ingredientId - ID of the ingredient to remove
+   * @param recipeId     - ID of the recipe containing that ingredient
+   * @returns Promise<boolean> - true if deletion succeeded, false otherwise
    */
   deleteRecipeIngredient: (
     ingredientId: number,
@@ -79,7 +81,7 @@ type AppProviderProps = {
   children: React.ReactNode;
 };
 
-// Create the context
+// Create the actual context with default values (no-ops).
 const AppContext = React.createContext<ContextProps>({
   ingredients: [],
   setIngredients: () => Promise.resolve(),
@@ -95,98 +97,118 @@ const AppContext = React.createContext<ContextProps>({
   deleteRecipeIngredient: async () => false,
 });
 
-// Create the provider component
+// The provider component wraps the app and supplies state + methods.
 export const AppProvider = ({children}: AppProviderProps) => {
+  // Local state for the list of ingredients (in memory)
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+
+  // Local state for the list of recipes (in memory)
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
+  // Log whenever the recipes array changes, for debugging
   useEffect(() => {
     console.log('Context -> recipes:', JSON.stringify(recipes));
   }, [recipes]);
 
   /**
-   * Adds or updates an ingredient in SQLite and context state.
-   * Returns the real ID if successful, or -1 on failure.
+   * Adds a new ingredient or updates existing one:
+   * 1. If id already exists in context, simply update that entry.
+   * 2. Otherwise, insert into SQLite and then append to context state.
+   * Returns the real (database) ID on success, or -1 if something fails.
    */
   const addOrUpdateIngredient = async (
     newIngredient: Ingredient,
   ): Promise<number> => {
-    // Check if it already exists in context by ID
+    // Check if this ingredient already exists in our in-memory list by ID
     const existingIndex = ingredients.findIndex(i => i.id === newIngredient.id);
 
     try {
       if (existingIndex >= 0) {
-        // Update path: update in context array
+        // --- UPDATE PATH ---
+        // Replace the object at existingIndex with the new data
         const updatedList = [...ingredients];
         updatedList[existingIndex] = newIngredient;
         setIngredients(updatedList);
-        return newIngredient.id;
+        return newIngredient.id; // Return the unchanged ID
       } else {
-        // Add path: insert into SQLite first
+        // --- ADD PATH ---
+        // Insert into SQLite database first
         const response = await addIngredient(newIngredient);
 
         if (response.created && response.insertedId != null) {
           const realId = response.insertedId;
 
-          // Build the full object with real ID
+          // Build a new Ingredient object with the actual ID returned
           const insertedIngredient: Ingredient = {
             id: realId,
             name: newIngredient.name,
             category: newIngredient.category,
           };
 
-          // Append to context state
+          // Append that new object to our in-memory list
           setIngredients(prev => [...prev, insertedIngredient]);
-          return realId;
+          return realId; // Return the new ID
         } else {
+          // Insert failed: log error and show an alert
           console.error('Failed to insert ingredient:', response);
           Alert.alert('Error', 'Could not add ingredient. Please try again.');
         }
       }
     } catch (error) {
+      // Unexpected exception: log and alert
       console.error('addOrUpdateIngredient -> Exception:', error);
       Alert.alert('Error', 'Unexpected error while adding ingredient.');
     }
 
-    return -1;
+    return -1; // Indicate failure
   };
 
   /**
-   * Adds or updates a recipe in SQLite and context.
-   * If updateRecipe (SQLite) returns false, logs and alerts.
+   * Adds or updates a recipe:
+   * 1. Calls SQLite updateRecipe(newRecipe).
+   * 2. If success, update in-memory list: replace if ID exists, otherwise append.
+   * 3. If SQLite returns false, log and alert the user.
    */
   const addOrUpdateRecipe = async (newRecipe: Recipe) => {
     try {
       const response = await updateRecipe(newRecipe);
       if (response) {
+        // Update our in-memory recipes array
         setRecipes(prev => {
           const index = prev.findIndex(r => r.id === newRecipe.id);
           if (index !== -1) {
+            // Replace existing
             const updated = [...prev];
             updated[index] = newRecipe;
             console.log('Updated recipe in context:', newRecipe);
             return updated;
           } else {
+            // Append new
             console.log('Added new recipe in context:', newRecipe);
             return [...prev, newRecipe];
           }
         });
       } else {
+        // SQLite update returned false => failure
         console.error('SQLite updateRecipe returned false for', newRecipe);
         Alert.alert('Error', `Could not save recipe "${newRecipe.name}".`);
       }
     } catch (error) {
+      // Unexpected exception
       console.error('addOrUpdateRecipe -> Exception:', error);
       Alert.alert('Error', 'Unexpected error while saving recipe.');
     }
   };
 
   /**
-   * Adds a new RecipeIngredient in SQLite. Returns inserted ID or -1 on failure.
+   * Adds a RecipeIngredient row to SQLite via addRecipeIngredientDb.
+   * First validates the object, then inserts.
+   * Returns the new row ID on success, or -1 on validation or insertion failure.
    */
   const addRecipeIngredient = async (
     newRecIng: RecipeIngredientWithoutId,
   ): Promise<number> => {
+    // Validate the newRecIng object (checks recipeId, ingredientId, etc.)
     const isValid = verifyRecipeIngredientWithoutId(newRecIng);
     console.log('Context.addRecipeIngredient -> verify result:', isValid);
 
@@ -196,14 +218,17 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
 
     try {
+      // Try inserting into SQLite
       const result = await addRecipeIngredientDb(newRecIng);
       if (result.created && result.insertedId != null) {
         return result.insertedId;
       } else {
+        // Insert succeeded but rowsAffected was 0 (UNIQUE constraint triggered)
         console.error('addRecipeIngredientDb did not create row:', result);
         Alert.alert('Error', 'Could not add ingredient to recipe.');
       }
     } catch (error) {
+      // Unexpected exception
       console.error('addRecipeIngredient -> Exception:', error);
       Alert.alert(
         'Error',
@@ -211,17 +236,20 @@ export const AppProvider = ({children}: AppProviderProps) => {
       );
     }
 
-    return -1;
+    return -1; // On any failure
   };
 
   /**
-   * Updates an existing RecipeIngredient by first finding its internal ID,
-   * then calling SQLite update. Alerts/logs on failure.
+   * Updates an existing RecipeIngredient row:
+   * 1. Finds the internal primary key by calling getIdFromRecipeId.
+   * 2. Calls SQLite update with updateRecipeIngredientDb.
+   * 3. Alerts/logs if no matching row found or exception occurs.
    */
   const updateRecipeIngredient = async (
     newRecipeIngredient: RecipeIngredientWithoutId,
   ) => {
     try {
+      // Look up the RecipeIngredient row ID from recipeId alone
       const recipeIngredientId = await getIdFromRecipeId(
         newRecipeIngredient.recipeId,
       );
@@ -231,12 +259,14 @@ export const AppProvider = ({children}: AppProviderProps) => {
       );
 
       if (recipeIngredientId >= 0) {
+        // Call the actual SQLite update function
         await updateRecipeIngredientDb({
           id: recipeIngredientId,
           ...newRecipeIngredient,
         });
         console.log('Updated RecipeIngredient in SQLite:', newRecipeIngredient);
       } else {
+        // No matching row found
         console.error(
           'No matching RecipeIngredient found for:',
           newRecipeIngredient,
@@ -247,6 +277,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
         );
       }
     } catch (error) {
+      // Unexpected exception
       console.error('updateRecipeIngredient -> Exception:', error);
       Alert.alert(
         'Error',
@@ -256,31 +287,38 @@ export const AppProvider = ({children}: AppProviderProps) => {
   };
 
   /**
-   * Fetches all ingredients (with quantity & type) belonging to a given recipe.
-   * Returns an empty array if none found. Alerts/logs on DB errors.
+   * Fetches all RecipeIngredient rows for a specific recipe,
+   * then maps each row to an Ingredient object plus { quantity, quantityType }.
+   * Returns an empty array if no rows found or on DB error.
    */
   const getIngredientsOfRecipe = async (
     recipeId: number,
   ): Promise<
     (Ingredient & {quantity: number; quantityType: QuantityType})[]
   > => {
+    // Prepare return array
     const result: Array<
       Ingredient & {quantity: number; quantityType: QuantityType}
     > = [];
 
+    // Guard: invalid recipeId
     if (recipeId < 0) {
       console.error('getIngredientsOfRecipe -> invalid recipeId:', recipeId);
       return result;
     }
 
     try {
+      // Fetch rows from SQLite: each row contains recipeId, ingredientId, quantity, quantityType
       const rows = await getIngredientsFromRecipeId(recipeId);
+
       if (rows.length === 0) {
-        // No ingredients for this recipe; return empty
+        // No rows found => return empty
         return result;
       }
 
+      // Map each row to an in-memory Ingredient object plus its quantity & type
       for (const ri of rows) {
+        // Find the corresponding Ingredient in context by ID
         const idx = ingredients.findIndex(i => i.id === ri.ingredientId);
         if (idx === -1) {
           console.warn(`Ingredient ${ri.ingredientId} not in context list`);
@@ -295,6 +333,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
       }
       return result;
     } catch (error) {
+      // Unexpected exception while fetching from DB
       console.error('getIngredientsOfRecipe -> DB Exception:', error);
       Alert.alert('Error', 'Could not load ingredients for recipe.');
       return result;
@@ -302,14 +341,15 @@ export const AppProvider = ({children}: AppProviderProps) => {
   };
 
   /**
-   * Deletes a RecipeIngredient by looking up its internal ID first,
-   * then calling SQLite delete. Returns true/false.
+   * Deletes a RecipeIngredient row by looking up its internal ID via recipeId & ingredientId,
+   * then calling the SQLite delete function. Returns true if deletion succeeded.
    */
   const deleteRecipeIngredient = async (
     ingredientId: number,
     recipeId: number,
   ): Promise<boolean> => {
     try {
+      // Find the row ID in RecipeIngredients
       const recipeIngredientId = await getIdFromRecipeIdAndIngredientId(
         recipeId,
         ingredientId,
@@ -324,8 +364,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
         return false;
       }
 
+      // Call SQLite delete
       const deleted = await deleteRecipeIngredientDb(recipeIngredientId);
       if (!deleted) {
+        // If rowsAffected was 0
         console.error(
           'deleteRecipeIngredientDb returned false for ID:',
           recipeIngredientId,
@@ -334,6 +376,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
       }
       return deleted;
     } catch (error) {
+      // Unexpected exception
       console.error('deleteRecipeIngredient -> Exception:', error);
       Alert.alert(
         'Error',
@@ -362,7 +405,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
   );
 };
 
-// Custom hook to use the context
+// Custom hook for consuming the context in components
 export const useAppContext = () => {
   const context = React.useContext(AppContext);
   if (!context) {
