@@ -9,7 +9,7 @@ type CustomPickerProps = {
   setIsPickerOpen: (open: boolean) => void;
   quantityType: QuantityType;
   setQuantityType: (quantityType: QuantityType) => void;
-  options: QuantityType[];
+  options: any[];
 };
 
 export const CustomPicker = ({
