@@ -9,7 +9,7 @@ import {RECIPE_ID} from './recipe-db-services';
 
 // Fields for the WeeklyMeals table
 export const WEEKLY_MEALS_ID = 'id';
-export const WEEKLY_MEALS_DAY = 'day';
+export const WEEKLY_MEALS_DAY = 'dayOfWeek';
 export const WEEKLY_MEALS_MEAL_TYPE = 'mealType';
 export const WEEKLY_MEALS_RECIPE_ID = 'recipeId';
 
