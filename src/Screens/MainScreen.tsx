@@ -11,6 +11,7 @@ import {
   Ingredient,
   MealType,
   Recipe,
+  RecipeIngredient,
   WeeklyMeal,
 } from '../Types/Types';
 import RecipeCard from '../Components/RecipeCardComponent';
@@ -24,9 +25,10 @@ import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
 import {RecipeScreenName, RecipesScreenName} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
-import {screensBackgroundColor} from '../Utils/Styiling';
+import {orangeBackgroundColor, screensBackgroundColor} from '../Utils/Styiling';
 import {getAllRecipeIngredients} from '../Services/recipeIngredients-db-services';
 import {FloatingButton} from '../Components/FloatingButton';
+import {PlanMealModal} from '../Components/PlanMealModal';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -41,6 +43,9 @@ export default function MainScreen(): React.JSX.Element {
   const [currentWeeklyMeals, setCurrentWeeklyMeals] = useState<Recipe[]>([]);
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
+  // State to trigger visibility of PlanMealModal
+  const [planMealModalVisible, setPlanMealModalVisible] =
+    useState<boolean>(false);
   //boolean state to track the completion of the data fetching
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
 
