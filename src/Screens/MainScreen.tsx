@@ -37,6 +37,8 @@ export default function MainScreen(): React.JSX.Element {
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
   // State to store the fetched weekly meals based on the selected day and meal type
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
+  // The recipes of the selected day and mealType
+  const [currentWeeklyMeals, setCurrentWeeklyMeals] = useState<Recipe[]>([]);
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
   //boolean state to track the completion of the data fetching
@@ -64,7 +66,7 @@ export default function MainScreen(): React.JSX.Element {
       const item: Recipe | null = await getRecipeById(weeklyMeals[i].recipeId);
       if (item) fetchedRecipes.push(item); // Only add recipes that exist
     }
-    setCurrentWeeklyMeals(fetchedRecipes); // Update the state with fetched recipes
+    setCurrentWeeklyMeals(fetchedRecipes || []); // Update the state with fetched recipes
   };
 
   // Handles the navigation
@@ -100,7 +102,7 @@ export default function MainScreen(): React.JSX.Element {
     if (selectedDay && selectedMeal && isFetchFinished == true) {
       const fetchData = async () => {
         try {
-          setRecipes([]); // Clear previous recipes to avoid stale data
+          setWeeklyMeals([]); // Clear previous recipes to avoid stale data
           const fetchedWeeklyMeals: WeeklyMeal[] = await fetchWeeklyMeals(
             selectedDay,
             selectedMeal,
@@ -126,7 +128,7 @@ export default function MainScreen(): React.JSX.Element {
       console.log('Fetching recipes for weeklyMeals:', weeklyMeals);
       fetchRecipes();
     } else {
-      setRecipes([]); // Reset recipes when there are no meals for the selected meal type
+      setCurrentWeeklyMeals([]); // Reset recipes when there are no meals for the selected meal type
     }
   }, [weeklyMeals]);
 
@@ -175,8 +177,37 @@ export default function MainScreen(): React.JSX.Element {
           onPress={() => setVisible(true)}
         />
 
+        {/* button to open PlanMealMode */}
+        <FloatingButton
+          iconName="calendar"
+          iconSize={32}
+          iconColor="white"
+          onPress={() => setPlanMealModalVisible(true)}
+          containerStyle={{
+            position: 'absolute',
+            bottom: 16,
+            right: 60 + 16 * 2,
+            backgroundColor: '#fb7945',
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 5, // Android shadow
+            shadowColor: '#000', // iOS shadow
+            shadowOffset: {width: 0, height: 2},
+            shadowOpacity: 0.3,
+            shadowRadius: 3,
+          }}
+        />
+
         {/* Modal to add the Recipes */}
         <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
+        <PlanMealModal
+          visible={planMealModalVisible}
+          onClose={() => setPlanMealModalVisible(false)}
+          onSaved={() => {}}
+        />
       </>
     </View>
   ) : (
