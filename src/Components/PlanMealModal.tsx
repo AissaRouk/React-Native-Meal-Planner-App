@@ -24,7 +24,7 @@ import {
 type PlanMealModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSaved: () => void; // callback to re‐fetch MainScreen data after saving
+  onSaved?: () => void; // callback to re‐fetch MainScreen data after saving
 };
 
 /**
@@ -91,7 +91,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
         recipeId: selectedRecipeId,
       });
       // onSaved will cause MainScreen to re‐fetch from DB
-      onSaved();
+      onSaved && onSaved();
       // close modal
       onClose();
     } catch (error) {
