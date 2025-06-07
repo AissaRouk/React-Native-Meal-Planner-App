@@ -100,10 +100,6 @@ export default function MainScreen(): React.JSX.Element {
       .then(() => setIsFetchFinished(true));
   }, []);
 
-  useEffect(() => {
-    console.log('ingredients array changed: ' + JSON.stringify(ingredients));
-  }, [ingredients]);
-
   // Fetches the weekly meals whenever the selected day or meal type changes
   useEffect(() => {
     if (selectedDay && selectedMeal && isFetchFinished == true) {
@@ -132,7 +128,6 @@ export default function MainScreen(): React.JSX.Element {
   // Fetches recipes whenever the weekly meals state is updated
   useEffect(() => {
     if (weeklyMeals.length > 0) {
-      console.log('Fetching recipes for weeklyMeals:', weeklyMeals);
       fetchRecipes();
     } else {
       setCurrentWeeklyMeals([]); // Reset recipes when there are no meals for the selected meal type
