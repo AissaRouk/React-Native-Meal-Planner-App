@@ -158,9 +158,9 @@ export default function MainScreen(): React.JSX.Element {
           {currentWeeklyMeals === null || currentWeeklyMeals?.length === 0 ? (
             <Text>No Recipes Found</Text>
           ) : (
-            currentWeeklyMeals.map(weeklyMeal => (
+            currentWeeklyMeals.map((weeklyMeal, index) => (
               <RecipeCard
-                key={weeklyMeal.id}
+                key={index}
                 recipe={weeklyMeal}
                 onPress={() =>
                   (navigation as any).navigate(RecipeScreenName, {
