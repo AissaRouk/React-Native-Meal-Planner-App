@@ -41,6 +41,8 @@ export default function MainScreen(): React.JSX.Element {
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
   // The recipes of the selected day and mealType
   const [currentWeeklyMeals, setCurrentWeeklyMeals] = useState<Recipe[]>([]);
+  //State that forces the fetch of the currentWeeklyMeals
+  const [renderFlag, setRenderFlag] = useState<boolean>(false);
   //State to trigger the visibility of the AddRecipeModal
   const [visible, setVisible] = useState<boolean>(false);
   // State to trigger visibility of PlanMealModal
@@ -125,7 +127,7 @@ export default function MainScreen(): React.JSX.Element {
 
       fetchData();
     }
-  }, [selectedMeal, selectedDay]);
+  }, [selectedMeal, selectedDay, renderFlag]);
 
   // Fetches recipes whenever the weekly meals state is updated
   useEffect(() => {
@@ -211,7 +213,7 @@ export default function MainScreen(): React.JSX.Element {
         <PlanMealModal
           visible={planMealModalVisible}
           onClose={() => setPlanMealModalVisible(false)}
-          onSaved={() => {}}
+          onSaved={() => setRenderFlag(!renderFlag)}
         />
       </>
     </View>
