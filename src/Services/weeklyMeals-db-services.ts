@@ -1,4 +1,9 @@
-import {DaysOfWeek, MealType, WeeklyMeal} from '../Types/Types';
+import {
+  DaysOfWeek,
+  MealType,
+  WeeklyMeal,
+  WeeklyMealWithoutId,
+} from '../Types/Types';
 import {getDbConnection, TABLE_WEEKLY_MEALS, TABLE_RECIPE} from './db-services';
 import {RECIPE_ID} from './recipe-db-services';
 
@@ -70,10 +75,9 @@ export const createWeeklyMealsTable: () => Promise<void> = async () => {
  * @returns {Promise<void>} Resolves when the weekly meal is added successfully or the insertion is ignored.
  */
 export const addWeeklyMeal: (
-  day: string,
-  mealType: MealType,
-  recipeId: number,
-) => Promise<void> = async (day, mealType, recipeId) => {
+  weeklyMeal: WeeklyMealWithoutId,
+) => Promise<number> = async weeklyMeal => {
+  const res = -1;
   try {
     const db = await getDbConnection();
 
@@ -88,10 +92,11 @@ export const addWeeklyMeal: (
     await db.transaction(tx => {
       tx.executeSql(
         sqlInsert,
-        [day, mealType, recipeId],
+        [weeklyMeal.day, weeklyMeal.mealType, weeklyMeal.recipeId],
         (tx, results) => {
           if (results.rowsAffected > 0) {
             console.log('addWeeklyMeal -> Meal added successfully!');
+            return results.insertId;
           } else {
             console.log('addWeeklyMeal -> Meal not added or already exists.');
           }
@@ -104,6 +109,7 @@ export const addWeeklyMeal: (
         },
       );
     });
+    return res;
   } catch (error) {
     console.error('addWeeklyMeal -> Transaction failed:', error);
     throw new Error(`addWeeklyMeal: ${error}`);
@@ -266,7 +272,7 @@ export const updateWeeklyMeal: (
  * @param {number} id - The ID of the weekly meal entry to be deleted.
  * @returns {Promise<void>} Resolves when the weekly meal entry is deleted successfully.
  */
-export const deleteWeeklyMeal: (id: number) => Promise<void> = async id => {
+export const deleteWeeklyMeal: (id: number) => Promise<boolean> = async id => {
   try {
     const db = await getDbConnection();
     const sqlDelete = `DELETE FROM ${TABLE_WEEKLY_MEALS} WHERE ${WEEKLY_MEALS_ID} = ?;`;
@@ -278,6 +284,7 @@ export const deleteWeeklyMeal: (id: number) => Promise<void> = async id => {
         (tx, results) => {
           if (results.rowsAffected > 0) {
             console.log('deleteWeeklyMeal -> Meal deleted successfully!');
+            return true;
           } else {
             console.log('deleteWeeklyMeal -> Meal not found or delete failed.');
           }
@@ -290,6 +297,7 @@ export const deleteWeeklyMeal: (id: number) => Promise<void> = async id => {
         },
       );
     });
+    return false;
   } catch (error) {
     console.error('deleteWeeklyMeal -> Transaction failed:', error);
     throw new Error(`deleteWeeklyMeal: ${error}`);
