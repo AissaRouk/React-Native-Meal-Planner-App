@@ -33,8 +33,7 @@ export const createWeeklyMealsTable: () => Promise<void> = async () => {
         ${WEEKLY_MEALS_DAY} TEXT NOT NULL,
         ${WEEKLY_MEALS_MEAL_TYPE} TEXT NOT NULL,
         ${WEEKLY_MEALS_RECIPE_ID} INTEGER,
-        FOREIGN KEY (${WEEKLY_MEALS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID}),
-        UNIQUE(${WEEKLY_MEALS_DAY}, ${WEEKLY_MEALS_MEAL_TYPE})
+        FOREIGN KEY (${WEEKLY_MEALS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID})
       );
     `;
 
