@@ -112,7 +112,7 @@ export const IngredientSearchSelector: React.FC<
       return;
     }
     getIngredientById(id).then(ing => {
-      onAddIngredient({...ing, quantity: 1, quantityType: QuantityType.GRAMS});
+      onAddIngredient({...ing, quantity: 1, quantityType: QuantityType.GRAM});
       setSearchValue('');
     });
   }
