@@ -4,9 +4,11 @@ import {
   modalSemiTransparentBg,
   modalWhiteBg,
   modalBorderRadius,
+  orangeBackgroundColor,
 } from '../Utils/Styiling';
 import {Recipe} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
+import {FloatingButton} from './FloatingButton';
 
 export function RecipeOptionsModal({
   menuVisible,
@@ -112,10 +114,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     paddingVertical: 8,
     paddingHorizontal: 12,
+    backgroundColor: orangeBackgroundColor,
+    borderRadius: modalBorderRadius,
   },
   cancelText: {
     fontSize: 16,
-    color: 'red',
+    color: 'white',
     fontWeight: '600',
   },
 });
