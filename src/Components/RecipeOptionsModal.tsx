@@ -8,16 +8,25 @@ import {
 } from '../Utils/Styiling';
 import {Recipe} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
-import {FloatingButton} from './FloatingButton';
 
 export function RecipeOptionsModal({
   menuVisible,
   setMenuVisible,
   recipe,
+  deleteOption,
+  onDelete,
+  unPlanOption,
+  onPlan,
+  onUnplan,
 }: {
   menuVisible: boolean;
   setMenuVisible: (visible: boolean) => void;
   recipe: Recipe;
+  deleteOption?: boolean;
+  unPlanOption?: boolean;
+  onDelete?: () => any;
+  onUnplan?: () => any;
+  onPlan: () => any;
 }): React.ReactNode {
   return (
     <Modal
@@ -36,21 +45,28 @@ export function RecipeOptionsModal({
 
           <TouchableOpacity
             style={styles.optionButton}
-            onPress={() => {
-              /* navigate to plan meal */
-            }}>
+            onPress={() => onPlan()}>
             <Icon name="calendar-outline" size={18} color="#fb7945" />
             <Text style={styles.optionText}>Plan this meal</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => {
-              /* delete from schedule */
-            }}>
-            <Icon name="trash-outline" size={18} color="#fb7945" />
-            <Text style={styles.optionText}>Remove from schedule</Text>
-          </TouchableOpacity>
+          {unPlanOption && (
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => onUnplan && onUnplan()}>
+              <Icon name="trash-outline" size={18} color="#fb7945" />
+              <Text style={styles.optionText}>Remove from schedule</Text>
+            </TouchableOpacity>
+          )}
+
+          {deleteOption && (
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => onDelete && onDelete()}>
+              <Icon name="trash-outline" size={18} color="#fb7945" />
+              <Text style={styles.optionText}>Delete this recipe</Text>
+            </TouchableOpacity>
+          )}
 
           <TouchableOpacity
             style={styles.cancelButton}
