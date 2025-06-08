@@ -55,6 +55,11 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     MealType.BREAKFAST,
   );
 
+  // States to manage the visibility of both pickers
+  const [dayPickerVisible, setDayPickerVisible] = useState<boolean>(false);
+  const [mealTypePickerVisible, setMealTypePickerVisible] =
+    useState<boolean>(false);
+
   // 3) Pick a recipeId
   const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
 
@@ -122,8 +127,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           {/** 1) Picker for DayOfWeek */}
           <Text style={styles.label}>Day of Week:</Text>
           <CustomPicker
-            isPickerOpen={false}
-            setIsPickerOpen={() => {}}
+            isPickerOpen={dayPickerVisible}
+            setIsPickerOpen={setDayPickerVisible}
             quantityType={selectedDay as any}
             setQuantityType={(d: any) => setSelectedDay(d)}
             options={Object.values(DaysOfWeek)}
@@ -132,8 +137,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           {/** 2) Picker for MealType */}
           <Text style={[styles.label, {marginTop: 16}]}>Meal Type:</Text>
           <CustomPicker
-            isPickerOpen={false}
-            setIsPickerOpen={() => {}}
+            isPickerOpen={mealTypePickerVisible}
+            setIsPickerOpen={setMealTypePickerVisible}
             quantityType={selectedMealType as any}
             setQuantityType={(m: any) => setSelectedMealType(m)}
             options={Object.values(MealType)}
