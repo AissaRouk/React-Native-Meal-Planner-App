@@ -76,7 +76,7 @@ export const createWeeklyMealsTable: () => Promise<void> = async () => {
 export const addWeeklyMeal: (
   weeklyMeal: WeeklyMealWithoutId,
 ) => Promise<number> = async weeklyMeal => {
-  const res = -1;
+  var res = -1;
   try {
     const db = await getDbConnection();
 
@@ -95,7 +95,7 @@ export const addWeeklyMeal: (
         (tx, results) => {
           if (results.rowsAffected > 0) {
             console.log('addWeeklyMeal -> Meal added successfully!');
-            return results.insertId;
+            res = results.insertId;
           } else {
             console.log('addWeeklyMeal -> Meal not added or already exists.');
           }
@@ -275,6 +275,7 @@ export const deleteWeeklyMeal: (id: number) => Promise<boolean> = async id => {
   try {
     const db = await getDbConnection();
     const sqlDelete = `DELETE FROM ${TABLE_WEEKLY_MEALS} WHERE ${WEEKLY_MEALS_ID} = ?;`;
+    var res = false;
 
     await db.transaction(tx => {
       tx.executeSql(
@@ -283,7 +284,7 @@ export const deleteWeeklyMeal: (id: number) => Promise<boolean> = async id => {
         (tx, results) => {
           if (results.rowsAffected > 0) {
             console.log('deleteWeeklyMeal -> Meal deleted successfully!');
-            return true;
+            res = true;
           } else {
             console.log('deleteWeeklyMeal -> Meal not found or delete failed.');
           }
@@ -296,7 +297,7 @@ export const deleteWeeklyMeal: (id: number) => Promise<boolean> = async id => {
         },
       );
     });
-    return false;
+    return res;
   } catch (error) {
     console.error('deleteWeeklyMeal -> Transaction failed:', error);
     throw new Error(`deleteWeeklyMeal: ${error}`);
