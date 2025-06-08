@@ -25,6 +25,9 @@ type PlanMealModalProps = {
   visible: boolean;
   onClose: () => void;
   onSaved?: () => void; // callback to re‐fetch MainScreen data after saving
+  initialDay?: DaysOfWeek;
+  initialMealType?: MealType;
+  initialRecipeId?: number;
 };
 
 /**
@@ -38,6 +41,9 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   visible,
   onClose,
   onSaved,
+  initialDay,
+  initialMealType,
+  initialRecipeId,
 }) => {
   // 1) We need a list of ALL recipes (so the user can choose which one to plan)
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
@@ -58,12 +64,17 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   // Load all recipes once when modal opens
   useEffect(() => {
     if (!visible) return;
+    // reset to the incoming “initial…” or defaults
+    setSelectedDay(initialDay ?? DaysOfWeek.MONDAY);
+    setSelectedMealType(initialMealType ?? MealType.BREAKFAST);
+    setSelectedRecipeId(initialRecipeId ?? null);
+    console.log('selectedRecipeId -> ' + initialRecipeId);
     const fetchAll = async () => {
       setIsLoadingRecipes(true);
       try {
         const fetched: Recipe[] = await getAllRecipes();
         setAllRecipes(fetched);
-        if (fetched.length > 0) {
+        if (fetched.length > 0 && initialRecipeId == null) {
           // default to first recipe
           setSelectedRecipeId(fetched[0].id);
         }
@@ -74,7 +85,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
       }
     };
     fetchAll();
-  }, [visible]);
+  }, [visible, initialDay, initialMealType, initialRecipeId]);
 
   // Called when user taps “Save”
   const handleSave = async () => {
