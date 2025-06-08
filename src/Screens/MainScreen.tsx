@@ -29,6 +29,7 @@ import {orangeBackgroundColor, screensBackgroundColor} from '../Utils/Styiling';
 import {getAllRecipeIngredients} from '../Services/recipeIngredients-db-services';
 import {FloatingButton} from '../Components/FloatingButton';
 import {PlanMealModal} from '../Components/PlanMealModal';
+import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -48,6 +49,10 @@ export default function MainScreen(): React.JSX.Element {
   // State to trigger visibility of PlanMealModal
   const [planMealModalVisible, setPlanMealModalVisible] =
     useState<boolean>(false);
+  // State to handle the visibility of the RecipeOptionsModal
+  const [recipeOptionsVisibility, setRecipeOptionsVisibility] =
+    useState<boolean>(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe>();
   //boolean state to track the completion of the data fetching
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
 
@@ -164,6 +169,10 @@ export default function MainScreen(): React.JSX.Element {
                     recipe: weeklyMeal,
                   })
                 }
+                onLongPress={() => {
+                  setSelectedRecipe(weeklyMeal);
+                  setRecipeOptionsVisibility(true);
+                }}
               />
             ))
           )}
@@ -205,11 +214,20 @@ export default function MainScreen(): React.JSX.Element {
 
         {/* Modal to add the Recipes */}
         <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
+        {/* Modal to Plan the meals */}
         <PlanMealModal
           visible={planMealModalVisible}
           onClose={() => setPlanMealModalVisible(false)}
           onSaved={() => setRenderFlag(!renderFlag)}
         />
+        {/* Modal to open the RecipeOptions */}
+        {selectedRecipe && (
+          <RecipeOptionsModal
+            menuVisible={recipeOptionsVisibility}
+            setMenuVisible={() => setRecipeOptionsVisibility(false)}
+            recipe={selectedRecipe}
+          />
+        )}
       </>
     </View>
   ) : (
