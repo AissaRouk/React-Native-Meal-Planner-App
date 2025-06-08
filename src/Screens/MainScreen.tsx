@@ -123,7 +123,7 @@ export default function MainScreen(): React.JSX.Element {
 
       fetchData();
     }
-  }, [selectedMeal, selectedDay, renderFlag]);
+  }, [selectedMeal, selectedDay, renderFlag, isFetchFinished]);
 
   // Fetches recipes whenever the weekly meals state is updated
   useEffect(() => {
