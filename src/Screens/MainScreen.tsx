@@ -41,7 +41,9 @@ export default function MainScreen(): React.JSX.Element {
   // State to store the fetched weekly meals based on the selected day and meal type
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
   // The recipes of the selected day and mealType
-  const [currentWeeklyMeals, setCurrentWeeklyMeals] = useState<Recipe[]>([]);
+  const [currentWeeklyMealsRecipes, setCurrentWeeklyMealsRecipes] = useState<
+    Recipe[]
+  >([]);
   //State that forces the fetch of the currentWeeklyMeals
   const [renderFlag, setRenderFlag] = useState<boolean>(false);
   //State to trigger the visibility of the AddRecipeModal
@@ -78,7 +80,7 @@ export default function MainScreen(): React.JSX.Element {
       const item: Recipe | null = await getRecipeById(weeklyMeals[i].recipeId);
       if (item) fetchedRecipes.push(item); // Only add recipes that exist
     }
-    setCurrentWeeklyMeals(fetchedRecipes || []); // Update the state with fetched recipes
+    setCurrentWeeklyMealsRecipes(fetchedRecipes || []); // Update the state with fetched recipes
   };
 
   // Handles the navigation
@@ -135,7 +137,7 @@ export default function MainScreen(): React.JSX.Element {
     if (weeklyMeals.length > 0) {
       fetchRecipes();
     } else {
-      setCurrentWeeklyMeals([]); // Reset recipes when there are no meals for the selected meal type
+      setCurrentWeeklyMealsRecipes([]); // Reset recipes when there are no meals for the selected meal type
     }
   }, [weeklyMeals]);
 
@@ -157,10 +159,11 @@ export default function MainScreen(): React.JSX.Element {
 
         {/* ScrollView to display the recipes */}
         <ScrollView showsVerticalScrollIndicator={false}>
-          {currentWeeklyMeals === null || currentWeeklyMeals?.length === 0 ? (
+          {currentWeeklyMealsRecipes === null ||
+          currentWeeklyMealsRecipes?.length === 0 ? (
             <Text>No Recipes Found</Text>
           ) : (
-            currentWeeklyMeals.map((weeklyMeal, index) => (
+            currentWeeklyMealsRecipes.map((weeklyMeal, index) => (
               <RecipeCard
                 key={index}
                 recipe={weeklyMeal}
