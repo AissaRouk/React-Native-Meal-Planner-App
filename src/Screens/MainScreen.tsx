@@ -18,7 +18,10 @@ import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
 import {getAllRecipes} from '../Services/recipe-db-services';
 import {getRecipeById} from '../Services/recipe-db-services';
-import {getWeeklyMealsByDayAndMealType} from '../Services/weeklyMeals-db-services';
+import {
+  deleteWeeklyMeal,
+  getWeeklyMealsByDayAndMealType,
+} from '../Services/weeklyMeals-db-services';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
@@ -91,6 +94,32 @@ export default function MainScreen(): React.JSX.Element {
   // called from the options modal:
   const handlePlanRecipe = () => {
     setPlanMealModalVisible(true);
+  };
+
+  // Handler para “desplanificar”
+  const handleUnplanRecipe = async () => {
+    if (!selectedRecipe) return;
+
+    // Encuentra el WeeklyMeal que corresponde al recipeId
+    const entry = weeklyMeals.find(wm => wm.recipeId === selectedRecipe.id);
+    if (!entry) {
+      console.warn('No schedule entry found for', selectedRecipe.id);
+      return;
+    }
+
+    try {
+      const success = await deleteWeeklyMeal(entry.id);
+      if (success) {
+        // Fuerza el re-fetch
+        setRenderFlag(flag => !flag);
+        // Cierra el modal de opciones
+        setRecipeOptionsVisibility(false);
+      } else {
+        console.error('Failed to unplan meal', entry.id);
+      }
+    } catch (e) {
+      console.error('Error unplanning meal:', e);
+    }
   };
 
   // Runs once when the component is mounted to initialize and populate the database
@@ -239,7 +268,7 @@ export default function MainScreen(): React.JSX.Element {
             recipe={selectedRecipe}
             onPlan={() => handlePlanRecipe()}
             unPlanOption
-            onUnplan={() => {}}
+            onUnplan={handleUnplanRecipe}
           />
         )}
       </>
