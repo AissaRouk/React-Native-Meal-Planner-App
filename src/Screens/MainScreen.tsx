@@ -26,7 +26,7 @@ import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
-import {RecipeScreenName, RecipesScreenName} from '../../App';
+import {PantryScreenName, RecipeScreenName, RecipesScreenName} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
 import {orangeBackgroundColor, screensBackgroundColor} from '../Utils/Styiling';
 import {getAllRecipeIngredients} from '../Services/recipeIngredients-db-services';
@@ -86,9 +86,23 @@ export default function MainScreen(): React.JSX.Element {
     setCurrentWeeklyMealsRecipes(fetchedRecipes || []); // Update the state with fetched recipes
   };
 
-  // Handles the navigation
-  const handleNavigate = () => {
-    (navigation as any).navigate(RecipesScreenName);
+  type Destination =
+    | {screen: 'Recipes'}
+    | {screen: 'Recipe'; params: {recipe: Recipe}}
+    | {screen: 'Pantry'};
+
+  const handleNavigate = (dest: Destination) => {
+    switch (dest.screen) {
+      case 'Recipes':
+        (navigation as any).navigate(RecipesScreenName);
+        break;
+      case 'Recipe':
+        (navigation as any).navigate(RecipeScreenName, dest.params);
+        break;
+      case 'Pantry':
+        (navigation as any).navigate(PantryScreenName);
+        break;
+    }
   };
 
   // called from the options modal:
@@ -182,7 +196,7 @@ export default function MainScreen(): React.JSX.Element {
         <MealsHeader
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
-          onButtonPress={handleNavigate}
+          onButtonPress={() => handleNavigate({screen: 'Recipes'})}
         />
 
         {/* Component to select the meal type */}
@@ -202,9 +216,7 @@ export default function MainScreen(): React.JSX.Element {
                 key={index}
                 recipe={recipe}
                 onPress={() =>
-                  (navigation as any).navigate(RecipeScreenName, {
-                    recipe: recipe,
-                  })
+                  handleNavigate({screen: 'Recipe', params: {recipe: recipe}})
                 }
                 onLongPress={() => {
                   setSelectedRecipe(recipe);
@@ -227,7 +239,7 @@ export default function MainScreen(): React.JSX.Element {
 
         {/* button to open PlanMealMode */}
         <FloatingButton
-          iconName="calendar"
+          iconName="calendar-outline"
           iconSize={32}
           iconColor="white"
           onPress={() => setPlanMealModalVisible(true)}
@@ -235,6 +247,30 @@ export default function MainScreen(): React.JSX.Element {
             position: 'absolute',
             bottom: 16,
             right: 60 + 16 * 2,
+            backgroundColor: '#fb7945',
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 5, // Android shadow
+            shadowColor: '#000', // iOS shadow
+            shadowOffset: {width: 0, height: 2},
+            shadowOpacity: 0.3,
+            shadowRadius: 3,
+          }}
+        />
+        {/* Button to go to Pantry */}
+        {/* button to open PlanMealMode */}
+        <FloatingButton
+          iconName="basket-outline"
+          iconSize={32}
+          iconColor="white"
+          onPress={() => handleNavigate({screen: 'Pantry'})}
+          containerStyle={{
+            position: 'absolute',
+            bottom: 16,
+            right: 60 * 2 + 16 * 3,
             backgroundColor: '#fb7945',
             width: 60,
             height: 60,
