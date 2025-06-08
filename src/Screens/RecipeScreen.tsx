@@ -29,6 +29,7 @@ import {FloatingButton} from '../Components/FloatingButton';
 import AddIngredientModal from '../Components/AddIngredientModal';
 import {IngredientSearchSelector} from '../Components/IngredientSearchSelectorComponent';
 import {ModalHeader} from '../Components/ModalHeareComponent';
+import {IngredientSearchModal} from '../Components/IngredientSearchModal';
 
 type RecipeScreenProps = {
   route: any;
@@ -379,49 +380,20 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       </TouchableOpacity>
 
       {/* Modal to add the RecipeIngredient */}
-      <Modal visible={isIngredientModalVisible} transparent>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <View
-            style={{
-              backgroundColor: 'white',
-              padding: 20,
-              borderRadius: 10,
-              width: '90%', // Modal width relative to the screen
-            }}>
-            {/* The header of the modal */}
-            <ModalHeader
-              text={'Add an ingredient to the recipe'}
-              onClose={() => setIsIngredientModalVisible(false)}
-            />
-
-            {/* The SearchBar Component */}
-            <IngredientSearchSelector
-              onAddIngredient={handleAddRecipeIngredient}
-              onChangeQuantity={(ingredientId, quantity) => {
-                handleRecipeIngredientChange(
-                  ingredientId,
-                  'quantity',
-                  quantity,
-                );
-              }}
-              onChangeQuantityType={(id, quantityType) => {
-                handleRecipeIngredientChange(id, 'quantityType', quantityType);
-              }}
-              onRemoveIngredient={() => {}}
-              selectedIngredients={recipeIngredients}
-              onOpenAddIngredientModal={() => {
-                setAddIngredientModalVisible(true);
-              }}
-            />
-          </View>
-        </View>
-      </Modal>
+      <IngredientSearchModal
+        visible={isIngredientModalVisible}
+        onClose={() => setIsIngredientModalVisible(false)}
+        onAddIngredient={handleAddRecipeIngredient}
+        onChangeQuantity={(id, quantity) =>
+          handleRecipeIngredientChange(id, 'quantity', quantity)
+        }
+        onChangeQuantityType={(id, quantityType) =>
+          handleRecipeIngredientChange(id, 'quantityType', quantityType)
+        }
+        onRemoveIngredient={() => {}}
+        selectedIngredients={recipeIngredients}
+        onOpenAddIngredientModal={() => setAddIngredientModalVisible(true)}
+      />
 
       {/* The button for opening the modal */}
       <AddIngredientModal
