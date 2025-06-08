@@ -43,6 +43,7 @@ type IngredientSearchSelectorProps = {
     quantityType: QuantityType,
   ) => void;
   onOpenAddIngredientModal: () => any;
+  showResultList?: boolean;
 };
 
 export const IngredientSearchSelector: React.FC<
@@ -54,6 +55,7 @@ export const IngredientSearchSelector: React.FC<
   onChangeQuantity,
   onChangeQuantityType,
   onOpenAddIngredientModal,
+  showResultList,
 }) => {
   const {ingredients} = useAppContext();
 
@@ -216,23 +218,25 @@ export const IngredientSearchSelector: React.FC<
         </TouchableOpacity>
       </View>
 
-      {searchResultsVisible && selectedIngredients.length > 0 && (
-        <ScrollView style={{maxHeight: 200, marginBottom: 8}}>
-          {selectedIngredients.map((inst, idx) => (
-            <IngredientComponent
-              key={idx}
-              ingredients={selectedIngredients}
-              id={inst.id}
-              number={idx}
-              quantity={inst.quantity}
-              quantityType={inst.quantityType}
-              setQuantity={q => onChangeQuantity(inst.id, q)}
-              setQuantityType={qt => onChangeQuantityType(inst.id, qt)}
-              onDelete={onRemoveIngredient}
-            />
-          ))}
-        </ScrollView>
-      )}
+      {showResultList &&
+        searchResultsVisible &&
+        selectedIngredients.length > 0 && (
+          <ScrollView style={{maxHeight: 200, marginBottom: 8}}>
+            {selectedIngredients.map((inst, idx) => (
+              <IngredientComponent
+                key={idx}
+                ingredients={selectedIngredients}
+                id={inst.id}
+                number={idx}
+                quantity={inst.quantity}
+                quantityType={inst.quantityType}
+                setQuantity={q => onChangeQuantity(inst.id, q)}
+                setQuantityType={qt => onChangeQuantityType(inst.id, qt)}
+                onDelete={onRemoveIngredient}
+              />
+            ))}
+          </ScrollView>
+        )}
 
       {selectionViewOpen && (
         <>
