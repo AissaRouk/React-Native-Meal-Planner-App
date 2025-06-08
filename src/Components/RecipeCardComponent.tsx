@@ -6,11 +6,16 @@ import {Recipe} from '../Types/Types';
 const RecipeCard = ({
   recipe,
   onPress,
+  onLongPress,
 }: {
   recipe: Recipe;
   onPress?: () => any;
+  onLongPress?: () => any;
 }) => (
-  <TouchableOpacity style={styles.card} onPress={() => onPress && onPress()}>
+  <TouchableOpacity
+    style={styles.card}
+    onPress={() => onPress && onPress()}
+    onLongPress={() => onLongPress && onLongPress()}>
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <Image
         source={require('../Assets/icons/breakfast_icon.png')}
