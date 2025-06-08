@@ -88,6 +88,11 @@ export default function MainScreen(): React.JSX.Element {
     (navigation as any).navigate(RecipesScreenName);
   };
 
+  // called from the options modal:
+  const handlePlanRecipe = () => {
+    setPlanMealModalVisible(true);
+  };
+
   // Runs once when the component is mounted to initialize and populate the database
   useEffect(() => {
     const asyncFunctions = async () => {
@@ -163,17 +168,17 @@ export default function MainScreen(): React.JSX.Element {
           currentWeeklyMealsRecipes?.length === 0 ? (
             <Text>No Recipes Found</Text>
           ) : (
-            currentWeeklyMealsRecipes.map((weeklyMeal, index) => (
+            currentWeeklyMealsRecipes.map((recipe, index) => (
               <RecipeCard
                 key={index}
-                recipe={weeklyMeal}
+                recipe={recipe}
                 onPress={() =>
                   (navigation as any).navigate(RecipeScreenName, {
-                    recipe: weeklyMeal,
+                    recipe: recipe,
                   })
                 }
                 onLongPress={() => {
-                  setSelectedRecipe(weeklyMeal);
+                  setSelectedRecipe(recipe);
                   setRecipeOptionsVisibility(true);
                 }}
               />
@@ -222,6 +227,9 @@ export default function MainScreen(): React.JSX.Element {
           visible={planMealModalVisible}
           onClose={() => setPlanMealModalVisible(false)}
           onSaved={() => setRenderFlag(!renderFlag)}
+          initialDay={selectedDay} // plan for current day
+          initialMealType={selectedMeal} // plan for current meal
+          initialRecipeId={selectedRecipe?.id} // and this recipe
         />
         {/* Modal to open the RecipeOptions */}
         {selectedRecipe && (
@@ -229,6 +237,9 @@ export default function MainScreen(): React.JSX.Element {
             menuVisible={recipeOptionsVisibility}
             setMenuVisible={() => setRecipeOptionsVisibility(false)}
             recipe={selectedRecipe}
+            onPlan={() => handlePlanRecipe()}
+            unPlanOption
+            onUnplan={() => {}}
           />
         )}
       </>
