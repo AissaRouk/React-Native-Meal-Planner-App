@@ -25,13 +25,13 @@ import {
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
-import {useNavigation} from '@react-navigation/native';
 import MealsHeader from '../Components/MealsHeader';
 import {screensBackgroundColor} from '../Utils/Styiling';
 import {FloatingButton} from '../Components/FloatingButton';
 import {PlanMealModal} from '../Components/PlanMealModal';
 import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 import {handleNavigate} from '../Utils/utils';
+import auth from '@react-native-firebase/auth';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -173,7 +173,8 @@ export default function MainScreen(): React.JSX.Element {
         <MealsHeader
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
-          onButtonPress={() => handleNavigate({screen: 'Recipes'})}
+          onRecipesButtonPress={() => handleNavigate({screen: 'Recipes'})}
+          onLogoutButtonPress={() => auth().signOut()}
         />
 
         {/* Component to select the meal type */}

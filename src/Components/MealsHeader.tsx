@@ -15,7 +15,8 @@ import AppHeader from './AppHeader';
 type MealsHeaderProps = {
   selectedDay: DaysOfWeek;
   setSelectedDay: (day: DaysOfWeek) => void;
-  onButtonPress: () => void;
+  onRecipesButtonPress: () => void;
+  onLogoutButtonPress: () => void;
 };
 
 /**
@@ -28,24 +29,39 @@ type MealsHeaderProps = {
 const MealsHeader: React.FC<MealsHeaderProps> = ({
   selectedDay,
   setSelectedDay,
-  onButtonPress,
+  onRecipesButtonPress,
+  onLogoutButtonPress,
 }) => {
   return (
     <View>
       <AppHeader
         title="Daily Meals"
         rightComponent={
-          <TouchableOpacity
-            style={{
-              backgroundColor: orangeBackgroundColor,
-              paddingVertical: 10,
-              paddingHorizontal: 10,
-              borderRadius: 8,
-              alignSelf: 'flex-end',
-            }}
-            onPress={onButtonPress}>
-            <Icon name="book-outline" color={'white'} size={20} />
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: orangeBackgroundColor,
+                paddingVertical: 10,
+                paddingHorizontal: 10,
+                borderRadius: 8,
+                alignSelf: 'flex-end',
+                marginRight: 10,
+              }}
+              onPress={onLogoutButtonPress}>
+              <Icon name="log-out-outline" color={'white'} size={20} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: orangeBackgroundColor,
+                paddingVertical: 10,
+                paddingHorizontal: 10,
+                borderRadius: 8,
+                alignSelf: 'flex-end',
+              }}
+              onPress={onRecipesButtonPress}>
+              <Icon name="book-outline" color={'white'} size={20} />
+            </TouchableOpacity>
+          </View>
         }
       />
       <ScrollView
