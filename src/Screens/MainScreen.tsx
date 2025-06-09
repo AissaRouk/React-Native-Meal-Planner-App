@@ -26,17 +26,12 @@ import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
-import {
-  GroceryListScreenName,
-  PantryScreenName,
-  RecipeScreenName,
-  RecipesScreenName,
-} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
 import {screensBackgroundColor} from '../Utils/Styiling';
 import {FloatingButton} from '../Components/FloatingButton';
 import {PlanMealModal} from '../Components/PlanMealModal';
 import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
+import {handleNavigate} from '../Utils/utils';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -69,9 +64,6 @@ export default function MainScreen(): React.JSX.Element {
   // Context state to manage the ingredients
   const {ingredients, setIngredients, recipes, setRecipes} = useAppContext();
 
-  // NAVIGATION
-  const navigation = useNavigation();
-
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
     dayOfWeek: DaysOfWeek,
@@ -88,29 +80,6 @@ export default function MainScreen(): React.JSX.Element {
       if (item) fetchedRecipes.push(item); // Only add recipes that exist
     }
     setCurrentWeeklyMealsRecipes(fetchedRecipes || []); // Update the state with fetched recipes
-  };
-
-  type Destination =
-    | {screen: 'Recipes'}
-    | {screen: 'Recipe'; params: {recipe: Recipe}}
-    | {screen: 'Pantry'}
-    | {screen: 'GroceyList'};
-
-  const handleNavigate = (dest: Destination) => {
-    switch (dest.screen) {
-      case 'Recipes':
-        (navigation as any).navigate(RecipesScreenName);
-        break;
-      case 'Recipe':
-        (navigation as any).navigate(RecipeScreenName, dest.params);
-        break;
-      case 'Pantry':
-        (navigation as any).navigate(PantryScreenName);
-        break;
-      case 'GroceyList':
-        (navigation as any).navigate(GroceryListScreenName);
-        break;
-    }
   };
 
   // called from the options modal:
