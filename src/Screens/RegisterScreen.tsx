@@ -18,11 +18,13 @@ import {
   modalBorderRadius,
 } from '../Utils/Styiling';
 import {genericStyles} from '../Utils/Styiling';
-import auth from '@react-native-firebase/auth';
+import {getAuth} from '@react-native-firebase/auth';
 
 export default function RegisterScreen(): React.ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const auth = getAuth();
 
   const handleRegister = async () => {
     if (!email || !password) {
@@ -30,7 +32,7 @@ export default function RegisterScreen(): React.ReactElement {
       return;
     }
     try {
-      await auth().createUserWithEmailAndPassword(email.trim(), password);
+      await auth.createUserWithEmailAndPassword(email.trim(), password);
     } catch (err: any) {
       Alert.alert('Registration failed', err.message);
     }
@@ -74,16 +76,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: screensBackgroundColor,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   form: {
-    padding: 16,
     marginTop: 32,
+    width: '90%',
   },
   input: {
     borderWidth: 1,
     borderColor: greyBorderColor,
     borderRadius: 5,
-    padding: 10,
     marginBottom: 20,
     fontSize: 16,
   },

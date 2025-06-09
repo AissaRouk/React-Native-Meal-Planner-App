@@ -31,7 +31,7 @@ import {FloatingButton} from '../Components/FloatingButton';
 import {PlanMealModal} from '../Components/PlanMealModal';
 import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 import {handleNavigate} from '../Utils/utils';
-import auth from '@react-native-firebase/auth';
+import {getAuth} from '@react-native-firebase/auth';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -63,6 +63,8 @@ export default function MainScreen(): React.JSX.Element {
   //CONTEXT
   // Context state to manage the ingredients
   const {ingredients, setIngredients, recipes, setRecipes} = useAppContext();
+
+  const auth = getAuth();
 
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
@@ -174,7 +176,7 @@ export default function MainScreen(): React.JSX.Element {
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
           onRecipesButtonPress={() => handleNavigate({screen: 'Recipes'})}
-          onLogoutButtonPress={() => auth().signOut()}
+          onLogoutButtonPress={() => auth.signOut()}
         />
 
         {/* Component to select the meal type */}

@@ -18,8 +18,8 @@ import {
   modalBorderRadius,
 } from '../Utils/Styiling';
 import {genericStyles} from '../Utils/Styiling';
-import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
+import {getAuth} from '@react-native-firebase/auth';
 
 // Make sure these match the names you registered in App.tsx
 const MainScreenName = 'MainScreen';
@@ -30,13 +30,15 @@ export default function LoginScreen(): React.ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const auth = getAuth();
+
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
     try {
-      await auth().signInWithEmailAndPassword(email.trim(), password);
+      await auth.signInWithEmailAndPassword(email.trim(), password);
     } catch (err: any) {
       Alert.alert('Login failed', err.message);
     }
@@ -88,10 +90,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: screensBackgroundColor,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   form: {
-    padding: 16,
+    paddingVertical: 16,
     marginTop: 32,
+    width: '90%',
   },
   input: {
     borderWidth: 1,
