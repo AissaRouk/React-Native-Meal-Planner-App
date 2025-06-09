@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "319125223546",
+    "project_id": "react-native-meal-planner",
+    "storage_bucket": "react-native-meal-planner.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319125223546:android:c16be6ebe3c27ccf67a3c3",
+        "android_client_info": {
+          "package_name": "com.reactnativemealplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "319125223546-g19cq8qfql976a4sab6389oledj37s8h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.reactnativemealplanner",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "319125223546-vdjo3v0paf1dkbq25js4n50m0kl6cnm4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyey_bCS-XeIJ05gE9KNgf-1UJFzeruVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "319125223546-vdjo3v0paf1dkbq25js4n50m0kl6cnm4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
