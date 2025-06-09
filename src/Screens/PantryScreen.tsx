@@ -1,4 +1,5 @@
 // src/Screens/PantryScreen.tsx
+
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, FlatList, Text} from 'react-native';
 import {useAppContext} from '../Context/Context';
@@ -19,22 +20,17 @@ import {
   QuantityType,
 } from '../Types/Types';
 import AddIngredientModal from '../Components/AddIngredientModal';
+import AppHeader from '../Components/AppHeader';
 
 export default function PantryScreen(): React.JSX.Element {
-  // Access all known ingredients and helper to create new ones
+  // --- Context & state ---
   const {ingredients: allIngredients, addOrUpdateIngredient} = useAppContext();
-
-  // State: list of items currently in the pantry
   const [pantryItems, setPantryItems] = useState<IngredientPantry[]>([]);
-  // State: controls visibility of the search‐and‐select modal
   const [isSearchModalVisible, setSearchModalVisible] = useState(false);
-  // State: controls visibility of the “add new ingredient” modal
   const [isAddIngredientModalVisible, setIsAddIngredientModalVisible] =
-    useState<boolean>(false);
+    useState(false);
 
-  /**
-   * Load all pantry rows from the database into state
-   */
+  // --- Load pantry rows from DB ---
   const loadPantry = async () => {
     try {
       const items = await getAllIngredientPantries();
@@ -44,14 +40,11 @@ export default function PantryScreen(): React.JSX.Element {
     }
   };
 
-  // Fetch pantry items once on component mount
   useEffect(() => {
     loadPantry();
   }, []);
 
-  /**
-   * Update a single pantry row in DB and local state
-   */
+  // --- Update one pantry row both in DB and state ---
   const handleUpdate = async (updated: IngredientPantry) => {
     try {
       await updateIngredientPantry(updated);
@@ -63,9 +56,7 @@ export default function PantryScreen(): React.JSX.Element {
     }
   };
 
-  /**
-   * Delete a single pantry row in DB and remove it from state
-   */
+  // --- Delete one pantry row from DB and state ---
   const handleDelete = async (id: number) => {
     try {
       await deleteIngredientPantry(id);
@@ -75,10 +66,7 @@ export default function PantryScreen(): React.JSX.Element {
     }
   };
 
-  /**
-   * Add a new pantry entry via the search modal
-   * Returns true on success so the modal can close
-   */
+  // --- Add a pantry row (called from search modal) ---
   const handleAddIngredientPantry = async (
     newEntry: IngredientPantryWithoutId,
   ): Promise<boolean> => {
@@ -92,7 +80,7 @@ export default function PantryScreen(): React.JSX.Element {
     }
   };
 
-  // Handlers for selector callbacks that only take two args
+  // --- Wrapers for selector callbacks ---
   const handleChangeQuantity = (id: number, quantity: number) => {
     const item = pantryItems.find(i => i.id === id);
     if (item) handleUpdate({...item, quantity});
@@ -105,23 +93,20 @@ export default function PantryScreen(): React.JSX.Element {
     handleDelete(id);
   };
 
-  /**
-   * Create a brand‐new Ingredient if needed, then add it to pantry
-   */
+  // --- Create brand-new ingredient then add to pantry ---
   const handleCreateIngredient = async (
     i: IngredientWithoutId,
   ): Promise<boolean> => {
     const res = await addOrUpdateIngredient({...i, id: -1});
-    if (res == -1) return false;
-    const added = await handleAddIngredientPantry({
+    if (res === -1) return false;
+    return handleAddIngredientPantry({
       ingredientId: res,
       quantity: 1,
       quantityType: QuantityType.UNIT,
     });
-    return added;
   };
 
-  /** Render each pantry item as an IngredientComponent */
+  // --- Render each pantry row via IngredientComponent ---
   const renderItem = ({item}: {item: IngredientPantry}) => (
     <IngredientComponent
       ingredients={allIngredients}
@@ -137,7 +122,9 @@ export default function PantryScreen(): React.JSX.Element {
 
   return (
     <View style={styles.container}>
-      {/* If no items, show empty message */}
+      <AppHeader title="My Pantry" />
+
+      {/* Empty-state */}
       {pantryItems.length === 0 ? (
         <Text style={styles.emptyText}>Your pantry is empty.</Text>
       ) : (
@@ -149,7 +136,7 @@ export default function PantryScreen(): React.JSX.Element {
         />
       )}
 
-      {/* Button to open the ingredient‐search modal */}
+      {/* “+” to open search modal */}
       <FloatingButton
         iconName="add"
         iconSize={28}
@@ -157,7 +144,7 @@ export default function PantryScreen(): React.JSX.Element {
         onPress={() => setSearchModalVisible(true)}
       />
 
-      {/* Modal: search existing ingredients to add to pantry */}
+      {/* Modal ­– search existing ingredients */}
       <IngredientSearchModal
         visible={isSearchModalVisible}
         onClose={() => setSearchModalVisible(false)}
@@ -173,18 +160,16 @@ export default function PantryScreen(): React.JSX.Element {
           handleChangeQuantityType(id, type as QuantityType)
         }
         onRemoveIngredient={handleRemoveIngredient}
-        // Transform pantryItems to selector format
+        // pass pantryItems in selector’s expected shape
         selectedIngredients={pantryItems.map(p => ({
           id: p.ingredientId,
           quantity: p.quantity,
           quantityType: p.quantityType,
         }))}
-        onOpenAddIngredientModal={() => {
-          setIsAddIngredientModalVisible(true);
-        }}
+        onOpenAddIngredientModal={() => setIsAddIngredientModalVisible(true)}
       />
 
-      {/* Modal: add a completely new ingredient to the system */}
+      {/* Modal ­– add brand-new ingredient */}
       <AddIngredientModal
         visible={isAddIngredientModalVisible}
         onSubmit={handleCreateIngredient}
