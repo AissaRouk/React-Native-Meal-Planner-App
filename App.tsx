@@ -10,7 +10,7 @@ import GroceryListScreen from './src/Screens/GroceryListScreen';
 import LoginScreen from './src/Screens/LoginScreen';
 import RegisterScreen from './src/Screens/RegisterScreen';
 import {AppProvider} from './src/Context/Context';
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import {getAuth, FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,9 +23,10 @@ export const MainScreenName: string = 'MainScreen',
 export default function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const auth = getAuth();
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(u => {
+    const unsubscribe = auth.onAuthStateChanged(u => {
       setUser(u);
       if (initializing) setInitializing(false);
     });
