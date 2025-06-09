@@ -50,13 +50,14 @@ export type WeeklyMealWithoutId = Omit<WeeklyMeal, 'id'>;
 //Enums
 
 export enum QuantityType {
-  GRAMS = 'grams',
-  MILLILITERS = 'milliliters',
-  PIECES = 'pieces',
-  TABLESPOON = 'tablespoon',
-  TEASPOON = 'teaspoon',
-  CUPS = 'cups',
-  UNIT = 'unit', // Generic unit type
+  UNIT = 'UNIT',
+  GRAM = 'GRAM',
+  KILOGRAM = 'KILOGRAM',
+  MILLILITER = 'MILLILITER',
+  LITER = 'LITER',
+  CUP = 'CUP',
+  TABLESPOON = 'TABLESPOON',
+  TEASPOON = 'TEASPOON',
 }
 
 //Array of the quantityTypes
