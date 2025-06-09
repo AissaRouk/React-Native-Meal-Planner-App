@@ -5,11 +5,13 @@ import {AppProvider} from './src/Context/Context';
 import {RecipesScreen} from './src/Screens/RecipesScreen';
 import {RecipeScreen} from './src/Screens/RecipeScreen';
 import PantryScreen from './src/Screens/PantryScreen';
+import GroceryListScreen from './src/Components/GroceryListScreen';
 
 export const MainScreenName: string = 'MainScreen';
 export const RecipesScreenName: string = 'RecipesScreen';
 export const RecipeScreenName: string = 'RecipeScreen';
 export const PantryScreenName: string = 'PanstryScreen';
+export const GroceryListScreenName: string = 'GroceryListScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,10 @@ const RootStack = () => {
       <Stack.Screen name={RecipesScreenName} component={RecipesScreen} />
       <Stack.Screen name={RecipeScreenName} component={RecipeScreen} />
       <Stack.Screen name={PantryScreenName} component={PantryScreen} />
+      <Stack.Screen
+        name={GroceryListScreenName}
+        component={GroceryListScreen}
+      />
     </Stack.Navigator>
   );
 };
