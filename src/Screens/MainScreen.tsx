@@ -26,10 +26,14 @@ import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
 import {useNavigation} from '@react-navigation/native';
-import {PantryScreenName, RecipeScreenName, RecipesScreenName} from '../../App';
+import {
+  GroceryListScreenName,
+  PantryScreenName,
+  RecipeScreenName,
+  RecipesScreenName,
+} from '../../App';
 import MealsHeader from '../Components/MealsHeader';
-import {orangeBackgroundColor, screensBackgroundColor} from '../Utils/Styiling';
-import {getAllRecipeIngredients} from '../Services/recipeIngredients-db-services';
+import {screensBackgroundColor} from '../Utils/Styiling';
 import {FloatingButton} from '../Components/FloatingButton';
 import {PlanMealModal} from '../Components/PlanMealModal';
 import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
@@ -89,7 +93,8 @@ export default function MainScreen(): React.JSX.Element {
   type Destination =
     | {screen: 'Recipes'}
     | {screen: 'Recipe'; params: {recipe: Recipe}}
-    | {screen: 'Pantry'};
+    | {screen: 'Pantry'}
+    | {screen: 'GroceyList'};
 
   const handleNavigate = (dest: Destination) => {
     switch (dest.screen) {
@@ -101,6 +106,9 @@ export default function MainScreen(): React.JSX.Element {
         break;
       case 'Pantry':
         (navigation as any).navigate(PantryScreenName);
+        break;
+      case 'GroceyList':
+        (navigation as any).navigate(GroceryListScreenName);
         break;
     }
   };
@@ -261,7 +269,6 @@ export default function MainScreen(): React.JSX.Element {
           }}
         />
         {/* Button to go to Pantry */}
-        {/* button to open PlanMealMode */}
         <FloatingButton
           iconName="basket-outline"
           iconSize={32}
@@ -271,6 +278,29 @@ export default function MainScreen(): React.JSX.Element {
             position: 'absolute',
             bottom: 16,
             right: 60 * 2 + 16 * 3,
+            backgroundColor: '#fb7945',
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 5, // Android shadow
+            shadowColor: '#000', // iOS shadow
+            shadowOffset: {width: 0, height: 2},
+            shadowOpacity: 0.3,
+            shadowRadius: 3,
+          }}
+        />
+        {/* Button to open GroceryList Screen*/}
+        <FloatingButton
+          iconName="cart-outline"
+          iconSize={32}
+          iconColor="white"
+          onPress={() => handleNavigate({screen: 'GroceyList'})}
+          containerStyle={{
+            position: 'absolute',
+            bottom: 16,
+            right: 60 * 3 + 16 * 4,
             backgroundColor: '#fb7945',
             width: 60,
             height: 60,
