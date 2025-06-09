@@ -14,6 +14,12 @@ import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 const Stack = createNativeStackNavigator();
 
+export const MainScreenName: string = 'MainScreen',
+  RecipesScreenName: string = 'RecipesScreen',
+  RecipeScreenName: string = 'RecipeScreen',
+  PantryScreenName: string = 'PantryScreen',
+  GroceryListScreenName: string = 'GroceryListScreen';
+
 export default function App() {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
@@ -36,12 +42,15 @@ export default function App() {
           {user ? (
             // logged in
             <>
-              <Stack.Screen name="MainScreen" component={MainScreen} />
-              <Stack.Screen name="RecipesScreen" component={RecipesScreen} />
-              <Stack.Screen name="RecipeScreen" component={RecipeScreen} />
-              <Stack.Screen name="PantryScreen" component={PantryScreen} />
+              <Stack.Screen name={MainScreenName} component={MainScreen} />
               <Stack.Screen
-                name="GroceryListScreen"
+                name={RecipesScreenName}
+                component={RecipesScreen}
+              />
+              <Stack.Screen name={RecipeScreenName} component={RecipeScreen} />
+              <Stack.Screen name={PantryScreenName} component={PantryScreen} />
+              <Stack.Screen
+                name={GroceryListScreenName}
                 component={GroceryListScreen}
               />
             </>
