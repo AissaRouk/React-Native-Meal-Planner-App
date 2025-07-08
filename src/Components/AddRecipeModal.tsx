@@ -26,11 +26,7 @@ import {
 } from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
 import {addRecipe} from '../Services/recipe-db-services';
-import {addRecipeIngredientMultiple} from '../Services/recipeIngredients-db-services';
-import {
-  addIngredient,
-  getIngredientById,
-} from '../Services/ingredient-db-services';
+import {getIngredientById} from '../Services/ingredient-db-services';
 import {IngredientCard} from './IngredientCard';
 import {ModalHeader} from './ModalHeareComponent';
 
@@ -100,7 +96,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   }
 
   // Context state to manage the ingredients
-  const {ingredients, setIngredients, setRecipes} = useAppContext();
+  const {
+    ingredients,
+    setIngredients,
+    setRecipes,
+    addRecipeIngredientMultiple,
+    addIngredient,
+  } = useAppContext();
 
   //
   // USE EFFECTS
@@ -364,7 +366,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
         {
           ...ingredient,
           quantity: 0,
-          quantityType: QuantityType.GRAMS,
+          quantityType: QuantityType.GRAM,
         },
       ]);
 
