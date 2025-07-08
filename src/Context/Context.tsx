@@ -1,20 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {
+  ErrorResponseCodes,
   Ingredient,
+  IngredientWithoutId,
   QuantityType,
   Recipe,
   RecipeIngredientWithoutId,
 } from '../Types/Types';
-import {updateRecipe} from '../Services/recipe-db-services';
+import {getAllRecipesDb, updateRecipe} from '../Services/recipe-db-services';
 import {
   addRecipeIngredientDb,
+  addRecipeIngredientMultipleDb,
   deleteRecipeIngredientDb,
   getIdFromRecipeIdAndIngredientId,
   getIngredientsFromRecipeId,
   updateRecipeIngredientDb,
 } from '../Services/recipeIngredients-db-services';
-import {addIngredient} from '../Services/ingredient-db-services';
+import {addIngredientDb} from '../Services/ingredient-db-services';
 import {verifyRecipeIngredientWithoutId} from '../Utils/utils';
 
 // Define the shape of the entire context, including methods and state values.
@@ -48,6 +51,16 @@ type ContextProps = {
   ) => Promise<number>;
 
   /**
+   * Inserts a new ingredient into the database.
+   * Unlike `addOrUpdateIngredient`, this function always creates a new entry without checking if it exists in context.
+   * @param ingredient - The new ingredient object without an ID
+   * @returns Promise containing an object with { created, insertedId?, response? }
+   */
+  addIngredient: (
+    ingredient: IngredientWithoutId,
+  ) => Promise<{created: boolean; response?: string; insertedId?: number}>;
+
+  /**
    * Fetches all ingredients (with quantity & type) for a given recipe.
    * @param recipeId - ID of the recipe to fetch ingredients for
    * @returns Promise of an array of Ingredient plus { quantity, quantityType }
@@ -74,6 +87,29 @@ type ContextProps = {
     ingredientId: number,
     recipeId: number,
   ) => Promise<boolean>;
+
+  /**
+   * Adds multiple RecipeIngredient entries for a given recipe.
+   * @param recipeId - The ID of the recipe to which ingredients will be added
+   * @param ingredients - Array of ingredients with quantity and quantityType to be linked to the recipe
+   * @returns Promise with creation status, insertedId (optional), and responseCode (optional)
+   */
+  addRecipeIngredientMultiple: (
+    recipeId: number,
+    ingredients: Array<
+      Ingredient & {quantity: number; quantityType: QuantityType}
+    >,
+  ) => Promise<{
+    created: boolean;
+    insertedId?: number;
+    responseCode?: ErrorResponseCodes;
+  }>;
+
+  /**
+   * Function that gets all the recipes.
+   * @returns an array of all the recipes
+   */
+  getAllRecipes: () => Promise<Recipe[]>;
 };
 
 type AppProviderProps = {
@@ -94,6 +130,11 @@ const AppContext = React.createContext<ContextProps>({
   getIngredientsOfRecipe: async () => [],
   updateRecipeIngredient: async () => {},
   deleteRecipeIngredient: async () => false,
+  addRecipeIngredientMultiple: async () => ({
+    created: false,
+  }),
+  addIngredient: async () => ({created: false}),
+  getAllRecipes: async () => [],
 });
 
 // The provider component wraps the app and supplies state + methods.
@@ -132,7 +173,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
       } else {
         // --- ADD PATH ---
         // Insert into SQLite database first
-        const response = await addIngredient(newIngredient);
+        const response = await addIngredientDb(newIngredient);
 
         if (response.created && response.insertedId != null) {
           const realId = response.insertedId;
@@ -160,6 +201,27 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
 
     return -1; // Indicate failure
+  };
+
+  /**
+   * Inserts a new ingredient into the database.
+   * Unlike `addOrUpdateIngredient`, this function always creates a new entry without checking if it exists in context.
+   * @param ingredient - The new ingredient object without an ID
+   * @returns Promise containing an object with { created, insertedId?, response? }
+   */
+  const addIngredient = async (
+    ingredient: IngredientWithoutId,
+  ): Promise<{created: boolean; response?: string; insertedId?: number}> => {
+    const response = await addIngredientDb(ingredient);
+    return response;
+  };
+
+  /**
+   * Gets all the Recipes
+   */
+  const getAllRecipes = async () => {
+    const result: Recipe[] = await getAllRecipesDb();
+    return result;
   };
 
   /**
@@ -236,6 +298,22 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
 
     return -1; // On any failure
+  };
+
+  /**
+   * Adds multiple RecipeIngredient entries for a given recipe.
+   * @param recipeId - The ID of the recipe to which ingredients will be added
+   * @param ingredients - Array of ingredients with quantity and quantityType to be linked to the recipe
+   * @returns Promise with creation status, insertedId (optional), and responseCode (optional)
+   */
+  const addRecipeIngredientMultiple = async (
+    recipeId: number,
+    ingredients: Array<
+      Ingredient & {quantity: number; quantityType: QuantityType}
+    >,
+  ) => {
+    const response = await addRecipeIngredientMultipleDb(recipeId, ingredients);
+    return response;
   };
 
   /**
@@ -392,13 +470,16 @@ export const AppProvider = ({children}: AppProviderProps) => {
         ingredients,
         setIngredients,
         addOrUpdateIngredient,
+        addIngredient,
         recipes,
         setRecipes,
         addOrUpdateRecipe,
         addRecipeIngredient,
+        addRecipeIngredientMultiple,
         getIngredientsOfRecipe,
         updateRecipeIngredient,
         deleteRecipeIngredient,
+        getAllRecipes,
       }}>
       {children}
     </AppContext.Provider>
