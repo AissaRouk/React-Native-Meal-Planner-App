@@ -16,12 +16,6 @@ import {
 } from '../Types/Types';
 import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
-import {getAllRecipes} from '../Services/recipe-db-services';
-import {getRecipeById} from '../Services/recipe-db-services';
-import {
-  deleteWeeklyMeal,
-  getWeeklyMealsByDayAndMealType,
-} from '../Services/weeklyMeals-db-services';
 import AddRecipeModal from '../Components/AddRecipeModal';
 import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
@@ -32,6 +26,7 @@ import {PlanMealModal} from '../Components/PlanMealModal';
 import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 import {handleNavigate} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -62,9 +57,18 @@ export default function MainScreen(): React.JSX.Element {
 
   //CONTEXT
   // Context state to manage the ingredients
-  const {ingredients, setIngredients, recipes, setRecipes} = useAppContext();
+  const {
+    setIngredients,
+    getRecipeById,
+    setRecipes,
+    getAllRecipes,
+    deleteWeeklyMeal,
+    getWeeklyMealsByDayAndMealType,
+  } = useAppContext();
 
   const auth = getAuth();
+
+  const navigation = useNavigation();
 
   // Fetches the weekly meals for a specific day and meal type
   const fetchWeeklyMeals = async (
@@ -175,7 +179,9 @@ export default function MainScreen(): React.JSX.Element {
         <MealsHeader
           selectedDay={selectedDay}
           setSelectedDay={setSelectedDay}
-          onRecipesButtonPress={() => handleNavigate({screen: 'Recipes'})}
+          onRecipesButtonPress={() =>
+            handleNavigate({screen: 'Recipes'}, navigation)
+          }
           onLogoutButtonPress={() => auth.signOut()}
         />
 
@@ -196,7 +202,10 @@ export default function MainScreen(): React.JSX.Element {
                 key={index}
                 recipe={recipe}
                 onPress={() =>
-                  handleNavigate({screen: 'Recipe', params: {recipe: recipe}})
+                  handleNavigate(
+                    {screen: 'Recipe', params: {recipe: recipe}},
+                    navigation,
+                  )
                 }
                 onLongPress={() => {
                   setSelectedRecipe(recipe);
@@ -245,7 +254,7 @@ export default function MainScreen(): React.JSX.Element {
           iconName="basket-outline"
           iconSize={32}
           iconColor="white"
-          onPress={() => handleNavigate({screen: 'Pantry'})}
+          onPress={() => handleNavigate({screen: 'Pantry'}, navigation)}
           containerStyle={{
             position: 'absolute',
             bottom: 16,
@@ -268,7 +277,7 @@ export default function MainScreen(): React.JSX.Element {
           iconName="cart-outline"
           iconSize={32}
           iconColor="white"
-          onPress={() => handleNavigate({screen: 'GroceyList'})}
+          onPress={() => handleNavigate({screen: 'GroceyList'}, navigation)}
           containerStyle={{
             position: 'absolute',
             bottom: 16,
