@@ -4,14 +4,10 @@ import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import AppHeader from '../Components/AppHeader';
 import {useAppContext} from '../Context/Context';
 import {DaysOfWeek, MealType, QuantityType, WeeklyMeal} from '../Types/Types';
-import {getWeeklyMealsByDayAndMealType} from '../Services/weeklyMeals-db-services';
-import {getIngredientsFromRecipeId} from '../Services/recipeIngredients-db-services';
-import {getAllIngredientPantries} from '../Services/ingredientPantry-db-services';
 import {
-  createGroceryBoughtTable,
-  addGroceryBought,
-  removeGroceryBought,
-  getAllGroceryBought,
+  createGroceryBoughtTableDb,
+  // addGroceryBought,
+  // removeGroceryBought,
 } from '../Services/groceryBought-db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import {
@@ -20,6 +16,7 @@ import {
   greyBorderColor,
   modalBorderRadius,
 } from '../Utils/Styiling';
+import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
 
 interface GroceryItem {
   ingredientId: number;
@@ -29,7 +26,14 @@ interface GroceryItem {
 }
 
 export default function GroceryListScreen(): React.ReactElement {
-  const {ingredients} = useAppContext();
+  const {
+    ingredients,
+    getWeeklyMealsByDayAndMealType,
+    getIngredientsOfRecipe,
+    getAllGroceryBought,
+    addGroceryBought,
+    removeGroceryBought,
+  } = useAppContext();
   const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
   const [boughtIds, setBoughtIds] = useState<Set<number>>(new Set());
   const [boughtCollapsed, setBoughtCollapsed] = useState<boolean>(false);
@@ -40,7 +44,7 @@ export default function GroceryListScreen(): React.ReactElement {
     setIsLoading(true);
     try {
       // ensure our bought‐table exists
-      await createGroceryBoughtTable();
+      await createGroceryBoughtTableDb();
 
       // 1) Gather all planned meals
       const allWeekly: WeeklyMeal[] = [];
@@ -61,7 +65,7 @@ export default function GroceryListScreen(): React.ReactElement {
         {ingredientId: number; quantity: number; quantityType: QuantityType}
       > = {};
       for (const wm of allWeekly) {
-        const recipeIngr = await getIngredientsFromRecipeId(wm.recipeId);
+        const recipeIngr = await getIngredientsOfRecipe(wm.recipeId);
         recipeIngr.forEach(ri => {
           const key = `${ri.id}|${ri.quantityType}`;
           if (neededMap[key]) {
@@ -77,7 +81,7 @@ export default function GroceryListScreen(): React.ReactElement {
       }
 
       // 3) Subtract pantry
-      const pantry = await getAllIngredientPantries();
+      const pantry = await getAllIngredientPantriesDb();
       const pantryLookup: Record<number, number> = {};
       pantry.forEach(p => (pantryLookup[p.ingredientId] = p.quantity));
 
