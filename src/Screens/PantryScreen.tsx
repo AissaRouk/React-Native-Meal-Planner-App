@@ -7,7 +7,6 @@ import {FloatingButton} from '../Components/FloatingButton';
 import {IngredientComponent} from '../Components/IngredientComponent';
 import {IngredientSearchModal} from '../Components/IngredientSearchModal';
 import {
-  getAllIngredientPantries,
   addIngredientPantry,
   updateIngredientPantry,
   deleteIngredientPantry,
@@ -24,7 +23,11 @@ import AppHeader from '../Components/AppHeader';
 
 export default function PantryScreen(): React.JSX.Element {
   // --- Context & state ---
-  const {ingredients: allIngredients, addOrUpdateIngredient} = useAppContext();
+  const {
+    ingredients: allIngredients,
+    addOrUpdateIngredient,
+    getAllIngredientPantries,
+  } = useAppContext();
   const [pantryItems, setPantryItems] = useState<IngredientPantry[]>([]);
   const [isSearchModalVisible, setSearchModalVisible] = useState(false);
   const [isAddIngredientModalVisible, setIsAddIngredientModalVisible] =
