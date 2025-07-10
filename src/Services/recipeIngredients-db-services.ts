@@ -177,7 +177,7 @@ export const addRecipeIngredientDb = async (
  *   // All ingredients added successfully
  * }
  */
-export const addRecipeIngredientMultiple = async (
+export const addRecipeIngredientMultipleDb = async (
   recipeId: number,
   ingredients: Array<
     Ingredient & {quantity: number; quantityType: QuantityType}
@@ -298,7 +298,7 @@ export const getAllRecipeIngredients = async (): Promise<
  * @param recipeId the id of the recipe
  * @returns an array with all the RecipeIngredients, each one contains the ingredient of a Recipe
  */
-export const getIngredientsFromRecipeId = async (
+export const getIngredientsFromRecipeIdDb = async (
   recipeId: number,
 ): Promise<RecipeIngredient[]> => {
   try {

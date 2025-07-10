@@ -144,7 +144,7 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
  * @param {number} id - The ID of the recipe to be fetched.
  * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
  */
-export const getRecipeById: (
+export const getRecipeByIdDb: (
   id: number,
 ) => Promise<Recipe | null> = async id => {
   try {
@@ -189,7 +189,7 @@ export const getRecipeById: (
  * Function that gets all the recipes.
  * @returns an array of all the recipes
  */
-export const getAllRecipes = async (): Promise<Recipe[]> => {
+export const getAllRecipesDb = async (): Promise<Recipe[]> => {
   try {
     const db = await getDbConnection();
 

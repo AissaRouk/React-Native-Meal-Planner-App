@@ -176,7 +176,7 @@ export const getWeeklyMeals: () => Promise<WeeklyMeal[]> = async () => {
  *   .then(weeklyMeals => console.log(weeklyMeals))
  *   .catch(error => console.error('Error fetching weekly meals:', error));
  */
-export const getWeeklyMealsByDayAndMealType: (
+export const getWeeklyMealsByDayAndMealTypeDb: (
   dayOfWeek: DaysOfWeek,
   mealType: MealType,
 ) => Promise<WeeklyMeal[]> = async (dayOfWeek, mealType) => {
@@ -271,7 +271,9 @@ export const updateWeeklyMeal: (
  * @param {number} id - The ID of the weekly meal entry to be deleted.
  * @returns {Promise<void>} Resolves when the weekly meal entry is deleted successfully.
  */
-export const deleteWeeklyMeal: (id: number) => Promise<boolean> = async id => {
+export const deleteWeeklyMealDb: (
+  id: number,
+) => Promise<boolean> = async id => {
   try {
     const db = await getDbConnection();
     const sqlDelete = `DELETE FROM ${TABLE_WEEKLY_MEALS} WHERE ${WEEKLY_MEALS_ID} = ?;`;

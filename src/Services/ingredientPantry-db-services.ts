@@ -96,7 +96,7 @@ export const addIngredientPantry: (
  *
  * @returns {Promise<ingredientPantry[]>} an array of all the IngredientPantry objects.
  */
-export const getAllIngredientPantries: () => Promise<
+export const getAllIngredientPantriesDb: () => Promise<
   IngredientPantry[]
 > = async () => {
   try {

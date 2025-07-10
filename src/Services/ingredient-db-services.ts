@@ -71,7 +71,7 @@ export const createIngredientTable = async (): Promise<void> => {
  * @returns {Promise<{created: boolean, response?: string}>} Resolves when the ingredient is added or the insertion is ignored if it already exists.
  *
  */
-export const addIngredient = async (
+export const addIngredientDb = async (
   ingredient: IngredientWithoutId,
 ): Promise<{created: boolean; response?: string; insertedId?: number}> => {
   try {

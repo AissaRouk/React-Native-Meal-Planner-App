@@ -11,7 +11,7 @@ export const GROCERY_BOUGHT_TIMESTAMP = 'boughtAt';
 /**
  * Creates the GroceryBought table if it doesn't already exist.
  */
-export const createGroceryBoughtTable: () => Promise<void> = async () => {
+export const createGroceryBoughtTableDb: () => Promise<void> = async () => {
   try {
     const db = await getDbConnection();
     const sql = `
@@ -40,7 +40,7 @@ export const createGroceryBoughtTable: () => Promise<void> = async () => {
  * Marks an ingredient as bought. If already marked, replaces timestamp.
  * @param ingredientId
  */
-export const addGroceryBought: (
+export const addGroceryBoughtDb: (
   ingredientId: number,
 ) => Promise<void> = async ingredientId => {
   try {
@@ -71,7 +71,7 @@ export const addGroceryBought: (
  * Unmarks an ingredient (removes its bought‐flag).
  * @param ingredientId
  */
-export const removeGroceryBought: (
+export const removeGroceryBoughtDb: (
   ingredientId: number,
 ) => Promise<void> = async ingredientId => {
   try {
@@ -99,7 +99,7 @@ export const removeGroceryBought: (
 /**
  * Returns an array of all ingredientIds currently marked bought.
  */
-export const getAllGroceryBought: () => Promise<number[]> = async () => {
+export const getAllGroceryBoughtDb: () => Promise<number[]> = async () => {
   try {
     const db = await getDbConnection();
     const sql = `SELECT ${GROCERY_BOUGHT_INGREDIENT_ID} FROM ${TABLE_GROCERY_BOUGHT};`;
