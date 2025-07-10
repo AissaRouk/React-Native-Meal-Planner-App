@@ -217,9 +217,6 @@ export const verifyWeeklyMeal = (wm: WeeklyMeal): boolean => {
   return false;
 };
 
-// NAVIGATION
-const navigation = useNavigation();
-
 type Destination =
   | {screen: 'Recipes'}
   | {screen: 'Recipe'; params: {recipe: Recipe}}
