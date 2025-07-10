@@ -1,24 +1,42 @@
 import React, {useEffect, useState} from 'react';
 import {Alert} from 'react-native';
 import {
+  DaysOfWeek,
   ErrorResponseCodes,
   Ingredient,
+  IngredientPantry,
   IngredientWithoutId,
+  MealType,
   QuantityType,
   Recipe,
   RecipeIngredientWithoutId,
+  WeeklyMeal,
 } from '../Types/Types';
-import {getAllRecipesDb, updateRecipe} from '../Services/recipe-db-services';
+import {
+  getAllRecipesDb,
+  getRecipeByIdDb,
+  updateRecipe,
+} from '../Services/recipe-db-services';
 import {
   addRecipeIngredientDb,
   addRecipeIngredientMultipleDb,
   deleteRecipeIngredientDb,
   getIdFromRecipeIdAndIngredientId,
-  getIngredientsFromRecipeId,
+  getIngredientsFromRecipeIdDb,
   updateRecipeIngredientDb,
 } from '../Services/recipeIngredients-db-services';
 import {addIngredientDb} from '../Services/ingredient-db-services';
 import {verifyRecipeIngredientWithoutId} from '../Utils/utils';
+import {
+  deleteWeeklyMealDb,
+  getWeeklyMealsByDayAndMealTypeDb,
+} from '../Services/weeklyMeals-db-services';
+import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
+import {
+  addGroceryBoughtDb,
+  getAllGroceryBoughtDb,
+  removeGroceryBoughtDb,
+} from '../Services/groceryBought-db-services';
 
 // Define the shape of the entire context, including methods and state values.
 type ContextProps = {
@@ -110,6 +128,55 @@ type ContextProps = {
    * @returns an array of all the recipes
    */
   getAllRecipes: () => Promise<Recipe[]>;
+
+  /**
+   * Fetches a recipe from the Recipe table by its ID.
+   *
+   * This function retrieves a single recipe from the `Recipe` table based on the provided recipe ID.
+   *
+   * @async
+   * @function getRecipeById
+   * @param {number} id - The ID of the recipe to be fetched.
+   * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
+   */
+  getRecipeById: (id: number) => Promise<Recipe | null>;
+
+  /**
+   * Deletes an entry from the WeeklyMeals table by its ID
+   * This function removes a row from the WeeklyMeals table based on the provided ID.
+   */
+  deleteWeeklyMeal: (id: number) => Promise<boolean>;
+
+  /**
+   * Retrieves the WeeklyMeals for a specific DayOfWeek and MealType combination.
+   */
+  getWeeklyMealsByDayAndMealType: (
+    dayOfWeek: DaysOfWeek,
+    mealType: MealType,
+  ) => Promise<WeeklyMeal[]>;
+
+  /**
+   * Function that returns all the IngredientPantries available
+   *
+   * @returns {Promise<ingredientPantry[]>} an array of all the IngredientPantry objects.
+   */ getAllIngredientPantries: () => Promise<IngredientPantry[]>;
+
+  /**
+   * Returns an array of all ingredientIds currently marked bought.
+   */
+  getAllGroceryBought: () => Promise<number[]>;
+
+  /**
+   * Marks an ingredient as bought. If already marked, replaces timestamp.
+   * @param ingredientId
+   */
+  addGroceryBought: (ingredientId: number) => Promise<void>;
+
+  /**
+   * Unmarks an ingredient (removes its bought‐flag).
+   * @param ingredientId
+   */
+  removeGroceryBought: (ingredientId: number) => Promise<void>;
 };
 
 type AppProviderProps = {
@@ -135,6 +202,13 @@ const AppContext = React.createContext<ContextProps>({
   }),
   addIngredient: async () => ({created: false}),
   getAllRecipes: async () => [],
+  getRecipeById: async () => ({id: 0, name: 's', servingSize: 0}),
+  deleteWeeklyMeal: async () => false,
+  getWeeklyMealsByDayAndMealType: async () => [],
+  getAllIngredientPantries: async () => [],
+  getAllGroceryBought: async () => [],
+  addGroceryBought: async () => {},
+  removeGroceryBought: async () => {},
 });
 
 // The provider component wraps the app and supplies state + methods.
@@ -387,7 +461,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
 
     try {
       // Fetch rows from SQLite: each row contains recipeId, ingredientId, quantity, quantityType
-      const rows = await getIngredientsFromRecipeId(recipeId);
+      const rows = await getIngredientsFromRecipeIdDb(recipeId);
 
       if (rows.length === 0) {
         // No rows found => return empty
@@ -464,6 +538,65 @@ export const AppProvider = ({children}: AppProviderProps) => {
     }
   };
 
+  /**
+   * Fetches a recipe from the Recipe table by its ID.
+   *
+   * This function retrieves a single recipe from the `Recipe` table based on the provided recipe ID.
+   *
+   * @async
+   * @function getRecipeById
+   * @param {number} id - The ID of the recipe to be fetched.
+   * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
+   */
+  const getRecipeById = async (id: number): Promise<Recipe | null> => {
+    return await getRecipeByIdDb(id);
+  };
+
+  /**
+   * Retrieves the WeeklyMeals for a specific DayOfWeek and MealType combination.
+   */
+  const getWeeklyMealsByDayAndMealType = async (
+    dayOfWeek: DaysOfWeek,
+    mealType: MealType,
+  ): Promise<WeeklyMeal[]> => {
+    return getWeeklyMealsByDayAndMealTypeDb(dayOfWeek, mealType);
+  };
+
+  /**
+   * Deletes an entry from the WeeklyMeals table by its ID.
+   *
+   * This function removes a row from the WeeklyMeals table based on the provided ID.
+   *
+   * @async
+   * @function deleteWeeklyMeal
+   * @param {number} id - The ID of the weekly meal entry to be deleted.
+   * @returns {Promise<void>} Resolves when the weekly meal entry is deleted successfully.
+   */
+  const deleteWeeklyMeal = async (id: number): Promise<boolean> => {
+    return deleteWeeklyMealDb(id);
+  };
+
+  /**
+   * Function that returns all the IngredientPantries available
+   *
+   * @returns {Promise<ingredientPantry[]>} an array of all the IngredientPantry objects.
+   */
+  const getAllIngredientPantries = (): Promise<IngredientPantry[]> => {
+    return getAllIngredientPantriesDb();
+  };
+
+  const getAllGroceryBought = async (): Promise<number[]> => {
+    return getAllGroceryBoughtDb();
+  };
+
+  const addGroceryBought = async (ingredientId: number): Promise<void> => {
+    return addGroceryBoughtDb(ingredientId);
+  };
+
+  const removeGroceryBought = async (ingredientId: number): Promise<void> => {
+    return removeGroceryBoughtDb(ingredientId);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -479,7 +612,14 @@ export const AppProvider = ({children}: AppProviderProps) => {
         getIngredientsOfRecipe,
         updateRecipeIngredient,
         deleteRecipeIngredient,
+        getRecipeById,
         getAllRecipes,
+        deleteWeeklyMeal,
+        getWeeklyMealsByDayAndMealType,
+        getAllIngredientPantries,
+        getAllGroceryBought,
+        addGroceryBought,
+        removeGroceryBought,
       }}>
       {children}
     </AppContext.Provider>
