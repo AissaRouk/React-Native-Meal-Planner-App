@@ -1,4 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
 import {
   Ingredient,
   Recipe,
@@ -19,6 +18,11 @@ import {
   RecipeScreenName,
   RecipesScreenName,
 } from '../../App';
+import {
+  NavigationProp,
+  NavigationState,
+  useNavigation,
+} from '@react-navigation/native';
 
 export const handleOnSetQuantity = (quantity: number): number => {
   if (quantity < 0) return 0;
@@ -225,7 +229,15 @@ type Destination =
   | {screen: 'Main'}
   | {screen: 'Register'};
 
-export const handleNavigate = (dest: Destination) => {
+export const handleNavigate = (
+  dest: Destination,
+  navigation: Omit<
+    NavigationProp<ReactNavigation.RootParamList>,
+    'getState'
+  > & {
+    getState(): NavigationState | undefined;
+  },
+) => {
   switch (dest.screen) {
     case 'Recipes':
       (navigation as any).navigate(RecipesScreenName);
