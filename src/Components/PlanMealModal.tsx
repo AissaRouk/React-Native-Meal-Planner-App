@@ -11,7 +11,6 @@ import {
   Alert,
 } from 'react-native';
 import {DaysOfWeek, MealType, Recipe, WeeklyMeal} from '../Types/Types';
-import {getAllRecipes, getRecipeById} from '../Services/recipe-db-services';
 import {addWeeklyMeal} from '../Services/weeklyMeals-db-services';
 import {ModalHeader} from './ModalHeareComponent';
 import {CustomPicker} from './CustomPicker'; // you already have this for picking enums
@@ -20,6 +19,7 @@ import {
   modalSemiTransparentBg,
   modalWhiteBg,
 } from '../Utils/Styiling';
+import {useAppContext} from '../Context/Context';
 
 type PlanMealModalProps = {
   visible: boolean;
@@ -65,6 +65,9 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
 
   // 4) Prevent double‐submission
   const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  // context functions
+  const {getAllRecipes} = useAppContext();
 
   // Load all recipes once when modal opens
   useEffect(() => {
