@@ -27,6 +27,16 @@ import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 import {handleNavigate} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
+import {
+  getIngredientById,
+  updateIngredient,
+} from '../Services/ingredient-db-services';
+import {
+  addRecipe,
+  deleteRecipe,
+  getRecipeByIdDb,
+  updateRecipe,
+} from '../Services/recipe-db-services';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -129,11 +139,17 @@ export default function MainScreen(): React.JSX.Element {
       setIsFetchFinished(true);
     };
     asyncFunctions()
-      .catch(error =>
-        console.log(
-          'MainScreen -> error in asyncFunctions : ' + JSON.stringify(error),
-        ),
-      )
+      .catch(error => {
+        if (error instanceof Error) {
+          console.log(
+            'MainScreen -> error in asyncFunctions :',
+            error.message,
+            error.stack,
+          );
+        } else {
+          console.log('MainScreen -> error in asyncFunctions :', error);
+        }
+      })
       // when finished hide ActivityIndicator
       .then(() => setIsFetchFinished(true));
   }, []);
@@ -305,7 +321,11 @@ export default function MainScreen(): React.JSX.Element {
           onSaved={() => setRenderFlag(!renderFlag)}
           initialDay={selectedDay} // plan for current day
           initialMealType={selectedMeal} // plan for current meal
-          initialRecipeId={selectedRecipe?.id} // and this recipe
+          initialRecipeId={
+            selectedRecipe?.id !== undefined
+              ? Number(selectedRecipe.id)
+              : undefined
+          } // and this recipe
         />
         {/* Modal to open the RecipeOptions */}
         {selectedRecipe && (
