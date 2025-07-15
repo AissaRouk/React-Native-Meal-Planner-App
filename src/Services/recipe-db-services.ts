@@ -1,5 +1,15 @@
 import {Recipe, RecipeWithoutId} from '../Types/Types';
 import {FAILED, getDbConnection, SUCCESS, TABLE_RECIPE} from './db-services';
+import {
+  collection,
+  query,
+  getDocs,
+  getFirestore,
+  setDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+} from '@react-native-firebase/firestore';
 
 // Fields for the Recipe table
 export const RECIPE_ID = 'id';
@@ -7,6 +17,9 @@ export const RECIPE_NAME = 'name';
 export const RECIPE_LINK = 'link';
 export const RECIPE_PREP_TIME = 'preparationTime';
 export const RECIPE_SERVING_SIZE = 'servingSize';
+
+const firestoreDb = getFirestore();
+const recipeCollection = collection(firestoreDb, TABLE_RECIPE);
 
 //
 //
@@ -65,6 +78,10 @@ export const addRecipe: (
     // Create query
     const insertQuery = `INSERT OR IGNORE INTO ${TABLE_RECIPE} (${RECIPE_NAME}, ${RECIPE_LINK}, ${RECIPE_PREP_TIME}, ${RECIPE_SERVING_SIZE})
     VALUES (?, ?, ?, ?);`;
+
+    // Adding with Firebase
+    const addRef = await setDoc(doc(recipeCollection, recipe.name), recipe);
+    console.log('addIngredient -> Firestore document added with ID:', addRef);
 
     // returns the promise
     return await new Promise<{created: boolean; insertedId?: number}>(
@@ -127,6 +144,26 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
       }),
     );
 
+    // Fetching with Firebase
+    const firebaseRecipes: Recipe[] = [];
+    const ingredientsQuery = query(recipeCollection);
+    const querySnapshot = await getDocs(ingredientsQuery);
+    querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: any}) => {
+      const data = doc.data() as RecipeWithoutId;
+      const recipe: Recipe = {
+        id: doc.id, // Use Firestore document ID as the ingredient ID
+        name: data.name, // Ensure the name is present
+        link: data.link || '', // Default to empty string if category is not provided
+        preparationTime: data.preparationTime || 0, // Default to 0 if preparationTime is not provided
+        servingSize: data.servingSize || 0, // Default to 0 if serving
+      };
+      firebaseRecipes.push(recipe);
+    });
+    console.log(
+      'getRecipes Firebase -> Recipes fetched successfully:',
+      fetchedRecipes,
+    );
+
     return fetchedRecipes;
   } catch (error) {
     console.error('getRecipes -> Error fetching recipes:', error);
@@ -146,7 +183,8 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
  */
 export const getRecipeByIdDb: (
   id: number,
-) => Promise<Recipe | null> = async id => {
+  name?: string,
+) => Promise<Recipe | null> = async (id, name) => {
   try {
     const db = await getDbConnection();
 
@@ -175,7 +213,27 @@ export const getRecipeByIdDb: (
       );
     });
 
-    return recipe;
+    // Fetching with Firebase
+    if (name) {
+      const recipeDocRef = doc(firestoreDb, TABLE_RECIPE, name);
+      const recipeSnapShot = await getDoc(recipeDocRef);
+      if (recipeSnapShot.exists()) {
+        const data = recipeSnapShot.data() as RecipeWithoutId;
+        const recipeData = {
+          id: recipeSnapShot.id, // Use Firestore document ID as the recipe ID
+          ...data,
+        };
+        console.log(
+          'getRecipeById -> Firebase Recipe fetched successfully:' +
+            JSON.stringify(recipeData),
+        );
+        // return recipeData;
+        // Optionally, you could assign ingredientData to recipe if you want to prefer Firestore data
+        // recipe = ingredientData;
+      }
+    }
+
+    return recipe === undefined ? null : recipe;
   } catch (error) {
     console.error(
       'getRecipeById -> Transaction error:',
@@ -212,6 +270,27 @@ export const getAllRecipesDb = async (): Promise<Recipe[]> => {
         }
       }),
     );
+
+    // Fetching with Firebase
+    const firebaseRecipes: Recipe[] = [];
+    const recipesQuery = query(recipeCollection);
+    const querySnapshot = await getDocs(recipesQuery);
+    querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: any}) => {
+      const data = doc.data() as RecipeWithoutId;
+      const frecipe: Recipe = {
+        id: doc.id, // Use Firestore document ID as the ingredient ID
+        name: data.name, // Ensure the name is present
+        link: data.link || '', // Default to empty string if category is not provided
+        preparationTime: data.preparationTime || 0, // Default to 0 if preparationTime is not provided
+        servingSize: data.servingSize, // Default to 0 if serving
+      };
+      firebaseRecipes.push(frecipe);
+    });
+    console.log(
+      'getIngredients Firebase -> Ingredients fetched successfully:' +
+        JSON.stringify(firebaseRecipes),
+    );
+
     return resultRecipes;
   } catch (error) {
     throw new Error('getRecipes -> Error while retrieving: ' + error);
@@ -233,6 +312,8 @@ export const updateRecipe = async (recipe: Recipe): Promise<boolean> => {
       SET ${RECIPE_NAME} = ?, ${RECIPE_LINK} = ?, ${RECIPE_PREP_TIME} = ?, ${RECIPE_SERVING_SIZE} = ?
       WHERE ${RECIPE_ID} = ?
     `;
+
+    setDoc(doc(recipeCollection, recipe.name), recipe);
 
     return await new Promise<boolean>((resolve, reject) => {
       db.transaction(tx => {
@@ -273,7 +354,9 @@ export const updateRecipe = async (recipe: Recipe): Promise<boolean> => {
  *
  * @param {number} id the id of the Recipe to delete
  */
-export const deleteRecipe: (id: number) => Promise<void> = async id => {
+export const deleteRecipe: (
+  id: number | string,
+) => Promise<void> = async id => {
   const db = await getDbConnection();
 
   const sqlInsert = `DELETE FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID}=?`;
@@ -285,4 +368,9 @@ export const deleteRecipe: (id: number) => Promise<void> = async id => {
       } else console.log("deleteRecipe -> Couldn't delete Recipe!!");
     }),
   );
+
+  // Firebase Implementation
+  const recipeDoc = doc(recipeCollection, id.toString());
+  await deleteDoc(recipeDoc);
+  console.log('deleteRecipe -> Firestore document deleted successfully.');
 };
