@@ -10,6 +10,7 @@ import {
   DaysOfWeek,
   Ingredient,
   MealType,
+  QuantityType,
   Recipe,
   RecipeIngredient,
   WeeklyMeal,
@@ -17,7 +18,6 @@ import {
 import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
 import AddRecipeModal from '../Components/AddRecipeModal';
-import {initialise} from '../Services/dataManager';
 import {useAppContext} from '../Context/Context';
 import MealsHeader from '../Components/MealsHeader';
 import {screensBackgroundColor} from '../Utils/Styiling';
@@ -28,14 +28,15 @@ import {handleNavigate} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {
+  addIngredientDb,
+  deleteIngredient,
+  getAllIngredients,
   getIngredientById,
-  updateIngredient,
 } from '../Services/ingredient-db-services';
 import {
-  addRecipe,
+  addRecipeDb,
   deleteRecipe,
-  getRecipeByIdDb,
-  updateRecipe,
+  getRecipes,
 } from '../Services/recipe-db-services';
 
 export default function MainScreen(): React.JSX.Element {
@@ -92,7 +93,9 @@ export default function MainScreen(): React.JSX.Element {
   const fetchRecipes = async () => {
     const fetchedRecipes: Recipe[] = [];
     for (let i = 0; i < weeklyMeals.length; i++) {
-      const item: Recipe | null = await getRecipeById(weeklyMeals[i].recipeId);
+      const item: Recipe | null = await getRecipeById(
+        weeklyMeals[i].recipeId.toString(),
+      );
       if (item) fetchedRecipes.push(item); // Only add recipes that exist
     }
     setCurrentWeeklyMealsRecipes(fetchedRecipes || []); // Update the state with fetched recipes
@@ -115,7 +118,7 @@ export default function MainScreen(): React.JSX.Element {
     }
 
     try {
-      const success = await deleteWeeklyMeal(entry.id);
+      const success = await deleteWeeklyMeal(entry.id.toString());
       if (success) {
         // Fuerza el re-fetch
         setRenderFlag(flag => !flag);
@@ -132,9 +135,17 @@ export default function MainScreen(): React.JSX.Element {
   // Runs once when the component is mounted to initialize and populate the database
   useEffect(() => {
     const asyncFunctions = async () => {
-      const fetingredients: Ingredient[] = await initialise();
+      const fetingredients: Ingredient[] = await getAllIngredients();
       setIngredients(fetingredients);
       const fetchedRecipes = await getAllRecipes();
+      await deleteRecipe('Tortilla');
+
+      const rcps = await getRecipes();
+      console.log(
+        'MainScreen -> Recipes fetched successfully: ',
+        JSON.stringify(rcps),
+      );
+
       setRecipes(fetchedRecipes);
       setIsFetchFinished(true);
     };
