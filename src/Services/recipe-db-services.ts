@@ -1,5 +1,5 @@
 import {Recipe, RecipeWithoutId} from '../Types/Types';
-import {FAILED, getDbConnection, SUCCESS, TABLE_RECIPE} from './db-services';
+import {FAILED, SUCCESS, TABLE_RECIPE} from './db-services';
 import {
   collection,
   query,
@@ -30,92 +30,20 @@ const recipeCollection = collection(firestoreDb, TABLE_RECIPE);
 //
 
 /**
- * Creates the Recipe Table in the database if it does not already exist.
- *
- * @returns A promise that resolves when the Recipe table creation operation is complete.
- */
-export const createRecipeTable: () => Promise<void> = async () => {
-  try {
-    const db = await getDbConnection();
-
-    const sqlInsert = `
-      CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE} (
-        ${RECIPE_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${RECIPE_NAME} TEXT NOT NULL UNIQUE,
-        ${RECIPE_LINK} TEXT,
-        ${RECIPE_PREP_TIME} INTEGER,
-        ${RECIPE_SERVING_SIZE} INTEGER
-      );
-    `;
-
-    await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [], (tx, results) => {
-        if (results.rowsAffected > 0) {
-          console.log('Recipe table created successfully!');
-        } else {
-          console.log('Recipe table already exists or creation not required.');
-        }
-      }),
-    );
-  } catch (error) {
-    console.error('Error creating the Recipe table:', error);
-  }
-};
-
-/**
  * Adds a new recipe to the Recipe table if it does not already exist.
  *
  * @param {RecipeWithoutId} recipe - The recipe object without the id param
  * @returns A promise that resolves when the recipe addition operation is complete.
  */
-export const addRecipe: (
+export const addRecipeDb: (
   recipe: RecipeWithoutId,
-) => Promise<{created: boolean; insertedId?: number}> = async recipe => {
+) => Promise<{created: boolean; insertedId?: string}> = async recipe => {
   try {
-    // Connect the database
-    const db = await getDbConnection();
-
-    // Create query
-    const insertQuery = `INSERT OR IGNORE INTO ${TABLE_RECIPE} (${RECIPE_NAME}, ${RECIPE_LINK}, ${RECIPE_PREP_TIME}, ${RECIPE_SERVING_SIZE})
-    VALUES (?, ?, ?, ?);`;
-
     // Adding with Firebase
     const addRef = await setDoc(doc(recipeCollection, recipe.name), recipe);
     console.log('addIngredient -> Firestore document added with ID:', addRef);
 
-    // returns the promise
-    return await new Promise<{created: boolean; insertedId?: number}>(
-      (resolve, reject) => {
-        db.transaction(tx => {
-          // execute the query
-          tx.executeSql(
-            insertQuery,
-            [
-              recipe.name,
-              recipe.link,
-              recipe.preparationTime,
-              recipe.servingSize,
-            ],
-            (tx, resultSet) => {
-              // If added
-              if (resultSet.rowsAffected > 0) {
-                console.log('Recipe added successfully!');
-                // return success and the id of the inserted recipe
-                resolve({created: SUCCESS, insertedId: resultSet.insertId});
-              } else {
-                console.log('Recipe not added; it may already exist.');
-                // if any problem return false
-                resolve({created: FAILED});
-              }
-            },
-            (tx, error) => {
-              console.error('Error adding recipe:', error);
-              reject(error);
-            },
-          );
-        });
-      },
-    );
+    return {created: SUCCESS, insertedId: recipe.name};
   } catch (error) {
     console.error('addRecipe -> Error adding the recipe:', error);
     return {created: FAILED};
@@ -128,21 +56,8 @@ export const addRecipe: (
  * @returns A promise that resolves to an array of Recipe objects.
  */
 export const getRecipes: () => Promise<Recipe[]> = async () => {
-  const db = await getDbConnection();
-  const sqlInsert = `SELECT * FROM ${TABLE_RECIPE}`;
-
   try {
     const fetchedRecipes: Recipe[] = [];
-
-    await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
-        const len = resultSet.rows.length;
-        for (let i = 0; i < len; i++) {
-          const row = resultSet.rows.item(i);
-          fetchedRecipes.push(row);
-        }
-      }),
-    );
 
     // Fetching with Firebase
     const firebaseRecipes: Recipe[] = [];
@@ -161,7 +76,7 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
     });
     console.log(
       'getRecipes Firebase -> Recipes fetched successfully:',
-      fetchedRecipes,
+      JSON.stringify(fetchedRecipes),
     );
 
     return fetchedRecipes;
@@ -182,55 +97,27 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
  * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
  */
 export const getRecipeByIdDb: (
-  id: number,
-  name?: string,
-) => Promise<Recipe | null> = async (id, name) => {
+  id: string,
+) => Promise<Recipe | null> = async id => {
   try {
-    const db = await getDbConnection();
-
-    const sqlQuery = `SELECT * FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID} = ?`;
-
     let recipe: Recipe | null = null;
 
-    await db.transaction(tx => {
-      tx.executeSql(
-        sqlQuery,
-        [id],
-        (tx, resultSet) => {
-          if (resultSet.rows.length > 0) {
-            recipe = resultSet.rows.item(0);
-            console.log(
-              'getRecipeById -> Recipe fetched successfully:',
-              recipe,
-            );
-          } else {
-            console.log('getRecipeById -> No recipe found with ID:', id);
-          }
-        },
-        error => {
-          console.error('getRecipeById -> SQL error fetching recipe:', error);
-        },
-      );
-    });
-
     // Fetching with Firebase
-    if (name) {
-      const recipeDocRef = doc(firestoreDb, TABLE_RECIPE, name);
-      const recipeSnapShot = await getDoc(recipeDocRef);
-      if (recipeSnapShot.exists()) {
-        const data = recipeSnapShot.data() as RecipeWithoutId;
-        const recipeData = {
-          id: recipeSnapShot.id, // Use Firestore document ID as the recipe ID
-          ...data,
-        };
-        console.log(
-          'getRecipeById -> Firebase Recipe fetched successfully:' +
-            JSON.stringify(recipeData),
-        );
-        // return recipeData;
-        // Optionally, you could assign ingredientData to recipe if you want to prefer Firestore data
-        // recipe = ingredientData;
-      }
+    const recipeDocRef = doc(firestoreDb, TABLE_RECIPE, id);
+    const recipeSnapShot = await getDoc(recipeDocRef);
+    if (recipeSnapShot.exists()) {
+      const data = recipeSnapShot.data() as RecipeWithoutId;
+      recipe = {
+        id: recipeSnapShot.id, // Use Firestore document ID as the recipe ID
+        ...data,
+      };
+      console.log(
+        'getRecipeById -> Firebase Recipe fetched successfully:' +
+          JSON.stringify(recipe),
+      );
+      // return recipeData;
+      // Optionally, you could assign ingredientData to recipe if you want to prefer Firestore data
+      // recipe = ingredientData;
     }
 
     return recipe === undefined ? null : recipe;
@@ -249,28 +136,6 @@ export const getRecipeByIdDb: (
  */
 export const getAllRecipesDb = async (): Promise<Recipe[]> => {
   try {
-    const db = await getDbConnection();
-
-    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE}`;
-
-    const resultRecipes: Recipe[] = [];
-
-    await db.transaction(txn =>
-      txn.executeSql(sqlInsert, [], (_unused, resultSet) => {
-        if (resultSet.rows.length > 0) {
-          for (let i = 0; i < resultSet.rows.length; i++) {
-            const recipeItem: Recipe = resultSet.rows.item(i);
-            resultRecipes.push(recipeItem);
-            console.log('Recipes fetched successfully');
-          }
-        } else if (resultSet.rows.length === 0) {
-          console.log('getRecipes -> There are no elements in the table');
-        } else {
-          console.log("getRecipes -> Couldn't retrieve any Recipes");
-        }
-      }),
-    );
-
     // Fetching with Firebase
     const firebaseRecipes: Recipe[] = [];
     const recipesQuery = query(recipeCollection);
@@ -291,7 +156,7 @@ export const getAllRecipesDb = async (): Promise<Recipe[]> => {
         JSON.stringify(firebaseRecipes),
     );
 
-    return resultRecipes;
+    return firebaseRecipes;
   } catch (error) {
     throw new Error('getRecipes -> Error while retrieving: ' + error);
   }
@@ -305,44 +170,8 @@ export const getAllRecipesDb = async (): Promise<Recipe[]> => {
  */
 export const updateRecipe = async (recipe: Recipe): Promise<boolean> => {
   try {
-    const db = await getDbConnection();
-
-    const sqlUpdate = `
-      UPDATE ${TABLE_RECIPE}
-      SET ${RECIPE_NAME} = ?, ${RECIPE_LINK} = ?, ${RECIPE_PREP_TIME} = ?, ${RECIPE_SERVING_SIZE} = ?
-      WHERE ${RECIPE_ID} = ?
-    `;
-
-    setDoc(doc(recipeCollection, recipe.name), recipe);
-
-    return await new Promise<boolean>((resolve, reject) => {
-      db.transaction(tx => {
-        tx.executeSql(
-          sqlUpdate,
-          [
-            recipe.name,
-            recipe.link,
-            recipe.preparationTime,
-            recipe.servingSize,
-            recipe.id,
-          ],
-          (tx, resultSet) => {
-            if (resultSet.rowsAffected > 0) {
-              console.log('Recipe updated successfully!');
-              resolve(true);
-            } else {
-              console.warn('No recipe was updated. Check the ID.');
-              resolve(false);
-            }
-          },
-          (tx, error) => {
-            console.error('SQL update error:', error);
-            reject(error);
-            return true; // Required to signal error was handled
-          },
-        );
-      });
-    });
+    await setDoc(doc(recipeCollection, recipe.name), recipe);
+    return true;
   } catch (error) {
     console.error('Error in updateRecipe:', error);
     throw new Error('Error while updating recipe: ' + error);
@@ -354,21 +183,7 @@ export const updateRecipe = async (recipe: Recipe): Promise<boolean> => {
  *
  * @param {number} id the id of the Recipe to delete
  */
-export const deleteRecipe: (
-  id: number | string,
-) => Promise<void> = async id => {
-  const db = await getDbConnection();
-
-  const sqlInsert = `DELETE FROM ${TABLE_RECIPE} WHERE ${RECIPE_ID}=?`;
-
-  await db.transaction(tx =>
-    tx.executeSql(sqlInsert, [id], (tx, resultSet) => {
-      if (resultSet.rowsAffected > 0) {
-        console.log('deleteRecipe -> recipe deleted successfully!');
-      } else console.log("deleteRecipe -> Couldn't delete Recipe!!");
-    }),
-  );
-
+export const deleteRecipe: (id: string) => Promise<void> = async id => {
   // Firebase Implementation
   const recipeDoc = doc(recipeCollection, id.toString());
   await deleteDoc(recipeDoc);
