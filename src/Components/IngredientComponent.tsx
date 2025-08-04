@@ -20,7 +20,7 @@ type IngredientComponentProps = {
   number: number; // The key of the component, only used for styling purposes
   setQuantity: (quantity: number) => void; // Function to update the quantity
   setQuantityType: (quantityType: QuantityType) => void; // Function to update the quantity type
-  onDelete: (id: number) => void; // Function that handles the deletion of the ingredient
+  onDelete: (id: string) => void; // Function that handles the deletion of the ingredient
 };
 /**
  * IngredientComponent renders a UI element for managing an individual ingredient
@@ -31,7 +31,7 @@ type IngredientComponentProps = {
  * - Remove the ingredient from the list
  *
  * @param {Ingredient[]} ingredients - List of all available ingredients (used to resolve the name)
- * @param {number} id - Unique identifier for the specific ingredient this component represents
+ * @param {string} id - Unique identifier for the specific ingredient this component represents
  * @param {number} quantity - Current quantity value of the ingredient
  * @param {QuantityType} quantityType - Unit of measurement for the ingredient (e.g., grams, ml)
  * @param {number} number - The index of the component in the list, used for zIndex styling
@@ -88,7 +88,7 @@ export function IngredientComponent({
         style={styles.ingredientText}
         numberOfLines={1}
         ellipsizeMode="tail">
-        {ingredients.find(ingredient => ingredient.id === id)?.name}
+        {ingredients.find(ingredient => Number(ingredient.id) === id)?.name}
       </Text>
 
       {/* Controls below */}
@@ -139,7 +139,7 @@ export function IngredientComponent({
           name="trash-outline"
           size={20}
           style={{marginLeft: 10}}
-          onPress={() => onDelete(id)}
+          onPress={() => onDelete(id.toString())}
         />
       </View>
     </View>
