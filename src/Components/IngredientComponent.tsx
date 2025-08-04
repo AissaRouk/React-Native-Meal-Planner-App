@@ -14,7 +14,7 @@ import {CustomPicker} from './CustomPicker'; // Import the new CustomPicker
 // Types of the AddRecipeModal params
 type IngredientComponentProps = {
   ingredients: Ingredient[]; // List of all available ingredients
-  id: number; // Unique identifier for the ingredient
+  id: string; // Unique identifier for the ingredient
   quantity: number; // Current quantity of the ingredient
   quantityType: QuantityType; // Unit of measurement for the quantity
   number: number; // The key of the component, only used for styling purposes
@@ -88,7 +88,7 @@ export function IngredientComponent({
         style={styles.ingredientText}
         numberOfLines={1}
         ellipsizeMode="tail">
-        {ingredients.find(ingredient => Number(ingredient.id) === id)?.name}
+        {ingredients.find(ingredient => ingredient.id === id)?.name}
       </Text>
 
       {/* Controls below */}
