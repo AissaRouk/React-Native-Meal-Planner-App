@@ -46,9 +46,9 @@ type ContextProps = {
   /**
    * Adds a new ingredient to SQLite (or updates if it already exists)
    * @param newIngredient - The ingredient object (id:-1 if new)
-   * @returns Promise<number> - the new or updated ingredient ID, or -1 on failure
+   * @returns Promise<string> - the new or updated ingredient ID, or -1 on failure
    */
-  addOrUpdateIngredient: (ingredient: Ingredient) => Promise<number>;
+  addOrUpdateIngredient: (ingredient: Ingredient) => Promise<string>;
 
   recipes: Recipe[];
   setRecipes: React.Dispatch<React.SetStateAction<Recipe[]>>;
@@ -62,11 +62,11 @@ type ContextProps = {
   /**
    * Adds a new RecipeIngredient record linking an ingredient to a recipe.
    * @param newRecIng - Object containing recipeId, ingredientId, quantity, quantityType
-   * @returns Promise<number> - new row ID on success, or -1 on failure
+   * @returns Promise<string> - new row ID on success, or -1 on failure
    */
   addRecipeIngredient: (
     newRecIng: RecipeIngredientWithoutId,
-  ) => Promise<number>;
+  ) => Promise<string>;
 
   /**
    * Inserts a new ingredient into the database.
@@ -76,7 +76,7 @@ type ContextProps = {
    */
   addIngredient: (
     ingredient: IngredientWithoutId,
-  ) => Promise<{created: boolean; response?: string; insertedId?: number}>;
+  ) => Promise<{created: boolean; response?: string; insertedId?: string}>;
 
   /**
    * Fetches all ingredients (with quantity & type) for a given recipe.
@@ -84,7 +84,7 @@ type ContextProps = {
    * @returns Promise of an array of Ingredient plus { quantity, quantityType }
    */
   getIngredientsOfRecipe: (
-    recipeId: number,
+    recipeId: string,
   ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
 
   /**
@@ -102,8 +102,8 @@ type ContextProps = {
    * @returns Promise<boolean> - true if deletion succeeded, false otherwise
    */
   deleteRecipeIngredient: (
-    ingredientId: number,
-    recipeId: number,
+    ingredientId: string,
+    recipeId: string,
   ) => Promise<boolean>;
 
   /**
@@ -113,13 +113,13 @@ type ContextProps = {
    * @returns Promise with creation status, insertedId (optional), and responseCode (optional)
    */
   addRecipeIngredientMultiple: (
-    recipeId: number,
+    recipeId: string,
     ingredients: Array<
       Ingredient & {quantity: number; quantityType: QuantityType}
     >,
   ) => Promise<{
     created: boolean;
-    insertedId?: number;
+    insertedId?: string;
     responseCode?: ErrorResponseCodes;
   }>;
 
@@ -136,16 +136,16 @@ type ContextProps = {
    *
    * @async
    * @function getRecipeById
-   * @param {number} id - The ID of the recipe to be fetched.
+   * @param {string} id - The ID of the recipe to be fetched.
    * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
    */
-  getRecipeById: (id: number) => Promise<Recipe | null>;
+  getRecipeById: (id: string) => Promise<Recipe | null>;
 
   /**
    * Deletes an entry from the WeeklyMeals table by its ID
    * This function removes a row from the WeeklyMeals table based on the provided ID.
    */
-  deleteWeeklyMeal: (id: number) => Promise<boolean>;
+  deleteWeeklyMeal: (id: string) => Promise<boolean>;
 
   /**
    * Retrieves the WeeklyMeals for a specific DayOfWeek and MealType combination.
@@ -164,19 +164,19 @@ type ContextProps = {
   /**
    * Returns an array of all ingredientIds currently marked bought.
    */
-  getAllGroceryBought: () => Promise<number[]>;
+  getAllGroceryBought: () => Promise<string[]>;
 
   /**
    * Marks an ingredient as bought. If already marked, replaces timestamp.
    * @param ingredientId
    */
-  addGroceryBought: (ingredientId: number) => Promise<void>;
+  addGroceryBought: (ingredientId: string) => Promise<void>;
 
   /**
    * Unmarks an ingredient (removes its bought‐flag).
    * @param ingredientId
    */
-  removeGroceryBought: (ingredientId: number) => Promise<void>;
+  removeGroceryBought: (ingredientId: string) => Promise<void>;
 };
 
 type AppProviderProps = {
@@ -187,13 +187,13 @@ type AppProviderProps = {
 const AppContext = React.createContext<ContextProps>({
   ingredients: [],
   setIngredients: () => Promise.resolve(),
-  addOrUpdateIngredient: async () => -1,
+  addOrUpdateIngredient: async () => '-1',
 
   recipes: [],
   setRecipes: () => {},
   addOrUpdateRecipe: async () => {},
 
-  addRecipeIngredient: async () => -1,
+  addRecipeIngredient: async () => '-1',
   getIngredientsOfRecipe: async () => [],
   updateRecipeIngredient: async () => {},
   deleteRecipeIngredient: async () => false,
@@ -232,7 +232,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
    */
   const addOrUpdateIngredient = async (
     newIngredient: Ingredient,
-  ): Promise<number> => {
+  ): Promise<string> => {
     // Check if this ingredient already exists in our in-memory list by ID
     const existingIndex = ingredients.findIndex(i => i.id === newIngredient.id);
 
@@ -274,7 +274,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
       Alert.alert('Error', 'Unexpected error while adding ingredient.');
     }
 
-    return -1; // Indicate failure
+    return ''; // Indicate failure
   };
 
   /**
@@ -285,7 +285,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
    */
   const addIngredient = async (
     ingredient: IngredientWithoutId,
-  ): Promise<{created: boolean; response?: string; insertedId?: number}> => {
+  ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
     const response = await addIngredientDb(ingredient);
     return response;
   };
@@ -342,14 +342,14 @@ export const AppProvider = ({children}: AppProviderProps) => {
    */
   const addRecipeIngredient = async (
     newRecIng: RecipeIngredientWithoutId,
-  ): Promise<number> => {
+  ): Promise<string> => {
     // Validate the newRecIng object (checks recipeId, ingredientId, etc.)
     const isValid = verifyRecipeIngredientWithoutId(newRecIng);
     console.log('Context.addRecipeIngredient -> verify result:', isValid);
 
     if (!isValid) {
       Alert.alert('Validation error', 'Invalid recipe‐ingredient data.');
-      return -1;
+      return '';
     }
 
     try {
@@ -371,7 +371,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
       );
     }
 
-    return -1; // On any failure
+    return ''; // On any failure
   };
 
   /**
@@ -381,7 +381,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
    * @returns Promise with creation status, insertedId (optional), and responseCode (optional)
    */
   const addRecipeIngredientMultiple = async (
-    recipeId: number,
+    recipeId: string,
     ingredients: Array<
       Ingredient & {quantity: number; quantityType: QuantityType}
     >,
@@ -410,7 +410,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
         recipeIngredientId,
       );
 
-      if (recipeIngredientId >= 0) {
+      if (recipeIngredientId && recipeIngredientId != '') {
         // Call the actual SQLite update function
         await updateRecipeIngredientDb({
           id: recipeIngredientId,
@@ -444,7 +444,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
    * Returns an empty array if no rows found or on DB error.
    */
   const getIngredientsOfRecipe = async (
-    recipeId: number,
+    recipeId: string,
   ): Promise<
     (Ingredient & {quantity: number; quantityType: QuantityType})[]
   > => {
@@ -454,7 +454,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
     > = [];
 
     // Guard: invalid recipeId
-    if (recipeId < 0) {
+    if (recipeId && recipeId != '') {
       console.error('getIngredientsOfRecipe -> invalid recipeId:', recipeId);
       return result;
     }
@@ -497,8 +497,8 @@ export const AppProvider = ({children}: AppProviderProps) => {
    * then calling the SQLite delete function. Returns true if deletion succeeded.
    */
   const deleteRecipeIngredient = async (
-    ingredientId: number,
-    recipeId: number,
+    ingredientId: string,
+    recipeId: string,
   ): Promise<boolean> => {
     try {
       // Find the row ID in RecipeIngredients
@@ -507,7 +507,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
         ingredientId,
       );
 
-      if (recipeIngredientId < 0) {
+      if (recipeIngredientId != '' && recipeIngredientId) {
         console.warn(
           'deleteRecipeIngredient -> no matching ID for',
           recipeId,
@@ -545,10 +545,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
    *
    * @async
    * @function getRecipeById
-   * @param {number} id - The ID of the recipe to be fetched.
+   * @param {string} id - The ID of the recipe to be fetched.
    * @returns {Promise<Recipe | null>} A promise that resolves to a `Recipe` object if found, or `null` if no recipe is found.
    */
-  const getRecipeById = async (id: number): Promise<Recipe | null> => {
+  const getRecipeById = async (id: string): Promise<Recipe | null> => {
     return await getRecipeByIdDb(id);
   };
 
@@ -569,10 +569,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
    *
    * @async
    * @function deleteWeeklyMeal
-   * @param {number} id - The ID of the weekly meal entry to be deleted.
+   * @param {string} id - The ID of the weekly meal entry to be deleted.
    * @returns {Promise<void>} Resolves when the weekly meal entry is deleted successfully.
    */
-  const deleteWeeklyMeal = async (id: number): Promise<boolean> => {
+  const deleteWeeklyMeal = async (id: string): Promise<boolean> => {
     return deleteWeeklyMealDb(id);
   };
 
@@ -585,15 +585,15 @@ export const AppProvider = ({children}: AppProviderProps) => {
     return getAllIngredientPantriesDb();
   };
 
-  const getAllGroceryBought = async (): Promise<number[]> => {
+  const getAllGroceryBought = async (): Promise<string[]> => {
     return getAllGroceryBoughtDb();
   };
 
-  const addGroceryBought = async (ingredientId: number): Promise<void> => {
+  const addGroceryBought = async (ingredientId: string): Promise<void> => {
     return addGroceryBoughtDb(ingredientId);
   };
 
-  const removeGroceryBought = async (ingredientId: number): Promise<void> => {
+  const removeGroceryBought = async (ingredientId: string): Promise<void> => {
     return removeGroceryBoughtDb(ingredientId);
   };
 
