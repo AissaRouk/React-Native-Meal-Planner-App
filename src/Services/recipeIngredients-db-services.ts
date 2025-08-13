@@ -1,9 +1,4 @@
-import {
-  getDbConnection,
-  TABLE_INGREDIENT,
-  TABLE_RECIPE,
-  TABLE_RECIPE_INGREDIENTS,
-} from './db-services';
+import {TABLE_RECIPE_INGREDIENTS} from './db-services';
 import {SUCCESS, FAILED} from './db-services';
 import {
   ErrorResponseCodes,
@@ -12,8 +7,18 @@ import {
   RecipeIngredient,
   RecipeIngredientWithoutId,
 } from '../Types/Types';
-import {INGREDIENT_ID} from './ingredient-db-services';
-import {RECIPE_ID} from './recipe-db-services';
+import {
+  collection,
+  query,
+  getDocs,
+  getFirestore,
+  setDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+  addDoc,
+  where,
+} from '@react-native-firebase/firestore';
 
 // Fields for the RecipeIngredients table
 export const RECIPE_INGREDIENTS_ID = 'id';
@@ -22,60 +27,11 @@ export const RECIPE_INGREDIENTS_INGREDIENT_ID = 'ingredientId';
 export const RECIPE_INGREDIENTS_QUANTITY = 'quantity';
 export const RECIPE_INGREDIENTS_QUANTITY_TYPE = 'quantityType';
 
-/**
- * Creates the RecipeIngredients table in the database.
- *
- * This function creates the `RecipeIngredients` table if it does not already exist. The table includes columns for
- * linking recipes to ingredients, as well as specifying the quantity and type of measurement for each ingredient.
- * Foreign keys link to the `Recipe` and `Ingredient` tables, ensuring referential integrity.
- *
- * @async
- * @function createRecipeIngredientTable
- * @returns {Promise<void>} Resolves when the table is created successfully.
- * @throws {Error} Throws an error if the table creation fails.
- *
- * @example
- * createRecipeIngredientTable()
- *   .then(() => console.log('RecipeIngredients table created or already exists'))
- *   .catch(error => console.error('Error creating RecipeIngredients table:', error));
- */
-export const createRecipeIngredientTable = async (): Promise<void> => {
-  const db = await getDbConnection();
-
-  try {
-    const sqlCreateTable = `CREATE TABLE IF NOT EXISTS ${TABLE_RECIPE_INGREDIENTS} (
-      ${RECIPE_INGREDIENTS_ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-      ${RECIPE_INGREDIENTS_RECIPE_ID} INTEGER,
-      ${RECIPE_INGREDIENTS_INGREDIENT_ID} INTEGER,
-      ${RECIPE_INGREDIENTS_QUANTITY} REAL,
-      ${RECIPE_INGREDIENTS_QUANTITY_TYPE} TEXT,
-      FOREIGN KEY (${RECIPE_INGREDIENTS_RECIPE_ID}) REFERENCES ${TABLE_RECIPE}(${RECIPE_ID}),
-      FOREIGN KEY (${RECIPE_INGREDIENTS_INGREDIENT_ID}) REFERENCES ${TABLE_INGREDIENT}(${INGREDIENT_ID}),
-      UNIQUE (${RECIPE_INGREDIENTS_RECIPE_ID}, ${RECIPE_INGREDIENTS_INGREDIENT_ID})
-    );`;
-
-    await db.transaction(tx =>
-      tx.executeSql(
-        sqlCreateTable,
-        [],
-        () => {
-          console.log(
-            "createRecipeIngredientTable -> Table 'RecipeIngredients' created successfully or already exists.",
-          );
-        },
-        error => {
-          console.error(
-            "createRecipeIngredientTable -> SQL error in creating 'RecipeIngredients' table:",
-            error,
-          );
-        },
-      ),
-    );
-  } catch (error) {
-    console.error('createRecipeIngredientTable -> Transaction failed:', error);
-    throw new Error(`createRecipeIngredientTable: ${error}`);
-  }
-};
+const firestoreDb = getFirestore();
+const recipeIngredientCollection = collection(
+  firestoreDb,
+  TABLE_RECIPE_INGREDIENTS,
+);
 
 /**
  * Adds a new ingredient to a recipe in the database.
@@ -98,59 +54,22 @@ export const addRecipeIngredientDb = async (
   recipeIngredient: RecipeIngredientWithoutId,
 ): Promise<{
   created: boolean;
-  insertedId?: number;
+  insertedId?: string;
   responseCode?: ErrorResponseCodes;
 }> => {
   try {
-    const db = await getDbConnection();
-
-    const sqlInsert = `INSERT OR IGNORE INTO ${TABLE_RECIPE_INGREDIENTS} (${RECIPE_INGREDIENTS_RECIPE_ID}, ${RECIPE_INGREDIENTS_INGREDIENT_ID}, ${RECIPE_INGREDIENTS_QUANTITY}, ${RECIPE_INGREDIENTS_QUANTITY_TYPE}) VALUES (?,?,?,?)`;
-
-    // Execute the query
-    const result = await new Promise<{
-      created: boolean;
-      responseCode?: ErrorResponseCodes;
-      insertedId?: number;
-    }>(
-      async resolve =>
-        await db.transaction(tx =>
-          tx.executeSql(
-            sqlInsert,
-            [
-              recipeIngredient.recipeId,
-              recipeIngredient.ingredientId,
-              recipeIngredient.quantity,
-              recipeIngredient.quantityType,
-            ],
-            (_, resultSet) => {
-              if (resultSet.rowsAffected > 0) {
-                console.log(
-                  `addRecipeIngredient -> Ingredient added to Recipe ID: ${recipeIngredient.recipeId}`,
-                );
-                resolve({
-                  created: SUCCESS,
-                  responseCode: ErrorResponseCodes.SUCCESS,
-                  insertedId: resultSet.insertId,
-                });
-              } else {
-                console.log(
-                  `addRecipeIngredient -> Ingredient not added for Recipe ID: ${recipeIngredient.recipeId}`,
-                );
-                resolve({
-                  created: SUCCESS,
-                  responseCode: ErrorResponseCodes.ERROR,
-                });
-              }
-            },
-            error =>
-              console.error(
-                `addRecipeIngredient -> SQL error for Recipe ID ${recipeIngredient.recipeId}:`,
-                error,
-              ),
-          ),
-        ),
+    // Firebase Implementation
+    const addRef = await addDoc(recipeIngredientCollection, recipeIngredient);
+    console.log(
+      `addRecipeIngredient -> Firestore document added with ID: ${addRef.id}`,
     );
-    return result;
+    return {
+      created: SUCCESS,
+      insertedId: addRef.id,
+      responseCode: ErrorResponseCodes.SUCCESS,
+    };
+
+    // return result;
   } catch (error) {
     console.error('addRecipeIngredient -> Transaction failed:', error);
     throw new Error(`Failed to add ingredient to recipe: ${error}`);
@@ -178,13 +97,13 @@ export const addRecipeIngredientDb = async (
  * }
  */
 export const addRecipeIngredientMultipleDb = async (
-  recipeId: number,
+  recipeId: string,
   ingredients: Array<
     Ingredient & {quantity: number; quantityType: QuantityType}
   >,
 ): Promise<{
   created: boolean;
-  insertedId?: number;
+  insertedId?: string;
   responseCode?: ErrorResponseCodes;
 }> => {
   try {
@@ -213,46 +132,25 @@ export const addRecipeIngredientMultipleDb = async (
  * Function that gets the RecipeIngredient ID from both recipeId and ingredientId
  * @param {number} recipeId - The ID of the recipe
  * @param {number} ingredientId - The ID of the ingredient
- * @returns {Promise<number>} - Returns the ID of the matching RecipeIngredient, or -1 if not found
+ * @returns {Promise<number | string>} - Returns the Firestore document ID of the matching RecipeIngredient, or -1 if not found
  */
 export const getIdFromRecipeIdAndIngredientId = async (
-  recipeId: number,
-  ingredientId: number,
-): Promise<number> => {
+  recipeId: string,
+  ingredientId: string,
+): Promise<string> => {
   try {
-    let response = -1;
-    const db = await getDbConnection();
-    const sqlQuery = `
-      SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} 
-      WHERE ${RECIPE_INGREDIENTS_RECIPE_ID} = ? AND ${RECIPE_INGREDIENTS_INGREDIENT_ID} = ?
-    `;
+    const q = query(
+      recipeIngredientCollection,
+      where('recipeId', '==', recipeId),
+      where('ingredientId', '==', ingredientId),
+    );
+    const querySnapshot = await getDocs(q);
 
-    await db.transaction(tx => {
-      tx.executeSql(
-        sqlQuery,
-        [recipeId, ingredientId],
-        (tx, resultSet) => {
-          if (resultSet.rows.length > 0) {
-            const result: RecipeIngredient = resultSet.rows.item(0);
-            console.log(
-              'getIdFromRecipeIdAndIngredientId -> Found RecipeIngredient ID:',
-              result.id,
-            );
-            response = result.id;
-          } else {
-            console.log(
-              'getIdFromRecipeIdAndIngredientId -> No match found for recipeId and ingredientId',
-            );
-          }
-        },
-        (tx, error) => {
-          console.error('SQL Error:', error);
-          return false;
-        },
-      );
-    });
-
-    return response;
+    if (!querySnapshot.empty) {
+      // Return the first matching document's ID
+      return querySnapshot.docs[0].id;
+    }
+    return '';
   } catch (error) {
     throw new Error(
       'Error while getting the RecipeIngredient by recipeId and ingredientId: ' +
@@ -272,21 +170,29 @@ export const getAllRecipeIngredients = async (): Promise<
   RecipeIngredient[]
 > => {
   try {
-    const db = await getDbConnection();
-    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS}`;
-    const result: RecipeIngredient[] = [];
-
-    await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [], (tx, resultSet) => {
-        const len = resultSet.rows.length;
-
-        for (let i = 0; i < len; i++) {
-          const row = resultSet.rows.item(i);
-          result.push(row);
-        }
-      }),
+    const recipeIngredients: RecipeIngredient[] = [];
+    // Firebase Implementation
+    const recipeIngredientsQuery = query(recipeIngredientCollection);
+    const querySnapshot = await getDocs(recipeIngredientsQuery);
+    querySnapshot.forEach(
+      (doc: {data: () => RecipeIngredientWithoutId; id: any}) => {
+        const data = doc.data() as RecipeIngredientWithoutId;
+        const recipeIngredient: RecipeIngredient = {
+          id: doc.id, // Use Firestore document ID as the ingredient ID
+          recipeId: data.recipeId, // Ensure the recipeId is present
+          ingredientId: data.ingredientId, // Ensure the ingredientId is present
+          quantity: data.quantity, // Ensure the quantity is present
+          quantityType: data.quantityType || QuantityType.UNIT, // Default to UNIT if quantity
+        };
+        recipeIngredients.push(recipeIngredient);
+      },
     );
-    return result;
+    console.log(
+      'getrecipeIngredients Firebase -> recipeIngredients fetched successfully:',
+      recipeIngredients,
+    );
+
+    return recipeIngredients;
   } catch (error) {
     console.error('getRecipeIngredients -> Transaction failed:', error);
     throw new Error(`getRecipeIngredients: ${error}`);
@@ -299,27 +205,36 @@ export const getAllRecipeIngredients = async (): Promise<
  * @returns an array with all the RecipeIngredients, each one contains the ingredient of a Recipe
  */
 export const getIngredientsFromRecipeIdDb = async (
-  recipeId: number,
+  recipeId: string,
 ): Promise<RecipeIngredient[]> => {
   try {
     const result: RecipeIngredient[] = [];
 
-    if (recipeId < 0) {
+    if (!recipeId || recipeId == '') {
       throw new Error("The recipeId's value is incorrect");
     }
-    const db = await getDbConnection();
-    const sqlInsert = `SELECT * FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_INGREDIENTS_RECIPE_ID} = ?`;
 
-    await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [recipeId], (tx, resultSet) => {
-        const len = resultSet.rows.length;
-        for (let i = 0; i < len; i++) {
-          const row = resultSet.rows.item(i);
-          result.push(row);
-        }
-      }),
+    const q = query(
+      recipeIngredientCollection,
+      where('recipeId', '==', recipeId),
     );
-    console.log('getIngredientsFromRecipeId -> ' + JSON.stringify(result));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc: {data: () => RecipeIngredient; id: any}) => {
+      const data = doc.data() as RecipeIngredient;
+      const rcpIngredient: RecipeIngredient = {
+        id: doc.id, // Use Firestore document ID as the ingredient ID
+        recipeId: data.recipeId, // Ensure the recipeId is present
+        ingredientId: data.ingredientId, // Ensure the ingredientId is present
+        quantity: data.quantity, // Ensure the quantity is present
+        quantityType: data.quantityType || QuantityType.UNIT, // Default to UNIT if quantityType is not provided
+      };
+      result.push(rcpIngredient);
+    });
+
+    console.log(
+      'getIngredientsFromRecipeId -> Ingredients fetched successfully:',
+      result,
+    );
     return result;
   } catch (error) {
     console.error('getIngredientsFromRecipeId -> Transaction failed:', error);
@@ -339,36 +254,11 @@ export const updateRecipeIngredientDb: (
   recipeIngredient: RecipeIngredient,
 ) => Promise<void> = async recipeIngredient => {
   try {
-    const db = getDbConnection();
-
-    console.log(
-      'updateRecipeIngredient -> REcipeIngredient to be updated: ' +
-        JSON.stringify(recipeIngredient),
+    await setDoc(
+      doc(recipeIngredientCollection, recipeIngredient.id),
+      recipeIngredient,
     );
-
-    const sqlInsert = `UPDATE ${TABLE_RECIPE_INGREDIENTS} SET ${RECIPE_INGREDIENTS_RECIPE_ID} = ?, ${RECIPE_INGREDIENTS_INGREDIENT_ID} = ?, ${RECIPE_INGREDIENTS_QUANTITY} = ?, ${RECIPE_INGREDIENTS_QUANTITY_TYPE} = ? WHERE ${RECIPE_INGREDIENTS_ID} = ?`;
-
-    (await db).transaction(tx =>
-      tx.executeSql(
-        sqlInsert,
-        [
-          recipeIngredient.recipeId,
-          recipeIngredient.ingredientId,
-          recipeIngredient.quantity,
-          recipeIngredient.quantityType,
-          recipeIngredient.id,
-        ],
-        (tx, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            console.log('updateRecipeIngredient -> RecipeIngredient updated');
-          } else {
-            console.log(
-              'updateRecipeIngredient -> RecipeIngredient not updated',
-            );
-          }
-        },
-      ),
-    );
+    console.log('updateRecipeIngredient -> RecipeIngredient updated');
   } catch (error) {
     console.log('Error while updating RecipeIngredient: ' + error);
     throw new Error('Error while updating RecipeIngredient: ' + error);
@@ -384,26 +274,16 @@ export const updateRecipeIngredientDb: (
  * @returns {Promise<void>} Resolves with a void
  */
 export const deleteRecipeIngredientDb: (
-  id: number,
+  id: string,
 ) => Promise<boolean> = async id => {
   try {
     var deleted = false;
-    const db = await getDbConnection();
 
-    const sqlInsert = `DELETE FROM ${TABLE_RECIPE_INGREDIENTS} WHERE ${RECIPE_INGREDIENTS_ID} = ?`;
-
-    await db.transaction(tx =>
-      tx.executeSql(sqlInsert, [id], (tx, resultSet) => {
-        if (resultSet.rowsAffected > 0) {
-          console.log(
-            'deleteRecipeIngredient -> RecipeIngredient deleted successfully',
-          );
-          return deleted;
-        } else
-          console.log(
-            'deleteRecipeIngredient -> could not delete RecipeIngredient',
-          );
-      }),
+    // Firebase Implementation
+    const recipeDoc = doc(recipeIngredientCollection, id.toString());
+    await deleteDoc(recipeDoc);
+    console.log(
+      'deleteRecipeIngredient -> Firestore document deleted successfully.',
     );
     return deleted;
   } catch (error) {
