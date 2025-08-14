@@ -1,6 +1,6 @@
 //Types
 export type Ingredient = {
-  id: number;
+  id: string;
   name: string;
   category: string;
 };
@@ -8,7 +8,7 @@ export type Ingredient = {
 export type IngredientWithoutId = Omit<Ingredient, 'id'>;
 
 export type Recipe = {
-  id: number;
+  id: number | string;
   name: string;
   link?: string;
   preparationTime?: number;
@@ -17,9 +17,9 @@ export type Recipe = {
 export type RecipeWithoutId = Omit<Recipe, 'id'>;
 
 export type RecipeIngredient = {
-  id: number;
-  recipeId: number;
-  ingredientId: number;
+  id: string;
+  recipeId: string;
+  ingredientId: string;
   quantity: number;
   quantityType: QuantityType;
 };
@@ -40,10 +40,10 @@ export type IngredientPantry = {
 export type IngredientPantryWithoutId = Omit<IngredientPantry, 'id'>;
 
 export type WeeklyMeal = {
-  id: number;
+  id: string;
   day: DaysOfWeek; // Day of the week (e.g., "Monday")
   mealType: MealType; // Type of meal (e.g., "Breakfast", "Lunch", "Dinner")
-  recipeId: number; // ID of the recipe assigned
+  recipeId: string; // ID of the recipe assigned
 };
 export type WeeklyMealWithoutId = Omit<WeeklyMeal, 'id'>;
 
