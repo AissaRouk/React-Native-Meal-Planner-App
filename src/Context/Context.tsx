@@ -38,6 +38,7 @@ import {
   getAllGroceryBoughtDb,
   removeGroceryBoughtDb,
 } from '../Services/groceryBought-db-services';
+import {addWeeklyMealDb} from '../Services/weeklyMeals-db-services'; // Import addWeeklyMealDb
 
 // Define the shape of the entire context, including methods and state values.
 type ContextProps = {
@@ -178,6 +179,11 @@ type ContextProps = {
    * @param ingredientId
    */
   removeGroceryBought: (ingredientId: string) => Promise<void>;
+
+  /**
+   * Adds a new weekly meal to the database.
+   */
+  addWeeklyMeal: (weeklyMeal: Omit<WeeklyMeal, 'id'>) => Promise<string>;
 };
 
 type AppProviderProps = {
@@ -203,13 +209,14 @@ const AppContext = React.createContext<ContextProps>({
   }),
   addIngredient: async () => ({created: false}),
   getAllRecipes: async () => [],
-  getRecipeById: async () => ({id: 0, name: 's', servingSize: 0}),
+  getRecipeById: async () => null,
   deleteWeeklyMeal: async () => false,
   getWeeklyMealsByDayAndMealType: async () => [],
   getAllIngredientPantries: async () => [],
   getAllGroceryBought: async () => [],
   addGroceryBought: async () => ({id: '', ingredientId: '', timestamp: 0}),
   removeGroceryBought: async () => {},
+  addWeeklyMeal: async () => '', // Add default implementation
 });
 
 // The provider component wraps the app and supplies state + methods.
@@ -603,6 +610,15 @@ export const AppProvider = ({children}: AppProviderProps) => {
     return removeGroceryBoughtDb(ingredientId);
   };
 
+  /**
+   * Adds a new weekly meal to the database.
+   */
+  const addWeeklyMeal = async (
+    weeklyMeal: Omit<WeeklyMeal, 'id'>,
+  ): Promise<string> => {
+    return addWeeklyMealDb(weeklyMeal);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -626,6 +642,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
         getAllGroceryBought,
         addGroceryBought,
         removeGroceryBought,
+        addWeeklyMeal, // Add addWeeklyMeal to the context value
       }}>
       {children}
     </AppContext.Provider>
