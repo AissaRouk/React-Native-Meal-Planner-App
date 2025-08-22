@@ -13,9 +13,9 @@ type IngredientSearchModalProps = {
   visible: boolean;
   onClose: () => void;
   onAddIngredient: (ingredient: any) => void;
-  onChangeQuantity: (id: number, quantity: number) => void;
-  onChangeQuantityType: (id: number, type: string) => void;
-  onRemoveIngredient: (id: number) => void;
+  onChangeQuantity: (id: string, quantity: number) => void;
+  onChangeQuantityType: (id: string, type: string) => void;
+  onRemoveIngredient: (id: string) => void;
   selectedIngredients: any[];
   onOpenAddIngredientModal: () => void;
 };
