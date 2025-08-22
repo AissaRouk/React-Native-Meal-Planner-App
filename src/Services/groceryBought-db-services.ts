@@ -1,5 +1,19 @@
 // src/Services/groceryBought-db-services.ts
+import {GroceryBought} from '../Types/Types';
 import {getDbConnection} from './db-services';
+import {
+  collection,
+  query,
+  getDocs,
+  getFirestore,
+  setDoc,
+  doc,
+  deleteDoc,
+  getDoc,
+  addDoc,
+  FirebaseFirestoreTypes,
+  where,
+} from '@react-native-firebase/firestore';
 
 // Table name
 export const TABLE_GROCERY_BOUGHT = 'GroceryBought';
@@ -8,62 +22,27 @@ export const TABLE_GROCERY_BOUGHT = 'GroceryBought';
 export const GROCERY_BOUGHT_INGREDIENT_ID = 'ingredientId';
 export const GROCERY_BOUGHT_TIMESTAMP = 'boughtAt';
 
-/**
- * Creates the GroceryBought table if it doesn't already exist.
- */
-export const createGroceryBoughtTableDb: () => Promise<void> = async () => {
-  try {
-    const db = await getDbConnection();
-    const sql = `
-      CREATE TABLE IF NOT EXISTS ${TABLE_GROCERY_BOUGHT} (
-        ${GROCERY_BOUGHT_INGREDIENT_ID} INTEGER PRIMARY KEY,
-        ${GROCERY_BOUGHT_TIMESTAMP}     TEXT NOT NULL
-      );
-    `;
-    await db.transaction(tx =>
-      tx.executeSql(
-        sql,
-        [],
-        () => console.log('createGroceryBoughtTable -> Table ready'),
-        (_, err) => {
-          console.error('createGroceryBoughtTable ->', err);
-          return false;
-        },
-      ),
-    );
-  } catch (e) {
-    throw new Error('createGroceryBoughtTable -> ' + e);
-  }
-};
+const firestoreDb = getFirestore();
+const groceryBoughtCollection = collection(firestoreDb, 'GroceryBought');
 
 /**
  * Marks an ingredient as bought. If already marked, replaces timestamp.
  * @param ingredientId
  */
-export const addGroceryBoughtDb: (
-  ingredientId: number,
-) => Promise<void> = async ingredientId => {
+export const addGroceryBoughtDb = async (
+  groceryBought: Omit<GroceryBought, 'id'>,
+): Promise<GroceryBought> => {
   try {
-    const db = await getDbConnection();
-    const now = new Date().toISOString();
-    const sql = `
-      INSERT OR REPLACE INTO ${TABLE_GROCERY_BOUGHT}
-        (${GROCERY_BOUGHT_INGREDIENT_ID}, ${GROCERY_BOUGHT_TIMESTAMP})
-      VALUES (?, ?);
-    `;
-    await db.transaction(tx =>
-      tx.executeSql(
-        sql,
-        [ingredientId, now],
-        () => console.log(`addGroceryBought -> ${ingredientId} marked bought`),
-        (_, err) => {
-          console.error('addGroceryBought ->', err);
-          return false;
-        },
-      ),
+    const docRef = await addDoc(groceryBoughtCollection, groceryBought);
+    const newGroceryBought = {id: docRef.id, ...groceryBought};
+    console.log(
+      'addGroceryBoughtDb -> GroceryBought added: ' +
+        JSON.stringify(newGroceryBought),
     );
-  } catch (e) {
-    throw new Error('addGroceryBought -> ' + e);
+    return newGroceryBought;
+  } catch (error) {
+    console.error('addGroceryBoughtDb -> Transaction failed:', error);
+    throw new Error(`Failed to add groceryBought: ${error}`);
   }
 };
 
@@ -72,26 +51,37 @@ export const addGroceryBoughtDb: (
  * @param ingredientId
  */
 export const removeGroceryBoughtDb: (
-  ingredientId: number,
+  ingredientId: string,
 ) => Promise<void> = async ingredientId => {
   try {
-    const db = await getDbConnection();
-    const sql = `
-      DELETE FROM ${TABLE_GROCERY_BOUGHT}
-      WHERE ${GROCERY_BOUGHT_INGREDIENT_ID} = ?;
-    `;
-    await db.transaction(tx =>
-      tx.executeSql(
-        sql,
-        [ingredientId],
-        () => console.log(`removeGroceryBought -> ${ingredientId} unmarked`),
-        (_, err) => {
-          console.error('removeGroceryBought ->', err);
-          return false;
-        },
-      ),
+    const q = query(
+      groceryBoughtCollection,
+      where('ingredientId', '==', ingredientId),
     );
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // Delete all matching documents
+      querySnapshot.forEach(
+        async (docSnapshot: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
+          await deleteDoc(doc(groceryBoughtCollection, docSnapshot.id));
+        },
+      );
+      console.log(
+        'removeGroceryBought -> GroceryBought documents deleted successfully for ingredientId:',
+        ingredientId,
+      );
+    } else {
+      console.log(
+        'removeGroceryBought -> No GroceryBought documents found for ingredientId:',
+        ingredientId,
+      );
+    }
   } catch (e) {
+    console.error(
+      'removeGroceryBought -> Error removing GroceryBought documents:',
+      e,
+    );
     throw new Error('removeGroceryBought -> ' + e);
   }
 };
@@ -99,28 +89,46 @@ export const removeGroceryBoughtDb: (
 /**
  * Returns an array of all ingredientIds currently marked bought.
  */
-export const getAllGroceryBoughtDb: () => Promise<number[]> = async () => {
+export const getAllGroceryBoughtDb = async (): Promise<GroceryBought[]> => {
   try {
-    const db = await getDbConnection();
-    const sql = `SELECT ${GROCERY_BOUGHT_INGREDIENT_ID} FROM ${TABLE_GROCERY_BOUGHT};`;
-    const result: number[] = [];
-    await db.transaction(tx =>
-      tx.executeSql(
-        sql,
-        [],
-        (_, {rows}) => {
-          for (let i = 0; i < rows.length; i++) {
-            result.push(rows.item(i)[GROCERY_BOUGHT_INGREDIENT_ID]);
-          }
-        },
-        (_, err) => {
-          console.error('getAllGroceryBought ->', err);
-          return false;
-        },
-      ),
+    const groceryBoughts: GroceryBought[] = [];
+    const groceryBoughtQuery = query(groceryBoughtCollection);
+    const querySnapshot = await getDocs(groceryBoughtQuery);
+    querySnapshot.forEach(
+      (docSnapshot: FirebaseFirestoreTypes.QueryDocumentSnapshot) => {
+        groceryBoughts.push({
+          id: docSnapshot.id,
+          ...docSnapshot.data(),
+        } as GroceryBought);
+      },
     );
-    return result;
-  } catch (e) {
-    throw new Error('getAllGroceryBought -> ' + e);
+    return groceryBoughts;
+  } catch (error) {
+    console.error('getAllGroceryBoughtDb -> Transaction failed:', error);
+    throw new Error(`Failed to get all groceryBoughts: ${error}`);
+  }
+};
+
+export const updateGroceryBoughtDb = async (
+  groceryBought: GroceryBought,
+): Promise<void> => {
+  try {
+    const docRef = doc(groceryBoughtCollection, groceryBought.id);
+    await setDoc(docRef, groceryBought);
+    console.log('updateGroceryBoughtDb -> GroceryBought updated');
+  } catch (error) {
+    console.error('updateGroceryBoughtDb -> Transaction failed:', error);
+    throw new Error(`Failed to update groceryBought: ${error}`);
+  }
+};
+
+export const deleteGroceryBoughtDb = async (id: string): Promise<void> => {
+  try {
+    const docRef = doc(groceryBoughtCollection, id);
+    await deleteDoc(docRef);
+    console.log('deleteGroceryBoughtDb -> GroceryBought deleted');
+  } catch (error) {
+    console.error('deleteGroceryBoughtDb -> Transaction failed:', error);
+    throw new Error(`Failed to delete groceryBought: ${error}`);
   }
 };
