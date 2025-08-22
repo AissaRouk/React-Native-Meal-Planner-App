@@ -214,11 +214,6 @@ export const getIngredientsFromRecipeIdDb = async (
       throw new Error("The recipeId's value is incorrect");
     }
 
-    console.log(
-      'getIngredientsFromRecipeId -> Fetching ingredients for recipeId:',
-      recipeId,
-    );
-
     const q = query(
       recipeIngredientCollection,
       where(RECIPE_INGREDIENTS_RECIPE_ID, '==', recipeId),
