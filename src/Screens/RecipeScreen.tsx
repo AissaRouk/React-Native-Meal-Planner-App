@@ -45,8 +45,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     getIngredientsOfRecipe,
     updateRecipeIngredient,
     deleteRecipeIngredient,
-    addOrUpdateIngredient,
     addRecipeIngredient,
+    addIngredient,
   } = useAppContext();
 
   /** Indicates whether the user is currently editing the form */
@@ -109,13 +109,13 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
    * Handle when the changes of the states of a RecipeIngredient
    */
   const handleRecipeIngredientChange = async (
-    id: number,
+    id: string,
     field: 'quantity' | 'quantityType',
     value: string | number,
   ) => {
     // Check if id is correct number
     console.log('REcipeScreen.handleRecipeIngredientChange -> ' + value);
-    if (id >= 0) {
+    if (id && id !== '') {
       // search for the recipeIngredient
       const index: number = recipeIngredients.findIndex(
         instance => instance.id == id,
@@ -150,7 +150,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
   /**
    * Handle when an ingredient is deleted
    */
-  const handleDeleteIngredient = async (ingredientId: number) => {
+  const handleDeleteIngredient = async (ingredientId: string) => {
     // delete the RecipeIngredient in the DB
     const response: boolean = await deleteRecipeIngredient(
       ingredientId,
@@ -175,7 +175,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       quantity: recipeIngredient.quantity,
       quantityType: recipeIngredient.quantityType,
     });
-    if (response != -1) {
+    if (!response) {
       setFetchFlag(prev => !prev);
     }
   };
@@ -185,13 +185,13 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
    */
   const handleAddIngredient = async (
     ingredient: IngredientWithoutId,
-  ): Promise<number> => {
-    var response = -1;
+  ): Promise<string> => {
+    var response = '';
     const check = verifyIngredientWithoutId(ingredient);
     if (check) {
       // the ingredient added is without id, so give it a temporal one
-      response == (await addOrUpdateIngredient({...ingredient, id: -1}));
-      if (response >= 0) {
+      response == (await addIngredient({...ingredient})).insertedId;
+      if (response) {
         onCloseModal();
       }
     }
