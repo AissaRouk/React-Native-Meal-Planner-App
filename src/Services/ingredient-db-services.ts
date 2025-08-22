@@ -9,6 +9,7 @@ import {
   doc,
   deleteDoc,
   getDoc,
+  addDoc,
 } from '@react-native-firebase/firestore';
 
 const firestoreDb = getFirestore();
@@ -33,11 +34,14 @@ export const addIngredientDb = async (
 ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
   try {
     // add ingredient to firebase
-    setDoc(doc(ingredientCollection, ingredient.name), ingredient);
+    // Generate a new document reference to get the ID first
+    const docRef = doc(ingredientCollection);
+    // Add the ingredient with the generated ID as a prop
+    await setDoc(docRef, {...ingredient, id: docRef.id});
     return {
       created: SUCCESS,
       response: 'Ingredient added successfully',
-      insertedId: ingredient.name,
+      insertedId: docRef.id, // Return the Firestore-generated ID
     };
   } catch (error) {
     console.error('addIngredient -> Transaction failed:', error);
