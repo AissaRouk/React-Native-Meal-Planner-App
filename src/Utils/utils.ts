@@ -23,6 +23,7 @@ import {
   NavigationState,
   useNavigation,
 } from '@react-navigation/native';
+import {ToastAndroid} from 'react-native';
 
 export const handleOnSetQuantity = (quantity: number): number => {
   if (quantity < 0) return 0;
@@ -258,4 +259,15 @@ export const handleNavigate = (
       (navigation as any).navigate(RecipeScreenName);
       break;
   }
+};
+
+// Function to show a Toast message
+export const showToast = (message: string) => {
+  ToastAndroid.showWithGravityAndOffset(
+    message,
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+  );
 };
