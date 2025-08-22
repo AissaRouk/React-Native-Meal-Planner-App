@@ -139,7 +139,7 @@ export function IngredientComponent({
           name="trash-outline"
           size={20}
           style={{marginLeft: 10}}
-          onPress={() => onDelete(id.toString())}
+          onPress={() => onDelete(id)}
         />
       </View>
     </View>
