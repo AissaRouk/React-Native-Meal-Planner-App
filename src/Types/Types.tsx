@@ -8,7 +8,7 @@ export type Ingredient = {
 export type IngredientWithoutId = Omit<Ingredient, 'id'>;
 
 export type Recipe = {
-  id: number | string;
+  id: string;
   name: string;
   link?: string;
   preparationTime?: number;
@@ -46,6 +46,12 @@ export type WeeklyMeal = {
   recipeId: string; // ID of the recipe assigned
 };
 export type WeeklyMealWithoutId = Omit<WeeklyMeal, 'id'>;
+
+export type GroceryBought = {
+  id: string;
+  ingredientId: string; // ID of the ingredient that was bought
+  timestamp: number; // Timestamp when the ingredient was bought
+};
 
 //Enums
 
