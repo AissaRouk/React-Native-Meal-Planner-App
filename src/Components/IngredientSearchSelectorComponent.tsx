@@ -33,13 +33,13 @@ type IngredientSearchSelectorProps = {
   /**
    * Call whenever the user deletes one of the selectedIngredients
    */
-  onRemoveIngredient: (ingredientId: number) => void;
+  onRemoveIngredient: (ingredientId: string) => void;
   /**
    * Override how to update quantity / quantityType for a given already‐picked ingredient
    */
-  onChangeQuantity: (ingredientId: number, quantity: number) => void;
+  onChangeQuantity: (ingredientId: string, quantity: number) => void;
   onChangeQuantityType: (
-    ingredientId: number,
+    ingredientId: string,
     quantityType: QuantityType,
   ) => void;
   onOpenAddIngredientModal: () => any;
@@ -106,7 +106,7 @@ export const IngredientSearchSelector: React.FC<
     }
   }, [searchResults]);
 
-  function handleSelectIngredient(id: number) {
+  function handleSelectIngredient(id: string) {
     // guard against duplicates
     if (selectedIngredients.find(i => i.id === id)) {
       return;
