@@ -11,7 +11,6 @@ import {
   Alert,
 } from 'react-native';
 import {DaysOfWeek, MealType, Recipe, WeeklyMeal} from '../Types/Types';
-import {addWeeklyMeal} from '../Services/weeklyMeals-db-services';
 import {ModalHeader} from './ModalHeareComponent';
 import {CustomPicker} from './CustomPicker'; // you already have this for picking enums
 import {
@@ -27,7 +26,7 @@ type PlanMealModalProps = {
   onSaved?: () => void; // callback to re‐fetch MainScreen data after saving
   initialDay?: DaysOfWeek;
   initialMealType?: MealType;
-  initialRecipeId?: number;
+  initialRecipeId?: string;
 };
 
 /**
@@ -61,13 +60,13 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     useState<boolean>(false);
 
   // 3) Pick a recipeId
-  const [selectedRecipeId, setSelectedRecipeId] = useState<number | null>(null);
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
 
   // 4) Prevent double‐submission
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
   // context functions
-  const {getAllRecipes} = useAppContext();
+  const {getAllRecipes, addWeeklyMeal} = useAppContext();
 
   // Load all recipes once when modal opens
   useEffect(() => {
