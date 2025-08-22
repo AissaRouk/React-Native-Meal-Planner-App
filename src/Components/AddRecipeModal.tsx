@@ -25,10 +25,10 @@ import {
   orangeBackgroundColor,
 } from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
-import {addRecipe} from '../Services/recipe-db-services';
 import {getIngredientById} from '../Services/ingredient-db-services';
 import {IngredientCard} from './IngredientCard';
 import {ModalHeader} from './ModalHeareComponent';
+import {addRecipeDb} from '../Services/recipe-db-services';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -178,7 +178,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       servingSize: Number(servings),
     };
 
-    const response = await addRecipe(newRecipe);
+    const response = await addRecipeDb(newRecipe);
 
     if (response.created && response.insertedId) {
       console.log('Recipe created successfully');
@@ -330,7 +330,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
 
   // function to change the quantityType value of a specific param
   const setQuantityTypeOfSelectedIngredient = (
-    id: number,
+    id: string,
     quantityType: QuantityType,
   ) => {
     setSelectedIngredients(prevIngredients => {
@@ -346,7 +346,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   };
 
   // Function to insert ingredients in the selectedIngredients array, it verifies duplicates
-  const handleSelectIngredient = async (id: number) => {
+  const handleSelectIngredient = async (id: string) => {
     // Check if the ingredient is already selected
     if (selectedIngredients.find(ingredient => ingredient.id === id)) {
       // Alert.alert(
@@ -382,7 +382,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   };
 
   // Function to delete an ingredient from selectedIngredients
-  const hanldeDeleteIngredient = (id: number) => {
+  const hanldeDeleteIngredient = (id: string) => {
     setSelectedIngredients(prevIngredients => {
       const updatedIngredients = prevIngredients.filter(
         ingredient => ingredient.id !== id,
@@ -393,7 +393,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   };
 
   // Function to modify the quantity of an ingredient in selectedIngredients
-  const setQuantityOfSelectedIngredient = (id: number, quantity: number) => {
+  const setQuantityOfSelectedIngredient = (id: string, quantity: number) => {
     if (selectedIngredients.length > 0) {
       const index: number | undefined = selectedIngredients.findIndex(
         ingredient => ingredient.id == id,
