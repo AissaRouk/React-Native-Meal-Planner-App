@@ -40,10 +40,13 @@ export const addRecipeDb: (
 ) => Promise<{created: boolean; insertedId?: string}> = async recipe => {
   try {
     // Adding with Firebase
-    const addRef = await setDoc(doc(recipeCollection, recipe.name), recipe);
+    const newRecipeRef = doc(recipeCollection); // Create a new document reference with auto-generated ID
+    const recipeWithId = {...recipe, id: newRecipeRef.id};
+    await setDoc(newRecipeRef, recipeWithId);
+    const addRef = newRecipeRef.id;
     console.log('addIngredient -> Firestore document added with ID:', addRef);
 
-    return {created: SUCCESS, insertedId: recipe.name};
+    return {created: SUCCESS, insertedId: addRef};
   } catch (error) {
     console.error('addRecipe -> Error adding the recipe:', error);
     return {created: FAILED};
