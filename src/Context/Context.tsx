@@ -3,6 +3,7 @@ import {Alert} from 'react-native';
 import {
   DaysOfWeek,
   ErrorResponseCodes,
+  GroceryBought,
   Ingredient,
   IngredientPantry,
   IngredientWithoutId,
@@ -164,13 +165,13 @@ type ContextProps = {
   /**
    * Returns an array of all ingredientIds currently marked bought.
    */
-  getAllGroceryBought: () => Promise<string[]>;
+  getAllGroceryBought: () => Promise<GroceryBought[]>;
 
   /**
    * Marks an ingredient as bought. If already marked, replaces timestamp.
    * @param ingredientId
    */
-  addGroceryBought: (ingredientId: string) => Promise<void>;
+  addGroceryBought: (ingredientId: string) => Promise<GroceryBought>;
 
   /**
    * Unmarks an ingredient (removes its bought‐flag).
@@ -207,7 +208,7 @@ const AppContext = React.createContext<ContextProps>({
   getWeeklyMealsByDayAndMealType: async () => [],
   getAllIngredientPantries: async () => [],
   getAllGroceryBought: async () => [],
-  addGroceryBought: async () => {},
+  addGroceryBought: async () => ({id: '', ingredientId: '', timestamp: 0}),
   removeGroceryBought: async () => {},
 });
 
@@ -454,7 +455,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
     > = [];
 
     // Guard: invalid recipeId
-    if (recipeId && recipeId != '') {
+    if (!recipeId && recipeId != '') {
       console.error('getIngredientsOfRecipe -> invalid recipeId:', recipeId);
       return result;
     }
@@ -585,12 +586,17 @@ export const AppProvider = ({children}: AppProviderProps) => {
     return getAllIngredientPantriesDb();
   };
 
-  const getAllGroceryBought = async (): Promise<string[]> => {
+  const getAllGroceryBought = async (): Promise<GroceryBought[]> => {
     return getAllGroceryBoughtDb();
   };
 
-  const addGroceryBought = async (ingredientId: string): Promise<void> => {
-    return addGroceryBoughtDb(ingredientId);
+  const addGroceryBought = async (
+    ingredientId: string,
+  ): Promise<GroceryBought> => {
+    return addGroceryBoughtDb({
+      ingredientId: ingredientId,
+      timestamp: Date.now(),
+    });
   };
 
   const removeGroceryBought = async (ingredientId: string): Promise<void> => {
