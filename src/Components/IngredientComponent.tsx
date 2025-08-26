@@ -49,7 +49,7 @@ export function IngredientComponent({
   setQuantity,
   setQuantityType,
   onDelete,
-  number,
+  number = 0,
 }: IngredientComponentProps): JSX.Element {
   //
   //States
@@ -81,7 +81,7 @@ export function IngredientComponent({
   };
 
   return (
-    <View style={[styles.ingredientView, {zIndex: 100 - number}]}>
+    <View style={[styles.ingredientView, {zIndex: 100 - number || 0}]}>
       {/* Ingredient name on top */}
 
       <Text
