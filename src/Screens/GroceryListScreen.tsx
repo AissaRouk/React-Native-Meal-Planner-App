@@ -1,14 +1,10 @@
 // src/Screens/GroceryListScreen.tsx
+
 import React, {useEffect, useState, useCallback} from 'react';
 import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import AppHeader from '../Components/AppHeader';
 import {useAppContext} from '../Context/Context';
 import {DaysOfWeek, MealType, QuantityType, WeeklyMeal} from '../Types/Types';
-import {
-  createGroceryBoughtTableDb,
-  // addGroceryBought,
-  // removeGroceryBought,
-} from '../Services/groceryBought-db-services';
 import Icon from '@react-native-vector-icons/ionicons';
 import {
   screensBackgroundColor,
@@ -18,14 +14,16 @@ import {
 } from '../Utils/Styiling';
 import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
 
+// Type for a grocery item to buy
 interface GroceryItem {
-  ingredientId: number;
+  ingredientId: string;
   name: string;
   toBuy: number;
   quantityType: QuantityType;
 }
 
 export default function GroceryListScreen(): React.ReactElement {
+  // Context hooks for app state and actions
   const {
     ingredients,
     getWeeklyMealsByDayAndMealType,
@@ -34,19 +32,26 @@ export default function GroceryListScreen(): React.ReactElement {
     addGroceryBought,
     removeGroceryBought,
   } = useAppContext();
-  const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
-  const [boughtIds, setBoughtIds] = useState<Set<number>>(new Set());
-  const [boughtCollapsed, setBoughtCollapsed] = useState<boolean>(false);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // Local state
+  const [groceryList, setGroceryList] = useState<GroceryItem[]>([]); // List of items to buy
+  const [boughtIds, setBoughtIds] = useState<Set<string>>(new Set()); // Set of bought ingredient IDs
+  const [boughtCollapsed, setBoughtCollapsed] = useState<boolean>(false); // Collapse bought section
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null); // Last refresh time
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading indicator
+
+  /**
+   * Loads grocery list by:
+   * 1. Gathering all planned meals for the week
+   * 2. Aggregating needed ingredients
+   * 3. Subtracting pantry stock
+   * 4. Building the final to-buy list
+   * 5. Loading bought flags from DB
+   */
   const loadGroceryList = useCallback(async () => {
     setIsLoading(true);
     try {
-      // ensure our bought‐table exists
-      await createGroceryBoughtTableDb();
-
-      // 1) Gather all planned meals
+      // 1) Gather all planned meals for each day and meal type
       const allWeekly: WeeklyMeal[] = [];
       for (const day of Object.values(DaysOfWeek)) {
         for (const meal of Object.values(MealType)) {
@@ -58,11 +63,11 @@ export default function GroceryListScreen(): React.ReactElement {
         }
       }
 
-      // 2) Aggregate needs
+      // 2) Aggregate ingredient needs from all recipes
       type NeedKey = string;
       const neededMap: Record<
         NeedKey,
-        {ingredientId: number; quantity: number; quantityType: QuantityType}
+        {ingredientId: string; quantity: number; quantityType: QuantityType}
       > = {};
       for (const wm of allWeekly) {
         const recipeIngr = await getIngredientsOfRecipe(wm.recipeId);
@@ -80,19 +85,24 @@ export default function GroceryListScreen(): React.ReactElement {
         });
       }
 
-      // 3) Subtract pantry
+      // 3) Subtract pantry stock from needed quantities
       const pantry = await getAllIngredientPantriesDb();
-      const pantryLookup: Record<number, number> = {};
+      const pantryLookup: Record<string, number> = {};
       pantry.forEach(p => (pantryLookup[p.ingredientId] = p.quantity));
 
-      // 4) Build to‐buy list
-      const list: GroceryItem[] = Object.values(neededMap)
+      // 4) Build final to-buy list (exclude items already in pantry)
+      const list = Object.values(neededMap)
         .map(({ingredientId, quantity, quantityType}) => {
           const have = pantryLookup[ingredientId] || 0;
           const toBuy = Math.max(0, quantity - have);
           const ing = ingredients.find(i => i.id === ingredientId);
           return ing && toBuy > 0
-            ? {ingredientId, name: ing.name, toBuy, quantityType}
+            ? {
+                ingredientId: ingredientId,
+                name: ing.name,
+                toBuy,
+                quantityType,
+              }
             : null;
         })
         .filter((x): x is GroceryItem => x !== null)
@@ -101,9 +111,9 @@ export default function GroceryListScreen(): React.ReactElement {
       setGroceryList(list);
       setLastUpdated(new Date());
 
-      // load persisted “bought” flags
+      // 5) Load persisted “bought” flags from DB
       const boughtArray = await getAllGroceryBought();
-      setBoughtIds(new Set(boughtArray));
+      setBoughtIds(new Set(boughtArray.map(item => item.ingredientId)));
     } catch (error) {
       console.error('GroceryListScreen: failed to load list', error);
     } finally {
@@ -111,28 +121,33 @@ export default function GroceryListScreen(): React.ReactElement {
     }
   }, [ingredients]);
 
+  // Load grocery list on mount and when dependencies change
   useEffect(() => {
     loadGroceryList();
   }, [loadGroceryList]);
 
   /**
    * Toggle an ingredient's "bought" state both in UI and in DB.
+   * Adds/removes the ingredient from the bought set and persists to DB.
    */
-  const toggleBought = async (id: number) => {
+  const toggleBought = async (id: string) => {
     if (boughtIds.has(id)) {
-      await removeGroceryBought(id);
+      await removeGroceryBought(id); // Remove from DB
       setBoughtIds(prev => {
         const next = new Set(prev);
         next.delete(id);
         return next;
       });
     } else {
-      await addGroceryBought(id);
+      await addGroceryBought(id); // Add to DB
       setBoughtIds(prev => new Set(prev).add(id));
     }
   };
 
-  /** Renders each “to buy” card */
+  /**
+   * Renders each “to buy” grocery card.
+   * Shows item name, quantity, and a checkbox to mark as bought.
+   */
   const renderToBuyItem = ({item}: {item: GroceryItem}) => (
     <View style={styles.card}>
       <View style={styles.row}>
@@ -147,12 +162,13 @@ export default function GroceryListScreen(): React.ReactElement {
     </View>
   );
 
-  // split into two lists
+  // Split grocery list into items to buy and already bought
   const toBuyList = groceryList.filter(i => !boughtIds.has(i.ingredientId));
   const boughtList = groceryList.filter(i => boughtIds.has(i.ingredientId));
 
   return (
     <View style={styles.container}>
+      {/* App header with refresh button */}
       <AppHeader
         title="Grocery List"
         rightComponent={
@@ -168,16 +184,18 @@ export default function GroceryListScreen(): React.ReactElement {
         }
       />
 
+      {/* Last updated time */}
       {lastUpdated && (
         <Text style={styles.updatedText}>
           Updated: {lastUpdated.toLocaleTimeString()}
         </Text>
       )}
 
+      {/* List of items to buy */}
       <View style={{flex: 1}}>
         <FlatList
           data={toBuyList}
-          keyExtractor={item => item.ingredientId.toString()}
+          keyExtractor={item => item.ingredientId}
           refreshing={isLoading}
           onRefresh={loadGroceryList}
           renderItem={renderToBuyItem}
@@ -190,6 +208,7 @@ export default function GroceryListScreen(): React.ReactElement {
         />
       </View>
 
+      {/* Already bought section, collapsible */}
       {boughtList.length > 0 && (
         <>
           <TouchableOpacity
@@ -221,6 +240,7 @@ export default function GroceryListScreen(): React.ReactElement {
   );
 }
 
+// Styles for the screen and components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
