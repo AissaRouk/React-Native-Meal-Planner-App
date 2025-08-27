@@ -9,10 +9,9 @@ import {
 import {
   DaysOfWeek,
   Ingredient,
+  IngredientWithoutId,
   MealType,
-  QuantityType,
   Recipe,
-  RecipeIngredient,
   WeeklyMeal,
 } from '../Types/Types';
 import RecipeCard from '../Components/RecipeCardComponent';
@@ -27,17 +26,8 @@ import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 import {handleNavigate} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import {
-  addIngredientDb,
-  deleteIngredient,
-  getAllIngredients,
-  getIngredientById,
-} from '../Services/ingredient-db-services';
-import {
-  addRecipeDb,
-  deleteRecipe,
-  getRecipes,
-} from '../Services/recipe-db-services';
+import {getAllIngredients} from '../Services/ingredient-db-services';
+import {getRecipes} from '../Services/recipe-db-services';
 
 export default function MainScreen(): React.JSX.Element {
   // State to track the currently selected meal type (e.g., Breakfast, Lunch, Dinner)
@@ -138,8 +128,6 @@ export default function MainScreen(): React.JSX.Element {
       const fetingredients: Ingredient[] = await getAllIngredients();
       setIngredients(fetingredients);
       const fetchedRecipes = await getAllRecipes();
-      await deleteRecipe('Tortilla');
-
       const rcps = await getRecipes();
       console.log(
         'MainScreen -> Recipes fetched successfully: ',
@@ -333,9 +321,7 @@ export default function MainScreen(): React.JSX.Element {
           initialDay={selectedDay} // plan for current day
           initialMealType={selectedMeal} // plan for current meal
           initialRecipeId={
-            selectedRecipe?.id !== undefined
-              ? Number(selectedRecipe.id)
-              : undefined
+            selectedRecipe?.id !== undefined ? selectedRecipe.id : undefined
           } // and this recipe
         />
         {/* Modal to open the RecipeOptions */}
