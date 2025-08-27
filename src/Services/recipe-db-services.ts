@@ -9,6 +9,7 @@ import {
   doc,
   deleteDoc,
   getDoc,
+  where,
 } from '@react-native-firebase/firestore';
 
 // Fields for the Recipe table
@@ -37,8 +38,29 @@ const recipeCollection = collection(firestoreDb, TABLE_RECIPE);
  */
 export const addRecipeDb: (
   recipe: RecipeWithoutId,
-) => Promise<{created: boolean; insertedId?: string}> = async recipe => {
+) => Promise<{
+  created: boolean;
+  insertedId?: string;
+  response?: string;
+}> = async recipe => {
   try {
+    // Check if a recipe with the same name already exists
+    const recipeQuery = query(
+      recipeCollection,
+      where('name', '==', recipe.name),
+    );
+    const querySnapshot = await getDocs(recipeQuery);
+
+    if (!querySnapshot.empty) {
+      console.warn(
+        `Recipe with name "${recipe.name}" already exists. Skipping.`,
+      );
+      return {
+        created: FAILED,
+        response: `Recipe with name "${recipe.name}" already exists.`,
+      };
+    }
+
     // Adding with Firebase
     const newRecipeRef = doc(recipeCollection); // Create a new document reference with auto-generated ID
     const recipeWithId = {...recipe, id: newRecipeRef.id};
