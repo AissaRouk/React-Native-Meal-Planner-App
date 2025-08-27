@@ -189,153 +189,151 @@ export default function MainScreen(): React.JSX.Element {
 
   return isFetchFinished ? (
     <View style={[styles.container, {padding: 16}]}>
-      <>
-        {/* Header component to select the day of the week */}
-        <MealsHeader
-          selectedDay={selectedDay}
-          setSelectedDay={setSelectedDay}
-          onRecipesButtonPress={() =>
-            handleNavigate({screen: 'Recipes'}, navigation)
-          }
-          onLogoutButtonPress={() => auth.signOut()}
-        />
+      {/* Header component to select the day of the week */}
+      <MealsHeader
+        selectedDay={selectedDay}
+        setSelectedDay={setSelectedDay}
+        onRecipesButtonPress={() =>
+          handleNavigate({screen: 'Recipes'}, navigation)
+        }
+        onLogoutButtonPress={() => auth.signOut()}
+      />
 
-        {/* Component to select the meal type */}
-        <MealTypeComponent
-          mealType={selectedMeal}
-          onSelectedMeal={setSelectedMeal}
-        />
+      {/* Component to select the meal type */}
+      <MealTypeComponent
+        mealType={selectedMeal}
+        onSelectedMeal={setSelectedMeal}
+      />
 
-        {/* ScrollView to display the recipes */}
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {currentWeeklyMealsRecipes === null ||
-          currentWeeklyMealsRecipes?.length === 0 ? (
-            <Text>No Recipes Found</Text>
-          ) : (
-            currentWeeklyMealsRecipes.map((recipe, index) => (
-              <RecipeCard
-                key={index}
-                recipe={recipe}
-                onPress={() =>
-                  handleNavigate(
-                    {screen: 'Recipe', params: {recipe: recipe}},
-                    navigation,
-                  )
-                }
-                onLongPress={() => {
-                  setSelectedRecipe(recipe);
-                  setRecipeOptionsVisibility(true);
-                }}
-              />
-            ))
-          )}
-        </ScrollView>
+      {/* ScrollView to display the recipes */}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {currentWeeklyMealsRecipes === null ||
+        currentWeeklyMealsRecipes?.length === 0 ? (
+          <Text>No Recipes Found</Text>
+        ) : (
+          currentWeeklyMealsRecipes.map((recipe, index) => (
+            <RecipeCard
+              key={index}
+              recipe={recipe}
+              onPress={() =>
+                handleNavigate(
+                  {screen: 'Recipe', params: {recipe: recipe}},
+                  navigation,
+                )
+              }
+              onLongPress={() => {
+                setSelectedRecipe(recipe);
+                setRecipeOptionsVisibility(true);
+              }}
+            />
+          ))
+        )}
+      </ScrollView>
 
-        {/*
+      {/*
           Replace your old inline TouchableOpacity with our reusable FloatingButton:
         */}
-        <FloatingButton
-          iconName="add"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => setVisible(true)}
-        />
+      <FloatingButton
+        iconName="add"
+        iconSize={32}
+        iconColor="white"
+        onPress={() => setVisible(true)}
+      />
 
-        {/* button to open PlanMealMode */}
-        <FloatingButton
-          iconName="calendar-outline"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => setPlanMealModalVisible(true)}
-          containerStyle={{
-            position: 'absolute',
-            bottom: 16,
-            right: 60 + 16 * 2,
-            backgroundColor: '#fb7945',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5, // Android shadow
-            shadowColor: '#000', // iOS shadow
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
-        />
-        {/* Button to go to Pantry */}
-        <FloatingButton
-          iconName="basket-outline"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => handleNavigate({screen: 'Pantry'}, navigation)}
-          containerStyle={{
-            position: 'absolute',
-            bottom: 16,
-            right: 60 * 2 + 16 * 3,
-            backgroundColor: '#fb7945',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5, // Android shadow
-            shadowColor: '#000', // iOS shadow
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
-        />
-        {/* Button to open GroceryList Screen*/}
-        <FloatingButton
-          iconName="cart-outline"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => handleNavigate({screen: 'GroceyList'}, navigation)}
-          containerStyle={{
-            position: 'absolute',
-            bottom: 16,
-            right: 60 * 3 + 16 * 4,
-            backgroundColor: '#fb7945',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5, // Android shadow
-            shadowColor: '#000', // iOS shadow
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
-        />
+      {/* button to open PlanMealMode */}
+      <FloatingButton
+        iconName="calendar-outline"
+        iconSize={32}
+        iconColor="white"
+        onPress={() => setPlanMealModalVisible(true)}
+        containerStyle={{
+          position: 'absolute',
+          bottom: 16,
+          right: 60 + 16 * 2,
+          backgroundColor: '#fb7945',
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 5, // Android shadow
+          shadowColor: '#000', // iOS shadow
+          shadowOffset: {width: 0, height: 2},
+          shadowOpacity: 0.3,
+          shadowRadius: 3,
+        }}
+      />
+      {/* Button to go to Pantry */}
+      <FloatingButton
+        iconName="basket-outline"
+        iconSize={32}
+        iconColor="white"
+        onPress={() => handleNavigate({screen: 'Pantry'}, navigation)}
+        containerStyle={{
+          position: 'absolute',
+          bottom: 16,
+          right: 60 * 2 + 16 * 3,
+          backgroundColor: '#fb7945',
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 5, // Android shadow
+          shadowColor: '#000', // iOS shadow
+          shadowOffset: {width: 0, height: 2},
+          shadowOpacity: 0.3,
+          shadowRadius: 3,
+        }}
+      />
+      {/* Button to open GroceryList Screen*/}
+      <FloatingButton
+        iconName="cart-outline"
+        iconSize={32}
+        iconColor="white"
+        onPress={() => handleNavigate({screen: 'GroceyList'}, navigation)}
+        containerStyle={{
+          position: 'absolute',
+          bottom: 16,
+          right: 60 * 3 + 16 * 4,
+          backgroundColor: '#fb7945',
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 5, // Android shadow
+          shadowColor: '#000', // iOS shadow
+          shadowOffset: {width: 0, height: 2},
+          shadowOpacity: 0.3,
+          shadowRadius: 3,
+        }}
+      />
 
-        {/* Modal to add the Recipes */}
-        <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
-        {/* Modal to Plan the meals */}
-        <PlanMealModal
-          visible={planMealModalVisible}
-          onClose={() => setPlanMealModalVisible(false)}
-          onSaved={() => setRenderFlag(!renderFlag)}
-          initialDay={selectedDay} // plan for current day
-          initialMealType={selectedMeal} // plan for current meal
-          initialRecipeId={
-            selectedRecipe?.id !== undefined ? selectedRecipe.id : undefined
-          } // and this recipe
+      {/* Modal to add the Recipes */}
+      <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
+      {/* Modal to Plan the meals */}
+      <PlanMealModal
+        visible={planMealModalVisible}
+        onClose={() => setPlanMealModalVisible(false)}
+        onSaved={() => setRenderFlag(!renderFlag)}
+        initialDay={selectedDay} // plan for current day
+        initialMealType={selectedMeal} // plan for current meal
+        initialRecipeId={
+          selectedRecipe?.id !== undefined ? selectedRecipe.id : undefined
+        } // and this recipe
+      />
+      {/* Modal to open the RecipeOptions */}
+      {selectedRecipe && (
+        <RecipeOptionsModal
+          menuVisible={recipeOptionsVisibility}
+          setMenuVisible={() => setRecipeOptionsVisibility(false)}
+          recipe={selectedRecipe}
+          onPlan={() => handlePlanRecipe()}
+          unPlanOption
+          onUnplan={handleUnplanRecipe}
         />
-        {/* Modal to open the RecipeOptions */}
-        {selectedRecipe && (
-          <RecipeOptionsModal
-            menuVisible={recipeOptionsVisibility}
-            setMenuVisible={() => setRecipeOptionsVisibility(false)}
-            recipe={selectedRecipe}
-            onPlan={() => handlePlanRecipe()}
-            unPlanOption
-            onUnplan={handleUnplanRecipe}
-          />
-        )}
-      </>
+      )}
     </View>
   ) : (
     // ActivityIndicator to show loading state while fetching data
