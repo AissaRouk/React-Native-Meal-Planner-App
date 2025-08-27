@@ -4,7 +4,7 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import AppHeader from '../Components/AppHeader';
 import {useAppContext} from '../Context/Context';
-import {DaysOfWeek, MealType, QuantityType, WeeklyMeal} from '../Types/Types';
+import {QuantityType, WeeklyMeal} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import {
   screensBackgroundColor,
@@ -13,6 +13,7 @@ import {
   modalBorderRadius,
 } from '../Utils/Styiling';
 import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
+import {getAllWeeklyMealsDb} from '../Services/weeklyMeals-db-services'; // Import the new function
 
 // Type for a grocery item to buy
 interface GroceryItem {
@@ -26,7 +27,6 @@ export default function GroceryListScreen(): React.ReactElement {
   // Context hooks for app state and actions
   const {
     ingredients,
-    getWeeklyMealsByDayAndMealType,
     getIngredientsOfRecipe,
     getAllGroceryBought,
     addGroceryBought,
@@ -51,17 +51,7 @@ export default function GroceryListScreen(): React.ReactElement {
   const loadGroceryList = useCallback(async () => {
     setIsLoading(true);
     try {
-      // 1) Gather all planned meals for each day and meal type
-      const allWeekly: WeeklyMeal[] = [];
-      for (const day of Object.values(DaysOfWeek)) {
-        for (const meal of Object.values(MealType)) {
-          const meals = await getWeeklyMealsByDayAndMealType(
-            day as DaysOfWeek,
-            meal as MealType,
-          );
-          allWeekly.push(...meals);
-        }
-      }
+      const allWeekly: WeeklyMeal[] = await getAllWeeklyMealsDb(); // Use the new function
 
       // 2) Aggregate ingredient needs from all recipes
       type NeedKey = string;
@@ -91,22 +81,28 @@ export default function GroceryListScreen(): React.ReactElement {
       pantry.forEach(p => (pantryLookup[p.ingredientId] = p.quantity));
 
       // 4) Build final to-buy list (exclude items already in pantry)
-      const list = Object.values(neededMap)
-        .map(({ingredientId, quantity, quantityType}) => {
-          const have = pantryLookup[ingredientId] || 0;
-          const toBuy = Math.max(0, quantity - have);
-          const ing = ingredients.find(i => i.id === ingredientId);
-          return ing && toBuy > 0
-            ? {
-                ingredientId: ingredientId,
+      const list: GroceryItem[] = [];
+      for (const key in neededMap) {
+        if (neededMap.hasOwnProperty(key)) {
+          const needed = neededMap[key];
+          const have = pantryLookup[needed.ingredientId] || 0;
+          const toBuy = Math.max(0, needed.quantity - have);
+
+          if (toBuy > 0) {
+            const ing = ingredients.find(i => i.id === needed.ingredientId);
+            if (ing) {
+              list.push({
+                ingredientId: needed.ingredientId,
                 name: ing.name,
-                toBuy,
-                quantityType,
-              }
-            : null;
-        })
-        .filter((x): x is GroceryItem => x !== null)
-        .sort((a, b) => a.name.localeCompare(b.name));
+                toBuy: toBuy,
+                quantityType: needed.quantityType,
+              });
+            }
+          }
+        }
+      }
+
+      list.sort((a, b) => a.name.localeCompare(b.name));
 
       setGroceryList(list);
       setLastUpdated(new Date());
@@ -119,7 +115,13 @@ export default function GroceryListScreen(): React.ReactElement {
     } finally {
       setIsLoading(false);
     }
-  }, [ingredients]);
+  }, [
+    ingredients,
+    getIngredientsOfRecipe,
+    getAllIngredientPantriesDb,
+    getAllGroceryBought,
+    getAllWeeklyMealsDb, // Add the new function to the dependency array
+  ]);
 
   // Load grocery list on mount and when dependencies change
   useEffect(() => {
