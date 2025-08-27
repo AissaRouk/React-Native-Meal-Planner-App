@@ -168,3 +168,37 @@ export const deleteWeeklyMealDb: (
     throw new Error(`deleteWeeklyMeal: ${error}`); // Throw error instead of returning false
   }
 };
+
+/**
+ * Fetches all entries from the WeeklyMeals table.
+ *
+ * @async
+ * @function getAllWeeklyMeals
+ * @returns {Promise<WeeklyMeal[]>} Resolves with an array of weekly meal entries.
+ * @throws {Error} If there's an error fetching the weekly meals.
+ */
+export const getAllWeeklyMeals: () => Promise<WeeklyMeal[]> = async () => {
+  try {
+    const weeklyMeals: WeeklyMeal[] = [];
+    const weeklyMealsQuery = query(weeklyMealCollection);
+    const querySnapshot = await getDocs(weeklyMealsQuery);
+    querySnapshot.forEach(
+      (doc: {data: () => WeeklyMealWithoutId; id: string}) => {
+        const data = doc.data() as WeeklyMealWithoutId;
+        weeklyMeals.push({
+          id: doc.id,
+          ...data,
+        });
+      },
+    );
+    console.log(
+      'getAllWeeklyMeals Firebase -> WeeklyMeals fetched successfully:',
+      weeklyMeals,
+    );
+
+    return weeklyMeals;
+  } catch (error) {
+    console.error('getAllWeeklyMeals -> Transaction error:', error);
+    throw new Error(`getAllWeeklyMeals: ${error}`); // Throw error for consistency
+  }
+};
