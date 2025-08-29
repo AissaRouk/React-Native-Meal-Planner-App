@@ -177,7 +177,7 @@ export const deleteWeeklyMealDb: (
  * @returns {Promise<WeeklyMeal[]>} Resolves with an array of weekly meal entries.
  * @throws {Error} If there's an error fetching the weekly meals.
  */
-export const getAllWeeklyMeals: () => Promise<WeeklyMeal[]> = async () => {
+export const getAllWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
   try {
     const weeklyMeals: WeeklyMeal[] = [];
     const weeklyMealsQuery = query(weeklyMealCollection);
