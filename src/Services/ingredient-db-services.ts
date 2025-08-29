@@ -1,5 +1,5 @@
 import {Ingredient, IngredientWithoutId} from '../Types/Types';
-import {FAILED, SUCCESS, TABLE_INGREDIENT} from './db-services';
+import {TABLE_INGREDIENT} from './db-services';
 import {
   collection,
   query,
@@ -9,7 +9,7 @@ import {
   doc,
   deleteDoc,
   getDoc,
-  addDoc,
+  where,
 } from '@react-native-firebase/firestore';
 
 const firestoreDb = getFirestore();
@@ -18,39 +18,41 @@ const ingredientCollection = collection(firestoreDb, 'Ingredient');
 //Ingredient CRUD functions
 
 /**
- * Adds a new ingredient to the Ingredient table if it does not already exist.
+ * Function that adds a ingredient row to the table
  *
- * This function inserts a new ingredient with the provided name and category into the `Ingredient` table.
- * If an ingredient with the same name already exists, the function ignores the insertion to prevent duplicates.
- *
- * @async
- * @function addIngredient
- * @param {IngredientWithoutId} ingredient The new ingredient added but without id, because the database will assign one for it
- * @returns {Promise<{created: boolean, response?: string}>} Resolves when the ingredient is added or the insertion is ignored if it already exists.
- *
+ * @param {IngredientWithoutId} ingredient the ingredient object but without id
+ * @returns {Promise<void>} A promise that resolves when the ingredient is added
  */
 export const addIngredientDb = async (
   ingredient: IngredientWithoutId,
 ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
   try {
-    // add ingredient to firebase
-    // Generate a new document reference to get the ID first
+    // Check if an ingredient with the same name already exists
+    const ingredientQuery = query(
+      ingredientCollection,
+      where('name', '==', ingredient.name),
+    );
+    const querySnapshot = await getDocs(ingredientQuery);
+
+    if (!querySnapshot.empty) {
+      console.warn(
+        `Ingredient with name "${ingredient.name}" already exists. Skipping.`,
+      );
+      return {
+        created: false,
+        response: `Ingredient with name "${ingredient.name}" already exists.`,
+      };
+    }
+
+    // Generate a new document reference with an auto-generated ID
     const docRef = doc(ingredientCollection);
     // Add the ingredient with the generated ID as a prop
     await setDoc(docRef, {...ingredient, id: docRef.id});
-    return {
-      created: SUCCESS,
-      response: 'Ingredient added successfully',
-      insertedId: docRef.id, // Return the Firestore-generated ID
-    };
+    return {created: true, insertedId: docRef.id};
   } catch (error) {
-    console.error('addIngredient -> Transaction failed:', error);
-    return {
-      created: FAILED,
-      response: `Error: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    };
+    throw new Error(
+      'addIngredientDb -> ingredient was not added: ' + JSON.stringify(error),
+    );
   }
 };
 
