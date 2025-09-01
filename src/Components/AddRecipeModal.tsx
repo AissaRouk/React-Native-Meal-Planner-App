@@ -425,6 +425,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
           category: category,
         };
         setIngredients(prev => [...prev, newIngredient]);
+        await handleSelectIngredient(response.insertedId);
       }
       return response.created;
     } else if (
