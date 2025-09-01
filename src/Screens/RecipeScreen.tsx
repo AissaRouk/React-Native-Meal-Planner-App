@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  Modal,
 } from 'react-native';
 import {
   Ingredient,
@@ -27,8 +26,6 @@ import {IngredientCard} from '../Components/IngredientCard';
 import {IngredientComponent} from '../Components/IngredientComponent';
 import {FloatingButton} from '../Components/FloatingButton';
 import AddIngredientModal from '../Components/AddIngredientModal';
-import {IngredientSearchSelector} from '../Components/IngredientSearchSelectorComponent';
-import {ModalHeader} from '../Components/ModalHeareComponent';
 import {IngredientSearchModal} from '../Components/IngredientSearchModal';
 
 type RecipeScreenProps = {
