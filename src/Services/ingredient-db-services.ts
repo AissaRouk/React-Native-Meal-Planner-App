@@ -18,36 +18,33 @@ const ingredientCollection = collection(firestoreDb, 'Ingredient');
 //Ingredient CRUD functions
 
 /**
- * Function that adds a ingredient row to the table
+ * Function that adds an ingredient row to the table, checking for duplicate by ID.
  *
  * @param {IngredientWithoutId} ingredient the ingredient object but without id
- * @returns {Promise<void>} A promise that resolves when the ingredient is added
+ * @returns {Promise<{created: boolean; response?: string; insertedId?: string}>} Result of the operation
  */
 export const addIngredientDb = async (
   ingredient: IngredientWithoutId,
 ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
   try {
-    // Check if an ingredient with the same name already exists
-    const ingredientQuery = query(
-      ingredientCollection,
-      where('name', '==', ingredient.name),
-    );
-    const querySnapshot = await getDocs(ingredientQuery);
+    // Generate a new document reference with an auto-generated ID
+    const docRef = doc(ingredientCollection);
 
-    if (!querySnapshot.empty) {
+    // Check if an ingredient with this ID already exists
+    const ingredientSnapShot = await getDoc(docRef);
+    if (ingredientSnapShot.exists()) {
       console.warn(
-        `Ingredient with name "${ingredient.name}" already exists. Skipping.`,
+        `Ingredient with ID "${docRef.id}" already exists. Skipping.`,
       );
       return {
         created: false,
-        response: `Ingredient with name "${ingredient.name}" already exists.`,
+        response: `Ingredient with ID "${docRef.id}" already exists.`,
       };
     }
 
-    // Generate a new document reference with an auto-generated ID
-    const docRef = doc(ingredientCollection);
     // Add the ingredient with the generated ID as a prop
     await setDoc(docRef, {...ingredient, id: docRef.id});
+    console.log('Ingredient added with ID:', docRef.id);
     return {created: true, insertedId: docRef.id};
   } catch (error) {
     throw new Error(
