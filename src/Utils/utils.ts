@@ -1,5 +1,6 @@
 import {
   Ingredient,
+  IngredientWithoutId,
   Recipe,
   RecipeIngredient,
   Pantry,
@@ -8,7 +9,6 @@ import {
   QuantityType,
   MealType,
   DaysOfWeek,
-  IngredientWithoutId,
   RecipeIngredientWithoutId,
 } from '../Types/Types';
 import {
@@ -271,3 +271,65 @@ export const showToast = (message: string) => {
     50,
   );
 };
+
+/**
+ * Pluralizes a quantity type based on the given quantity.
+ * @param quantity The quantity to check.
+ * @param quantityType The quantity type to pluralize.
+ * @returns The pluralized quantity type as a string.
+ */
+export const pluralize = (
+  quantity: number,
+  quantityType: QuantityType,
+): string => {
+  if (quantity === 1) {
+    return quantityType;
+  }
+
+  switch (quantityType) {
+    case QuantityType.GRAM:
+      return 'grams';
+    case QuantityType.KILOGRAM:
+      return 'kilograms';
+    case QuantityType.MILLILITER:
+      return 'milliliters';
+    case QuantityType.LITER:
+      return 'liters';
+    case QuantityType.CUP:
+      return 'cups';
+    case QuantityType.TABLESPOON:
+      return 'tablespoons';
+    case QuantityType.TEASPOON:
+      return 'teaspoons';
+    case QuantityType.UNIT:
+      return 'units'; // Or handle differently based on context
+    default:
+      return quantityType; // Return original if no pluralization needed
+  }
+};
+
+/**
+ * Returns the short version (abbreviation) of a QuantityType.
+ */
+export function getQuantityTypeShort(type: QuantityType): string {
+  switch (type) {
+    case QuantityType.GRAM:
+      return 'g';
+    case QuantityType.KILOGRAM:
+      return 'kg';
+    case QuantityType.MILLILITER:
+      return 'ml';
+    case QuantityType.LITER:
+      return 'L';
+    case QuantityType.CUP:
+      return 'cup';
+    case QuantityType.TABLESPOON:
+      return 'tbsp';
+    case QuantityType.TEASPOON:
+      return 'tsp';
+    case QuantityType.UNIT:
+      return 'unit';
+    default:
+      return type;
+  }
+}
