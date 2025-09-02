@@ -90,33 +90,3 @@ export enum ErrorResponseCodes {
   ALREADY_EXISTS = 409,
   ERROR = 0,
 }
-
-export const pluralize = (
-  quantity: number,
-  quantityType: QuantityType,
-): string => {
-  if (quantity === 1) {
-    return quantityType;
-  }
-
-  switch (quantityType) {
-    case QuantityType.GRAM:
-      return 'grams';
-    case QuantityType.KILOGRAM:
-      return 'kilograms';
-    case QuantityType.MILLILITER:
-      return 'milliliters';
-    case QuantityType.LITER:
-      return 'liters';
-    case QuantityType.CUP:
-      return 'cups';
-    case QuantityType.TABLESPOON:
-      return 'tablespoons';
-    case QuantityType.TEASPOON:
-      return 'teaspoons';
-    case QuantityType.UNIT:
-      return 'units'; // Or handle differently based on context
-    default:
-      return quantityType; // Return original if no pluralization needed
-  }
-};
