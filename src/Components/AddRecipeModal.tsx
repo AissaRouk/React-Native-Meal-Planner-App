@@ -393,7 +393,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   };
 
   // Function to modify the quantity of an ingredient in selectedIngredients
-  const setQuantityOfSelectedIngredient = (id: string, quantity: number) => {
+  const setQuantityOfSelectedIngredient = (
+    id: string,
+    quantity: string | number,
+  ) => {
     if (selectedIngredients.length > 0) {
       const index: number | undefined = selectedIngredients.findIndex(
         ingredient => ingredient.id == id,
@@ -402,7 +405,12 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       if (index >= 0) {
         setSelectedIngredients(prevIngredients => {
           const updatedIngredients = [...prevIngredients];
-          updatedIngredients[index].quantity = handleOnSetQuantity(quantity);
+          let parsedQuantity =
+            typeof quantity === 'string'
+              ? parseFloat(quantity.replace(',', '.'))
+              : quantity;
+          updatedIngredients[index].quantity =
+            handleOnSetQuantity(parsedQuantity);
           return updatedIngredients;
         });
       }
@@ -676,17 +684,19 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                   </View>
                   <Text style={styles.ingredientsHeader}>Ingredients:</Text>
                   {/* List all added ingredients */}
-                  {selectedIngredients.length > 0 &&
-                    selectedIngredients.map((ingredient, index) => (
-                      <IngredientCard
-                        key={index}
-                        id={ingredient.id}
-                        name={ingredient.name}
-                        category={ingredient.category}
-                        quantity={ingredient.quantity}
-                        quantityType={ingredient.quantityType}
-                      />
-                    ))}
+                  <>
+                    {selectedIngredients.length > 0 &&
+                      selectedIngredients.map((ingredient, index) => (
+                        <IngredientCard
+                          key={index}
+                          id={ingredient.id}
+                          name={ingredient.name}
+                          category={ingredient.category}
+                          quantity={ingredient.quantity}
+                          quantityType={ingredient.quantityType}
+                        />
+                      ))}
+                  </>
                 </View>
               </View>
             )}
