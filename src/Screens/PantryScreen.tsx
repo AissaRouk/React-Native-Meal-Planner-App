@@ -60,7 +60,7 @@ export default function PantryScreen(): React.JSX.Element {
   };
 
   // --- Delete one pantry row from DB and state ---
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       await deleteIngredientPantry(id);
       setPantryItems(prev => prev.filter(item => item.id !== id));
@@ -84,15 +84,15 @@ export default function PantryScreen(): React.JSX.Element {
   };
 
   // --- Wrapers for selector callbacks ---
-  const handleChangeQuantity = (id: number, quantity: number) => {
+  const handleChangeQuantity = (id: string, quantity: number) => {
     const item = pantryItems.find(i => i.id === id);
     if (item) handleUpdate({...item, quantity});
   };
-  const handleChangeQuantityType = (id: number, quantityType: QuantityType) => {
+  const handleChangeQuantityType = (id: string, quantityType: QuantityType) => {
     const item = pantryItems.find(i => i.id === id);
     if (item) handleUpdate({...item, quantityType});
   };
-  const handleRemoveIngredient = (id: number) => {
+  const handleRemoveIngredient = (id: string) => {
     handleDelete(id);
   };
 
@@ -100,8 +100,8 @@ export default function PantryScreen(): React.JSX.Element {
   const handleCreateIngredient = async (
     i: IngredientWithoutId,
   ): Promise<boolean> => {
-    const res = await addOrUpdateIngredient({...i, id: -1});
-    if (res === -1) return false;
+    const res = await addOrUpdateIngredient({...i, id: ''});
+    if (!res || res == '') return false;
     return handleAddIngredientPantry({
       ingredientId: res,
       quantity: 1,
@@ -110,13 +110,19 @@ export default function PantryScreen(): React.JSX.Element {
   };
 
   // --- Render each pantry row via IngredientComponent ---
-  const renderItem = ({item}: {item: IngredientPantry}) => (
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: IngredientPantry;
+    index: number;
+  }) => (
     <IngredientComponent
       ingredients={allIngredients}
       id={item.ingredientId}
       quantity={item.quantity}
       quantityType={item.quantityType}
-      number={item.id}
+      number={index}
       setQuantity={q => handleChangeQuantity(item.id, q)}
       setQuantityType={qt => handleChangeQuantityType(item.id, qt)}
       onDelete={() => handleDelete(item.id)}
