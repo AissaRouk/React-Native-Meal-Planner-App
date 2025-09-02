@@ -32,8 +32,8 @@ export type Pantry = {
 export type PantryWithoutId = Omit<Pantry, 'id'>;
 
 export type IngredientPantry = {
-  id: number;
-  ingredientId: number;
+  id: string;
+  ingredientId: string;
   quantity: number;
   quantityType: QuantityType;
 };
@@ -56,14 +56,14 @@ export type GroceryBought = {
 //Enums
 
 export enum QuantityType {
-  UNIT = 'UNIT',
-  GRAM = 'GRAM',
-  KILOGRAM = 'KILOGRAM',
-  MILLILITER = 'MILLILITER',
-  LITER = 'LITER',
-  CUP = 'CUP',
-  TABLESPOON = 'TABLESPOON',
-  TEASPOON = 'TEASPOON',
+  UNIT = 'unit',
+  GRAM = 'gram',
+  KILOGRAM = 'kilogram',
+  MILLILITER = 'milliliter',
+  LITER = 'liter',
+  CUP = 'cup',
+  TABLESPOON = 'tablespoon',
+  TEASPOON = 'teaspoon',
 }
 
 //Array of the quantityTypes
@@ -90,3 +90,33 @@ export enum ErrorResponseCodes {
   ALREADY_EXISTS = 409,
   ERROR = 0,
 }
+
+export const pluralize = (
+  quantity: number,
+  quantityType: QuantityType,
+): string => {
+  if (quantity === 1) {
+    return quantityType;
+  }
+
+  switch (quantityType) {
+    case QuantityType.GRAM:
+      return 'grams';
+    case QuantityType.KILOGRAM:
+      return 'kilograms';
+    case QuantityType.MILLILITER:
+      return 'milliliters';
+    case QuantityType.LITER:
+      return 'liters';
+    case QuantityType.CUP:
+      return 'cups';
+    case QuantityType.TABLESPOON:
+      return 'tablespoons';
+    case QuantityType.TEASPOON:
+      return 'teaspoons';
+    case QuantityType.UNIT:
+      return 'units'; // Or handle differently based on context
+    default:
+      return quantityType; // Return original if no pluralization needed
+  }
+};
