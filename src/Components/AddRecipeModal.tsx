@@ -15,7 +15,7 @@ import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
 import {FAILED} from '../Services/db-services';
-import {handleOnSetQuantity} from '../Utils/utils';
+import {handleOnSetQuantity, showToast} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
 import {
   greyBorderColor,
@@ -181,23 +181,18 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     const response = await addRecipeDb(newRecipe);
 
     if (response.created && response.insertedId) {
-      console.log('Recipe created successfully');
       const recipeIngredientsResponse = await addRecipeIngredientMultiple(
         response.insertedId,
         selectedIngredients,
       );
       if (recipeIngredientsResponse.created) {
-        console.log(
-          'AddRecipemodal -> all the ingredients of the recipe ' +
-            name +
-            ' were added successfully',
-        );
         if (response.insertedId) {
           setRecipes(prev => [
             ...prev,
             {id: response.insertedId!, ...newRecipe},
           ]);
         }
+        showToast('Recipe ' + name + ' added.');
       }
     }
 
