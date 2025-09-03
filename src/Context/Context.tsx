@@ -27,7 +27,7 @@ import {
   updateRecipeIngredientDb,
 } from '../Services/recipeIngredients-db-services';
 import {addIngredientDb} from '../Services/ingredient-db-services';
-import {verifyRecipeIngredientWithoutId} from '../Utils/utils';
+import {showToast, verifyRecipeIngredientWithoutId} from '../Utils/utils';
 import {
   deleteWeeklyMealDb,
   getWeeklyMealsByDayAndMealTypeDb,
@@ -295,6 +295,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
     ingredient: IngredientWithoutId,
   ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
     const response = await addIngredientDb(ingredient);
+    showToast("Ingredient '" + ingredient.name + "' added.");
     return response;
   };
 
@@ -395,6 +396,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
     >,
   ) => {
     const response = await addRecipeIngredientMultipleDb(recipeId, ingredients);
+    showToast(
+      ingredients.length + " ingredient(s) added to recipe '" + recipeId + "'.",
+    );
     return response;
   };
 
@@ -616,7 +620,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
   const addWeeklyMeal = async (
     weeklyMeal: Omit<WeeklyMeal, 'id'>,
   ): Promise<string> => {
-    return addWeeklyMealDb(weeklyMeal);
+    const response: Promise<string> = addWeeklyMealDb(weeklyMeal);
+    showToast('Meal added to ' + weeklyMeal.day + ', ' + weeklyMeal.mealType);
+    return response;
   };
 
   return (
