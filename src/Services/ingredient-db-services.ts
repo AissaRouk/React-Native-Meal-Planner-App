@@ -80,10 +80,6 @@ export const getAllIngredients: () => Promise<Ingredient[]> = async (): Promise<
       };
       ingredients.push(ingredient);
     });
-    console.log(
-      'getIngredients Firebase -> Ingredients fetched successfully:',
-      ingredients,
-    );
 
     return ingredients;
   } catch (error) {
