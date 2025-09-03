@@ -11,7 +11,6 @@ import {
 import {
   DaysOfWeek,
   Ingredient,
-  IngredientWithoutId,
   MealType,
   Recipe,
   WeeklyMeal,
@@ -29,7 +28,6 @@ import {handleNavigate} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {getAllIngredients} from '../Services/ingredient-db-services';
-import {getRecipes} from '../Services/recipe-db-services';
 
 export default function MainScreen(): React.JSX.Element {
   // Tracks the active tab; used to query weekly meals and default Plan modal.
@@ -133,11 +131,6 @@ export default function MainScreen(): React.JSX.Element {
       setIngredients(fetingredients);
 
       const fetchedRecipes = await getAllRecipes();
-      const rcps = await getRecipes(); // Looks redundant; appears used for logging only.
-      console.log(
-        'MainScreen -> Recipes fetched successfully: ',
-        JSON.stringify(rcps),
-      );
 
       setRecipes(fetchedRecipes);
       setIsFetchFinished(true); // Unlocks UI; also set again in `.then` below (dup but harmless).
