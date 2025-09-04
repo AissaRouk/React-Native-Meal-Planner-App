@@ -227,11 +227,6 @@ export const AppProvider = ({children}: AppProviderProps) => {
   // Local state for the list of recipes (in memory)
   const [recipes, setRecipes] = useState<Recipe[]>([]);
 
-  // Log whenever the recipes array changes, for debugging
-  useEffect(() => {
-    console.log('Context -> recipes:', JSON.stringify(recipes));
-  }, [recipes]);
-
   /**
    * Adds a new ingredient or updates existing one:
    * 1. If id already exists in context, simply update that entry.
