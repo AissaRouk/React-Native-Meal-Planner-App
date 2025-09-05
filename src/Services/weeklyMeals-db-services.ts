@@ -1,6 +1,8 @@
 import {
   DaysOfWeek,
   MealType,
+  QuantityType,
+  WeeklyEntryType,
   WeeklyMeal,
   WeeklyMealWithoutId,
 } from '../Types/Types';
@@ -14,6 +16,7 @@ import {
   doc,
   deleteDoc,
   where,
+  updateDoc,
 } from '@react-native-firebase/firestore';
 
 // Fields for the WeeklyMeals table
@@ -26,30 +29,52 @@ export const WEEKLY_MEALS_RECIPE_ID = 'recipeId';
 const firestoreDb = getFirestore();
 const weeklyMealCollection = collection(firestoreDb, TABLE_WEEKLY_MEALS);
 
-/**
- * Adds a new entry to the WeeklyMeals table.
- *
- * @async
- * @function addWeeklyMealDb
- * @param {WeeklyMealWithoutId} weeklyMeal - The weekly meal to add.
- * @returns {Promise<string>} Resolves with the ID of the added weekly meal.
- */
-export const addWeeklyMealDb: (
-  weeklyMeal: WeeklyMealWithoutId,
-) => Promise<string> = async weeklyMeal => {
-  try {
-    const newDocRef = doc(weeklyMealCollection);
-    await setDoc(newDocRef, weeklyMeal);
-    console.log(
-      'addWeeklyMeal -> Weekly meal added successfully:',
-      newDocRef.id,
-    );
-    return newDocRef.id;
-  } catch (error) {
-    console.error('addWeeklyMeal -> Transaction failed:', error);
-    throw new Error(`addWeeklyMeal: ${error}`);
-  }
-};
+export type AddWeeklyMealInput =
+  | {
+      day: DaysOfWeek;
+      mealType: MealType;
+      recipeId: string;
+      entryType?: WeeklyEntryType.RECIPE | 'RECIPE';
+    }
+  | {
+      day: DaysOfWeek;
+      mealType: MealType;
+      ingredientId: string;
+      quantity: number;
+      quantityType: QuantityType;
+      entryType?: WeeklyEntryType.INGREDIENT | 'INGREDIENT';
+    };
+
+export async function addWeeklyMealDb(
+  input: AddWeeklyMealInput,
+): Promise<string> {
+  // why: single API to store either a recipe entry or a single-ingredient entry
+  const ref = doc(weeklyMealCollection); // auto-id
+  const base = {
+    id: ref.id,
+    day: input.day,
+    mealType: input.mealType,
+    createdAt: Date.now(),
+  } as const;
+
+  const isIngredient = (input as any).ingredientId && !(input as any).recipeId;
+  const payload: WeeklyMeal = isIngredient
+    ? {
+        ...base,
+        entryType: WeeklyEntryType.INGREDIENT,
+        ingredientId: (input as any).ingredientId,
+        quantity: (input as any).quantity,
+        quantityType: (input as any).quantityType,
+      }
+    : {
+        ...base,
+        entryType: WeeklyEntryType.RECIPE,
+        recipeId: (input as any).recipeId,
+      };
+
+  await setDoc(ref, payload);
+  return ref.id;
+}
 
 /**
  * Fetches all entries from the WeeklyMeals table.
@@ -124,6 +149,23 @@ export const getWeeklyMealsByDayAndMealTypeDb: (
     throw new Error('Error fetching WeeklyMeals:' + error);
   }
 };
+
+// OPTIONAL: one-time helper to backfill old docs without entryType (treat as RECIPE)
+export async function backfillWeeklyEntryTypeOnce(): Promise<{
+  updated: number;
+}> {
+  const q = query(weeklyMealCollection, where('entryType', '==', null as any));
+  const snap = await getDocs(q);
+  let updated = 0;
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data() as WeeklyMeal;
+    if (!data.entryType) {
+      await updateDoc(docSnap.ref, {entryType: WeeklyEntryType.RECIPE});
+      updated++;
+    }
+  }
+  return {updated};
+}
 
 /**
  * Updates an existing entry in the WeeklyMeals table.
