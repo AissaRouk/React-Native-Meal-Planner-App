@@ -39,12 +39,27 @@ export type IngredientPantry = {
 };
 export type IngredientPantryWithoutId = Omit<IngredientPantry, 'id'>;
 
+export enum WeeklyEntryType {
+  RECIPE = 'RECIPE',
+  INGREDIENT = 'INGREDIENT',
+}
+
+// Extend WeeklyMeal to support either a recipe or a single ingredient entry.
+// Keep entryType optional for backward-compat with old docs (treat missing as RECIPE).
 export type WeeklyMeal = {
   id: string;
-  day: DaysOfWeek; // Day of the week (e.g., "Monday")
-  mealType: MealType; // Type of meal (e.g., "Breakfast", "Lunch", "Dinner")
-  recipeId: string; // ID of the recipe assigned
+  day: DaysOfWeek;
+  mealType: MealType;
+  entryType?: WeeklyEntryType; // defaults to RECIPE if undefined
+  // RECIPE variant
+  recipeId?: string;
+  // INGREDIENT variant
+  ingredientId?: string;
+  quantity?: number;
+  quantityType?: QuantityType;
+  createdAt?: number | Date;
 };
+
 export type WeeklyMealWithoutId = Omit<WeeklyMeal, 'id'>;
 
 export type GroceryBought = {
