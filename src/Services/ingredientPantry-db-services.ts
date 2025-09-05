@@ -7,8 +7,6 @@ import {
   setDoc,
   doc,
   deleteDoc,
-  getDoc,
-  addDoc,
   where,
 } from '@react-native-firebase/firestore';
 
