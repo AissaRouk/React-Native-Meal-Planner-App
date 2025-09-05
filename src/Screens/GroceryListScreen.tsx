@@ -4,7 +4,7 @@ import React, {useEffect, useState, useCallback} from 'react';
 import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import AppHeader from '../Components/AppHeader';
 import {useAppContext} from '../Context/Context';
-import {QuantityType, WeeklyMeal} from '../Types/Types';
+import {QuantityType, WeeklyEntryType, WeeklyMeal} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import {
   screensBackgroundColor,
@@ -60,19 +60,29 @@ export default function GroceryListScreen(): React.ReactElement {
         {ingredientId: string; quantity: number; quantityType: QuantityType}
       > = {};
       for (const wm of allWeekly) {
-        const recipeIngr = await getIngredientsOfRecipe(wm.recipeId);
-        recipeIngr.forEach(ri => {
-          const key = `${ri.id}|${ri.quantityType}`;
-          if (neededMap[key]) {
-            neededMap[key].quantity += ri.quantity;
-          } else {
+        const entryType = wm.entryType ?? WeeklyEntryType.RECIPE;
+        if (entryType === WeeklyEntryType.INGREDIENT && wm.ingredientId) {
+          const key = `${wm.ingredientId}|${wm.quantityType}`;
+          if (neededMap[key]) neededMap[key].quantity += wm.quantity ?? 0;
+          else
             neededMap[key] = {
-              ingredientId: ri.id,
-              quantity: ri.quantity,
-              quantityType: ri.quantityType,
+              ingredientId: wm.ingredientId,
+              quantity: wm.quantity ?? 0,
+              quantityType: wm.quantityType!,
             };
+        } else if (wm.recipeId) {
+          const recipeIngr = await getIngredientsOfRecipe(wm.recipeId);
+          for (const ri of recipeIngr) {
+            const key = `${ri.id}|${ri.quantityType}`;
+            if (neededMap[key]) neededMap[key].quantity += ri.quantity;
+            else
+              neededMap[key] = {
+                ingredientId: ri.id,
+                quantity: ri.quantity,
+                quantityType: ri.quantityType,
+              };
           }
-        });
+        }
       }
 
       // 3) Subtract pantry stock from needed quantities
