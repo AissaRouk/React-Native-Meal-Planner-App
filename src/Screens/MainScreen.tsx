@@ -7,11 +7,13 @@ import {
   ScrollView,
   Text,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import {
   DaysOfWeek,
   Ingredient,
   MealType,
+  QuantityType,
   Recipe,
   WeeklyMeal,
 } from '../Types/Types';
@@ -27,9 +29,21 @@ import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 import {handleNavigate} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import {getAllIngredients} from '../Services/ingredient-db-services';
+import {
+  getAllIngredients,
+  getIngredientById,
+} from '../Services/ingredient-db-services';
+import {WeeklyEntryType} from '../Types/Types';
 
 export default function MainScreen(): React.JSX.Element {
+  // Types
+  type WeeklyMealsIngredient = {
+    weeklyMealId: string;
+    IngredientName: string;
+    quantity: number;
+    quantityType: QuantityType;
+  };
+
   // Tracks the active tab; used to query weekly meals and default Plan modal.
   const [selectedMeal, setSelectedMeal] = useState<MealType>(
     MealType.BREAKFAST,
@@ -42,6 +56,9 @@ export default function MainScreen(): React.JSX.Element {
   const [currentWeeklyMealsRecipes, setCurrentWeeklyMealsRecipes] = useState<
     Recipe[]
   >([]);
+  // The list of the ingredients available in the weeklyMeals
+  const [currentWeeklyMealsIngredients, setCurrentWeeklyMealsIngredients] =
+    useState<WeeklyMealsIngredient[]>([]);
   // Flip-flop to force a refetch when mutating schedule without changing filters.
   const [renderFlag, setRenderFlag] = useState<boolean>(false);
   // Toggles the add-recipe modal.
@@ -85,12 +102,29 @@ export default function MainScreen(): React.JSX.Element {
   // NOTE: This runs sequentially to preserve order; if order is irrelevant, `Promise.all` would be faster.
   const fetchRecipes = async () => {
     const fetchedRecipes: Recipe[] = [];
-    for (let i = 0; i < weeklyMeals.length; i++) {
-      const item: Recipe | null = await getRecipeById(
-        weeklyMeals[i].recipeId.toString(),
-      );
-      if (item) fetchedRecipes.push(item); // Only add existing recipes.
+    const fetchedIngredients: WeeklyMealsIngredient[] = [];
+    for (const meal of weeklyMeals) {
+      if (meal.entryType === WeeklyEntryType.RECIPE && meal.recipeId) {
+        // Skip non-recipe entries.
+        const item: Recipe | null = await getRecipeById(meal.recipeId!);
+        if (item) fetchedRecipes.push(item); // Only add existing recipes.
+      }
+      // if it's an ingredient, we add it to the ingredient list
+      else if (meal.ingredientId) {
+        const ingredient: Ingredient = await getIngredientById(
+          meal.ingredientId!,
+        );
+        if (ingredient) {
+          fetchedIngredients.push({
+            weeklyMealId: meal.id,
+            IngredientName: ingredient.name,
+            quantity: meal.quantity!,
+            quantityType: meal.quantityType!,
+          });
+        }
+      }
     }
+    setCurrentWeeklyMealsIngredients(fetchedIngredients);
     setCurrentWeeklyMealsRecipes(fetchedRecipes || []);
   };
 
@@ -138,13 +172,13 @@ export default function MainScreen(): React.JSX.Element {
     asyncFunctions()
       .catch(error => {
         if (error instanceof Error) {
-          console.log(
+          console.error(
             'MainScreen -> error in asyncFunctions :',
             error.message,
             error.stack,
           );
         } else {
-          console.log('MainScreen -> error in asyncFunctions :', error);
+          console.error('MainScreen -> error in asyncFunctions :', error);
         }
       })
       .then(() => setIsFetchFinished(true)); // Redundant with the set above; safe but can be removed.
@@ -163,9 +197,6 @@ export default function MainScreen(): React.JSX.Element {
             selectedMeal,
           );
           setWeeklyMeals(fetchedWeeklyMeals);
-          console.log(
-            'weeklyMeals: ' + JSON.stringify(fetchedWeeklyMeals, null, 1),
-          );
         } catch (error) {
           console.error(
             'Error fetching weekly meals: ' + JSON.stringify(error),
@@ -220,22 +251,57 @@ export default function MainScreen(): React.JSX.Element {
           // Shows an empty state only when both arrays are empty to avoid flicker during transitions.
           <Text>No Recipes Found</Text>
         ) : (
-          currentWeeklyMealsRecipes.map((recipe, index) => (
-            <RecipeCard
-              key={index} // Consider key={recipe.id} if stable to avoid re-mounting.
-              recipe={recipe}
-              onPress={() =>
-                handleNavigate(
-                  {screen: 'Recipe', params: {recipe: recipe}},
-                  navigation,
-                )
-              }
-              onLongPress={() => {
-                setSelectedRecipe(recipe);
-                setRecipeOptionsVisibility(true);
-              }}
-            />
-          ))
+          <>
+            {currentWeeklyMealsRecipes.map((recipe, index) => (
+              <RecipeCard
+                key={index} // Consider key={recipe.id} if stable to avoid re-mounting.
+                recipe={recipe}
+                onPress={() =>
+                  handleNavigate(
+                    {screen: 'Recipe', params: {recipe: recipe}},
+                    navigation,
+                  )
+                }
+                onLongPress={() => {
+                  setSelectedRecipe(recipe);
+                  setRecipeOptionsVisibility(true);
+                }}
+              />
+            ))}
+            <View style={{marginTop: 12}}>
+              <Text style={{fontWeight: '700', marginBottom: 6}}>
+                Planned Ingredients
+              </Text>
+              {currentWeeklyMealsIngredients.map((instance, index) => (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 8,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#eee',
+                  }}>
+                  <Text style={{flex: 1, fontSize: 16}}>
+                    {instance.IngredientName} — {instance.quantity}
+                    {String(instance.quantityType)}
+                  </Text>
+                  {/* reuse your existing unplan handler */}
+                  <TouchableOpacity
+                    onPress={() => {
+                      // reuse deleteWeeklyMeal from context
+                      deleteWeeklyMeal(instance.weeklyMealId).then(
+                        ok => ok && setRenderFlag(f => !f),
+                      );
+                    }}>
+                    <Text style={{color: '#fb7945', fontWeight: '600'}}>
+                      Remove
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          </>
         )}
       </ScrollView>
       {/* Floating actions — duplicated inline styles for independent positioning. */}
