@@ -29,6 +29,7 @@ import {
 import {addIngredientDb} from '../Services/ingredient-db-services';
 import {showToast, verifyRecipeIngredientWithoutId} from '../Utils/utils';
 import {
+  AddWeeklyMealInput,
   deleteWeeklyMealDb,
   getWeeklyMealsByDayAndMealTypeDb,
 } from '../Services/weeklyMeals-db-services';
@@ -183,7 +184,7 @@ type ContextProps = {
   /**
    * Adds a new weekly meal to the database.
    */
-  addWeeklyMeal: (weeklyMeal: Omit<WeeklyMeal, 'id'>) => Promise<string>;
+  addWeeklyMeal: (input: AddWeeklyMealInput) => Promise<string>;
 };
 
 type AppProviderProps = {
@@ -612,11 +613,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
   /**
    * Adds a new weekly meal to the database.
    */
-  const addWeeklyMeal = async (
-    weeklyMeal: Omit<WeeklyMeal, 'id'>,
-  ): Promise<string> => {
-    const response: Promise<string> = addWeeklyMealDb(weeklyMeal);
-    showToast('Meal added to ' + weeklyMeal.day + ', ' + weeklyMeal.mealType);
+  const addWeeklyMeal = async (input: AddWeeklyMealInput): Promise<string> => {
+    const response: Promise<string> = addWeeklyMealDb(input);
+    showToast('Meal added to ' + input.day + ', ' + input.mealType);
     return response;
   };
 
