@@ -1,5 +1,5 @@
 // src/Components/PlanMealModal.tsx
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -8,33 +8,40 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  TextInput,
   Alert,
 } from 'react-native';
-import {DaysOfWeek, MealType, Recipe, WeeklyMeal} from '../Types/Types';
+import {
+  DaysOfWeek,
+  MealType,
+  Recipe,
+  QuantityType,
+  quantityTypes,
+} from '../Types/Types';
 import {ModalHeader} from './ModalHeareComponent';
-import {CustomPicker} from './CustomPicker'; // you already have this for picking enums
+import {CustomPicker} from './CustomPicker';
 import {
   modalBorderRadius,
   modalSemiTransparentBg,
   modalWhiteBg,
+  orangeBackgroundColor,
 } from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
 
-type PlanMealModalProps = {
+export type PlanMealModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSaved?: () => void; // callback to re‐fetch MainScreen data after saving
+  onSaved?: () => void; // refresh MainScreen after save
   initialDay?: DaysOfWeek;
   initialMealType?: MealType;
   initialRecipeId?: string;
 };
 
 /**
- * PlanMealModal allows the user to:
- *   1) Pick a DayOfWeek,
- *   2) Pick a MealType,
- *   3) Pick one Recipe from the entire recipe list,
- * then “Save” inserts a WeeklyMeal row.
+ * Unified planner:
+ * - Toggle between planning a Recipe OR planning a single Ingredient.
+ * - Uses existing context methods: getAllRecipes(), addWeeklyMeal(...), and ingredients from context.
+ * - For ingredient entries, addWeeklyMeal should accept {ingredientId, quantity, quantityType}.
  */
 export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   visible,
@@ -44,47 +51,49 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   initialMealType,
   initialRecipeId,
 }) => {
-  // 1) We need a list of ALL recipes (so the user can choose which one to plan)
-  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
-  const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(true);
-
-  // 2) Two pickers for DayOfWeek and MealType
-  const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
+  // Common selects
+  const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(
+    initialDay ?? DaysOfWeek.MONDAY,
+  );
   const [selectedMealType, setSelectedMealType] = useState<MealType>(
-    MealType.BREAKFAST,
+    initialMealType ?? MealType.BREAKFAST,
   );
 
-  // States to manage the visibility of both pickers
-  const [dayPickerVisible, setDayPickerVisible] = useState<boolean>(false);
-  const [mealTypePickerVisible, setMealTypePickerVisible] =
-    useState<boolean>(false);
+  // Toggle: what are we planning?
+  const [isRecipe, setIsRecipe] = useState(true);
 
-  // 3) Pick a recipeId
-  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+  // Recipes state
+  const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(true);
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(
+    initialRecipeId ?? null,
+  );
 
-  // 4) Prevent double‐submission
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  // Ingredients state
+  const {ingredients, getAllRecipes, addWeeklyMeal} = useAppContext();
+  const [search, setSearch] = useState('');
+  const [selectedIngredientId, setSelectedIngredientId] = useState<string>('');
+  const [qtyText, setQtyText] = useState('1');
+  const [qtyType, setQtyType] = useState<QuantityType>(QuantityType.UNIT);
 
-  // context functions
-  const {getAllRecipes, addWeeklyMeal} = useAppContext();
+  // Submission guard
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Load all recipes once when modal opens
   useEffect(() => {
     if (!visible) return;
-    // reset to the incoming “initial…” or defaults
     setSelectedDay(initialDay ?? DaysOfWeek.MONDAY);
     setSelectedMealType(initialMealType ?? MealType.BREAKFAST);
     setSelectedRecipeId(initialRecipeId ?? null);
-    console.log('selectedRecipeId -> ' + initialRecipeId);
+    setIsRecipe(initialRecipeId != null ? true : true);
+
+    // Load recipes when opening (kept here so modal is self-sufficient)
     const fetchAll = async () => {
       setIsLoadingRecipes(true);
       try {
-        const fetched: Recipe[] = await getAllRecipes();
+        const fetched = await getAllRecipes();
         setAllRecipes(fetched);
-        if (fetched.length > 0 && initialRecipeId == null) {
-          // default to first recipe
+        if (!initialRecipeId && fetched.length > 0)
           setSelectedRecipeId(fetched[0].id);
-        }
       } catch (e) {
         console.error('PlanMealModal: error loading recipes:', e);
       } finally {
@@ -92,29 +101,61 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
       }
     };
     fetchAll();
-  }, [visible, initialDay, initialMealType, initialRecipeId]);
 
-  // Called when user taps “Save”
-  const handleSave = async () => {
-    if (selectedRecipeId === null) {
-      Alert.alert('Please select a recipe.');
-      return;
-    }
-    setIsSaving(true);
+    // Reset ingredient form
+    setSearch('');
+    setSelectedIngredientId('');
+    setQtyText('1');
+    setQtyType(QuantityType.UNIT);
+  }, [visible, initialDay, initialMealType, initialRecipeId, getAllRecipes]);
+
+  // Search computed list (ingredients from context)
+  const filteredIngredients = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    if (!s) return ingredients;
+    return ingredients.filter(i => i.name.toLowerCase().includes(s));
+  }, [ingredients, search]);
+
+  const validateAndSave = async () => {
     try {
-      // Call your service to INSERT into WeeklyMeals table
-      await addWeeklyMeal({
-        day: selectedDay,
-        mealType: selectedMealType,
-        recipeId: selectedRecipeId,
-      });
-      // onSaved will cause MainScreen to re‐fetch from DB
-      onSaved && onSaved();
-      // close modal
+      if (isRecipe) {
+        if (!selectedRecipeId) {
+          Alert.alert('Please select a recipe.');
+          return;
+        }
+        setIsSaving(true);
+        await addWeeklyMeal({
+          day: selectedDay,
+          mealType: selectedMealType,
+          recipeId: selectedRecipeId,
+          entryType: 'RECIPE', // your service can ignore or use this
+        } as any);
+      } else {
+        if (!selectedIngredientId) {
+          Alert.alert('Please select an ingredient.');
+          return;
+        }
+        const q = parseFloat(qtyText);
+        if (isNaN(q) || q <= 0) {
+          Alert.alert('Quantity must be a positive number.');
+          return;
+        }
+        setIsSaving(true);
+        await addWeeklyMeal({
+          day: selectedDay,
+          mealType: selectedMealType,
+          ingredientId: selectedIngredientId,
+          quantity: q,
+          quantityType: qtyType,
+          entryType: 'INGREDIENT',
+        } as any);
+      }
+
+      onSaved?.();
       onClose();
     } catch (error) {
       console.error('PlanMealModal -> save error:', error);
-      Alert.alert('Could not save the meal plan. Please try again.');
+      Alert.alert('Could not save. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -126,66 +167,143 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
         <View style={styles.container}>
           <ModalHeader text="Plan a Meal" onClose={onClose} />
 
-          {/** 1) Picker for DayOfWeek */}
-          <Text style={styles.label}>Day of Week:</Text>
+          {/* Day */}
+          <Text style={styles.label}>Day of Week</Text>
           <CustomPicker
-            isPickerOpen={dayPickerVisible}
-            setIsPickerOpen={setDayPickerVisible}
+            isPickerOpen={false}
+            setIsPickerOpen={() => {}}
             quantityType={selectedDay as any}
             setQuantityType={(d: any) => setSelectedDay(d)}
             options={Object.values(DaysOfWeek)}
           />
 
-          {/** 2) Picker for MealType */}
-          <Text style={[styles.label, {marginTop: 16}]}>Meal Type:</Text>
+          {/* Meal type */}
+          <Text style={[styles.label, {marginTop: 16}]}>Meal Type</Text>
           <CustomPicker
-            isPickerOpen={mealTypePickerVisible}
-            setIsPickerOpen={setMealTypePickerVisible}
+            isPickerOpen={false}
+            setIsPickerOpen={() => {}}
             quantityType={selectedMealType as any}
             setQuantityType={(m: any) => setSelectedMealType(m)}
             options={Object.values(MealType)}
           />
 
-          {/** 3) Scrollable list of recipes for user to choose from */}
-          <Text style={[styles.label, {marginTop: 16}]}>Recipes:</Text>
-          <View style={styles.recipesListContainer}>
-            {isLoadingRecipes ? (
-              <ActivityIndicator size="small" color="#fb7945" />
-            ) : allRecipes.length === 0 ? (
-              <Text style={styles.noRecipesText}>No recipes available.</Text>
-            ) : (
-              <ScrollView style={styles.scrollArea}>
-                {allRecipes.map(r => {
-                  const isSelected = r.id === selectedRecipeId;
+          {/* Toggle */}
+          <View style={styles.toggleRow}>
+            <TouchableOpacity
+              style={[styles.toggleBtn, isRecipe && styles.toggleBtnActive]}
+              onPress={() => setIsRecipe(true)}>
+              <Text
+                style={[
+                  styles.toggleText,
+                  isRecipe && styles.toggleTextActive,
+                ]}>
+                Recipes
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.toggleBtn, !isRecipe && styles.toggleBtnActive]}
+              onPress={() => setIsRecipe(false)}>
+              <Text
+                style={[
+                  styles.toggleText,
+                  !isRecipe && styles.toggleTextActive,
+                ]}>
+                Ingredients
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Body */}
+          {isRecipe ? (
+            <View style={styles.listBox}>
+              {isLoadingRecipes ? (
+                <ActivityIndicator size="small" color={orangeBackgroundColor} />
+              ) : allRecipes.length === 0 ? (
+                <Text style={styles.noData}>No recipes available.</Text>
+              ) : (
+                <ScrollView style={styles.scrollArea}>
+                  {allRecipes.map(r => {
+                    const selected = r.id === selectedRecipeId;
+                    return (
+                      <TouchableOpacity
+                        key={r.id}
+                        style={[styles.option, selected && styles.optionActive]}
+                        onPress={() => setSelectedRecipeId(r.id)}>
+                        <Text
+                          style={[
+                            styles.optionText,
+                            selected && styles.optionTextActive,
+                          ]}>
+                          {r.name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              )}
+            </View>
+          ) : (
+            <View>
+              <Text style={[styles.label, {marginTop: 12}]}>
+                Find ingredient
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Banana, muesli bar…"
+                value={search}
+                onChangeText={setSearch}
+              />
+              <View style={styles.chipsRow}>
+                {filteredIngredients.slice(0, 10).map(i => {
+                  const selected = i.id === selectedIngredientId;
                   return (
                     <TouchableOpacity
-                      key={r.id}
-                      style={[
-                        styles.recipeOption,
-                        isSelected && styles.recipeOptionSelected,
-                      ]}
-                      onPress={() => setSelectedRecipeId(r.id)}>
+                      key={i.id}
+                      style={[styles.chip, selected && styles.chipActive]}
+                      onPress={() => setSelectedIngredientId(i.id)}>
                       <Text
                         style={[
-                          styles.recipeOptionText,
-                          isSelected && styles.recipeOptionTextSelected,
+                          styles.chipText,
+                          selected && styles.chipTextActive,
                         ]}>
-                        {r.name}
+                        {i.name}
                       </Text>
                     </TouchableOpacity>
                   );
                 })}
-              </ScrollView>
-            )}
-          </View>
+              </View>
 
-          {/** 4) Save button */}
+              <View style={styles.row}>
+                <View style={{flex: 1, marginRight: 8}}>
+                  <Text style={styles.label}>Quantity</Text>
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="decimal-pad"
+                    value={qtyText}
+                    onChangeText={setQtyText}
+                  />
+                </View>
+                <View style={{flex: 1, marginLeft: 8}}>
+                  <Text style={styles.label}>Unit</Text>
+                  <CustomPicker
+                    isPickerOpen={false}
+                    setIsPickerOpen={() => {}}
+                    quantityType={qtyType as any}
+                    setQuantityType={(qt: any) => setQtyType(qt)}
+                    options={quantityTypes}
+                  />
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Save */}
           <TouchableOpacity
             style={[styles.saveButton, isSaving && {opacity: 0.6}]}
-            onPress={handleSave}
+            onPress={validateAndSave}
             disabled={isSaving}>
             <Text style={styles.saveButtonText}>
-              {isSaving ? 'Saving...' : 'Save to Plan'}
+              {isSaving ? 'Saving…' : 'Save to Plan'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -207,55 +325,72 @@ const styles = StyleSheet.create({
     padding: 16,
     maxHeight: '90%',
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+  label: {fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 8},
+  toggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
     marginBottom: 8,
   },
-  recipesListContainer: {
+  toggleBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginHorizontal: 4,
+    alignItems: 'center',
+  },
+  toggleBtnActive: {
+    backgroundColor: orangeBackgroundColor,
+    borderColor: orangeBackgroundColor,
+  },
+  toggleText: {color: '#333', fontWeight: '600'},
+  toggleTextActive: {color: 'white'},
+  listBox: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 6,
     height: 200,
     overflow: 'hidden',
   },
-  noRecipesText: {
-    padding: 12,
-    color: '#666',
-    fontStyle: 'italic',
-  },
-  scrollArea: {
-    paddingHorizontal: 8,
-  },
-  recipeOption: {
+  noData: {padding: 12, color: '#666', fontStyle: 'italic'},
+  scrollArea: {paddingHorizontal: 8},
+  option: {
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  recipeOptionSelected: {
-    backgroundColor: '#fb7945',
-    borderRadius: 4,
+  optionActive: {backgroundColor: orangeBackgroundColor, borderRadius: 4},
+  optionText: {color: '#333', fontSize: 16},
+  optionTextActive: {color: 'white', fontWeight: '600'},
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
-  recipeOptionText: {
-    color: '#333',
-    fontSize: 16,
+  chipsRow: {flexDirection: 'row', flexWrap: 'wrap', marginTop: 8},
+  chip: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    backgroundColor: '#f2f2f2',
+    marginRight: 8,
+    marginBottom: 8,
   },
-  recipeOptionTextSelected: {
-    color: 'white',
-    fontWeight: '600',
-  },
+  chipActive: {backgroundColor: orangeBackgroundColor},
+  chipText: {color: '#333'},
+  chipTextActive: {color: 'white', fontWeight: '600'},
+  row: {flexDirection: 'row', marginTop: 10},
   saveButton: {
-    backgroundColor: '#fb7945',
+    backgroundColor: orangeBackgroundColor,
     marginTop: 20,
     borderRadius: 6,
     paddingVertical: 12,
     alignItems: 'center',
   },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
-  },
+  saveButtonText: {color: 'white', fontSize: 18, fontWeight: '600'},
 });
