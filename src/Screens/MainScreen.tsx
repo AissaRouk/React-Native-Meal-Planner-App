@@ -34,6 +34,8 @@ import {
   getIngredientById,
 } from '../Services/ingredient-db-services';
 import {WeeklyEntryType} from '../Types/Types';
+import PlannedIngredientCard from '../Components/PlannedIngredientCard';
+import {IngredientOptionsModal} from '../Components/PlannedIngredeintOptionsModal';
 
 export default function MainScreen(): React.JSX.Element {
   // Types
@@ -69,8 +71,14 @@ export default function MainScreen(): React.JSX.Element {
   // Controls the long-press options on a recipe card.
   const [recipeOptionsVisibility, setRecipeOptionsVisibility] =
     useState<boolean>(false);
+  // Controls the long-press options on a planned ingredient card.
+  const [ingredientOptionsVisibility, setIngredientOptionsVisibility] =
+    useState<boolean>(false);
   // Holds the recipe the user long-pressed; optional by design.
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe>();
+  // Holds the ingredient instance the user long-pressed; optional by design.
+  const [selectedIngredientInst, setSelectedIngredientInst] =
+    useState<WeeklyMealsIngredient | null>(null);
   // Guards first-render UX; prevents UI flashing before initial data is ready.
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
   // Spinner for the weekly-meals fetch (distinct from initial boot loading).
@@ -273,32 +281,16 @@ export default function MainScreen(): React.JSX.Element {
                 Planned Ingredients
               </Text>
               {currentWeeklyMealsIngredients.map((instance, index) => (
-                <View
+                <PlannedIngredientCard
+                  ingredientName={instance.IngredientName}
+                  quantity={instance.quantity}
+                  quantityType={instance.quantityType}
                   key={index}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingVertical: 8,
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#eee',
-                  }}>
-                  <Text style={{flex: 1, fontSize: 16}}>
-                    {instance.IngredientName} — {instance.quantity}
-                    {String(instance.quantityType)}
-                  </Text>
-                  {/* reuse your existing unplan handler */}
-                  <TouchableOpacity
-                    onPress={() => {
-                      // reuse deleteWeeklyMeal from context
-                      deleteWeeklyMeal(instance.weeklyMealId).then(
-                        ok => ok && setRenderFlag(f => !f),
-                      );
-                    }}>
-                    <Text style={{color: '#fb7945', fontWeight: '600'}}>
-                      Remove
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                  onLongPress={() => {
+                    setIngredientOptionsVisibility(true);
+                    setSelectedIngredientInst(instance);
+                  }}
+                />
               ))}
             </View>
           </>
@@ -406,6 +398,24 @@ export default function MainScreen(): React.JSX.Element {
             onUnplan={handleUnplanRecipe}
           />
         )}
+        {/* New simple modal for planned ingredients */}
+        <IngredientOptionsModal
+          menuVisible={ingredientOptionsVisibility}
+          setMenuVisible={setIngredientOptionsVisibility}
+          ingredientName={selectedIngredientInst?.IngredientName ?? ''}
+          onPlan={() => {
+            setIngredientOptionsVisibility(false);
+            setPlanMealModalVisible(true);
+          }}
+          onUnplan={async () => {
+            if (!selectedIngredientInst) return;
+            const ok = await deleteWeeklyMeal(
+              selectedIngredientInst.weeklyMealId,
+            );
+            if (ok) setRenderFlag(f => !f);
+            setIngredientOptionsVisibility(false);
+          }}
+        />
       </>
     </View>
   ) : (
