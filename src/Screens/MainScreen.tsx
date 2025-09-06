@@ -230,21 +230,23 @@ export default function MainScreen(): React.JSX.Element {
 
   return isFetchFinished ? (
     <View style={[styles.container, {padding: 16}]}>
-      {/* padding kept inline for easy tuning */}
-      {/* Day selector; also exposes navigation and sign-out actions. */}
-      <MealsHeader
-        selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
-        onRecipesButtonPress={() =>
-          handleNavigate({screen: 'Recipes'}, navigation)
-        }
-        onLogoutButtonPress={() => auth.signOut()}
-      />
-      {/* Meal-type tabs; drives the (day, meal) query. */}
-      <MealTypeComponent
-        mealType={selectedMeal}
-        onSelectedMeal={setSelectedMeal}
-      />
+      {/* Header */}
+      <>
+        {/* Day selector; also exposes navigation and sign-out actions. */}
+        <MealsHeader
+          selectedDay={selectedDay}
+          setSelectedDay={setSelectedDay}
+          onRecipesButtonPress={() =>
+            handleNavigate({screen: 'Recipes'}, navigation)
+          }
+          onLogoutButtonPress={() => auth.signOut()}
+        />
+        {/* Meal-type tabs; drives the (day, meal) query. */}
+        <MealTypeComponent
+          mealType={selectedMeal}
+          onSelectedMeal={setSelectedMeal}
+        />
+      </>
       {/* PlannedRecipes and PlannedIngredients list area */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {isWeeklyMealsLoading ? (
