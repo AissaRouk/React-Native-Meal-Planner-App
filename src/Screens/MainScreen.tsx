@@ -245,7 +245,7 @@ export default function MainScreen(): React.JSX.Element {
         mealType={selectedMeal}
         onSelectedMeal={setSelectedMeal}
       />
-      {/* Recipes list area */}
+      {/* PlannedRecipes and PlannedIngredients list area */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {isWeeklyMealsLoading ? (
           <ActivityIndicator
@@ -296,6 +296,7 @@ export default function MainScreen(): React.JSX.Element {
           </>
         )}
       </ScrollView>
+
       {/* Floating actions — duplicated inline styles for independent positioning. */}
       <>
         <FloatingButton
@@ -311,22 +312,7 @@ export default function MainScreen(): React.JSX.Element {
           iconSize={32}
           iconColor="white"
           onPress={() => setPlanMealModalVisible(true)}
-          containerStyle={{
-            position: 'absolute',
-            bottom: 16,
-            right: 60 + 16 * 2,
-            backgroundColor: '#fb7945',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5,
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
+          containerStyle={styles.planModalFloatingButton}
         />
         {/* Quick access to Pantry. */}
         <FloatingButton
@@ -334,22 +320,7 @@ export default function MainScreen(): React.JSX.Element {
           iconSize={32}
           iconColor="white"
           onPress={() => handleNavigate({screen: 'Pantry'}, navigation)}
-          containerStyle={{
-            position: 'absolute',
-            bottom: 16,
-            right: 60 * 2 + 16 * 3,
-            backgroundColor: '#fb7945',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5,
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
+          containerStyle={styles.pantryFloatingButton}
         />
         {/* Opens Grocery List — CHECK route name spelling in navigator. */}
         <FloatingButton
@@ -357,24 +328,10 @@ export default function MainScreen(): React.JSX.Element {
           iconSize={32}
           iconColor="white"
           onPress={() => handleNavigate({screen: 'GroceyList'}, navigation)} // likely 'GroceryList'
-          containerStyle={{
-            position: 'absolute',
-            bottom: 16,
-            right: 60 * 3 + 16 * 4,
-            backgroundColor: '#fb7945',
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5,
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
+          containerStyle={styles.groceryFloatingButton}
         />
       </>
+
       {/* Modals — mounted here so they can cover the whole screen. */}
       <>
         <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
@@ -451,5 +408,53 @@ const styles = StyleSheet.create({
   },
   activityIndicatorStyle: {
     flex: 1, // Centers spinner vertically when used as the whole-screen element.
+  },
+  planModalFloatingButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 60 + 16 * 2,
+    backgroundColor: '#fb7945',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  pantryFloatingButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 60 * 2 + 16 * 3,
+    backgroundColor: '#fb7945',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  groceryFloatingButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 60 * 3 + 16 * 4,
+    backgroundColor: '#fb7945',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
 });
