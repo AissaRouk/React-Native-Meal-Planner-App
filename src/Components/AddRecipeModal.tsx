@@ -15,7 +15,11 @@ import {SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
 import {FAILED} from '../Services/db-services';
-import {handleOnSetQuantity, showToast} from '../Utils/utils';
+import {
+  handleOnSetQuantity,
+  handleOnSubmitAddIngredient,
+  showToast,
+} from '../Utils/utils';
 import AddIngredientModal from './AddIngredientModal';
 import {
   greyBorderColor,
@@ -29,6 +33,7 @@ import {getIngredientById} from '../Services/ingredient-db-services';
 import {IngredientCard} from './IngredientCard';
 import {ModalHeader} from './ModalHeareComponent';
 import {addRecipeDb} from '../Services/recipe-db-services';
+import {AddIngredientButton} from './AddIngredientButton';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -412,35 +417,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     }
   };
 
-  // Handle the creation of a new ingredient in the database
-  const handleOnSubmitAddIngredient: (
-    name: string,
-    category: string,
-  ) => Promise<boolean> = async (name: string, category: string) => {
-    const response = await addIngredient({name, category});
-    console.log('response: ' + JSON.stringify(response));
-    if (response.created) {
-      // add the new ingredient to the selectedIngredients
-      if (response.insertedId) {
-        const newIngredient: Ingredient = {
-          name: name,
-          id: response.insertedId,
-          category: category,
-        };
-        setIngredients(prev => [...prev, newIngredient]);
-        await handleSelectIngredient(response.insertedId);
-      }
-      return response.created;
-    } else if (
-      !response.created &&
-      response.response == 'Ingredient already exists'
-    ) {
-      Alert.alert('This ingredient already exists');
-      return FAILED;
-    }
-    return FAILED;
-  };
-
   //
   //Components
   //
@@ -554,19 +530,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                     )}
                   </View>
                   {/* AddIngredient Modal Button */}
-                  <TouchableOpacity
-                    onPress={() => setAddIngredientModalVisible(true)}
-                    style={[
-                      {
-                        padding: 10,
-                        backgroundColor: orangeBackgroundColor,
-                        borderRadius: 5,
-                        margin: 5,
-                      },
-                      styles.searchContainerHeight,
-                    ]}>
-                    <Icon name="add-outline" size={20} color={'white'} />
-                  </TouchableOpacity>
+                  <AddIngredientButton
+                    setAddIngredientModalVisible={setAddIngredientModalVisible}
+                    searchContainerHeight={styles.searchContainerHeight}
+                  />
                 </View>
 
                 {/* selectedIngredients ScrollView */}
@@ -731,7 +698,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
         visible={isAddIngredientModalVisible}
         onClose={() => setAddIngredientModalVisible(false)}
         onSubmit={({name, category}) =>
-          handleOnSubmitAddIngredient(name, category)
+          handleOnSubmitAddIngredient(
+            name,
+            category,
+            addIngredient,
+            setIngredients,
+            handleSelectIngredient,
+            setAddIngredientModalVisible,
+          )
         }
       />
     </>
