@@ -1,5 +1,10 @@
-// src/Components/PlanMealModal.tsx
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -17,6 +22,7 @@ import {
   Recipe,
   QuantityType,
   quantityTypes,
+  WeeklyEntryType,
 } from '../Types/Types';
 import {ModalHeader} from './ModalHeareComponent';
 import {CustomPicker} from './CustomPicker';
@@ -27,22 +33,18 @@ import {
   orangeBackgroundColor,
 } from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
+import AddIngredientButton from './AddIngredientButton';
 
 export type PlanMealModalProps = {
   visible: boolean;
   onClose: () => void;
-  onSaved?: () => void; // refresh MainScreen after save
+  onSaved?: () => void;
   initialDay?: DaysOfWeek;
   initialMealType?: MealType;
   initialRecipeId?: string;
+  setAddIngredientModalVisible: Dispatch<SetStateAction<boolean>>;
 };
 
-/**
- * Unified planner:
- * - Toggle between planning a Recipe OR planning a single Ingredient.
- * - Uses existing context methods: getAllRecipes(), addWeeklyMeal(...), and ingredients from context.
- * - For ingredient entries, addWeeklyMeal should accept {ingredientId, quantity, quantityType}.
- */
 export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   visible,
   onClose,
@@ -50,8 +52,9 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   initialDay,
   initialMealType,
   initialRecipeId,
+  setAddIngredientModalVisible,
 }) => {
-  // Common selects
+  // selection values
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(
     initialDay ?? DaysOfWeek.MONDAY,
   );
@@ -59,34 +62,43 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     initialMealType ?? MealType.BREAKFAST,
   );
 
-  // Toggle: what are we planning?
-  const [isRecipe, setIsRecipe] = useState(true);
+  // picker open/close state (the crucial bit)
+  const [dayPickerOpen, setDayPickerOpen] = useState(false);
+  const [mealPickerOpen, setMealPickerOpen] = useState(false);
+  const [qtyPickerOpen, setQtyPickerOpen] = useState(false);
 
-  // Recipes state
+  const [isRecipe, setIsRecipe] = useState(false);
+
+  // recipes
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(true);
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(
     initialRecipeId ?? null,
   );
 
-  // Ingredients state
+  // ingredients
   const {ingredients, getAllRecipes, addWeeklyMeal} = useAppContext();
   const [search, setSearch] = useState('');
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>('');
   const [qtyText, setQtyText] = useState('1');
   const [qtyType, setQtyType] = useState<QuantityType>(QuantityType.UNIT);
 
-  // Submission guard
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!visible) return;
+
     setSelectedDay(initialDay ?? DaysOfWeek.MONDAY);
     setSelectedMealType(initialMealType ?? MealType.BREAKFAST);
     setSelectedRecipeId(initialRecipeId ?? null);
-    setIsRecipe(initialRecipeId != null ? true : true);
+    setIsRecipe(initialRecipeId != null); // open on Recipes only if a recipe was passed
 
-    // Load recipes when opening (kept here so modal is self-sufficient)
+    // reset pickers closed on open
+    setDayPickerOpen(false);
+    setMealPickerOpen(false);
+    setQtyPickerOpen(false);
+
+    // load recipes
     const fetchAll = async () => {
       setIsLoadingRecipes(true);
       try {
@@ -102,14 +114,13 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     };
     fetchAll();
 
-    // Reset ingredient form
+    // reset ingredient form
     setSearch('');
     setSelectedIngredientId('');
     setQtyText('1');
     setQtyType(QuantityType.UNIT);
   }, [visible, initialDay, initialMealType, initialRecipeId, getAllRecipes]);
 
-  // Search computed list (ingredients from context)
   const filteredIngredients = useMemo(() => {
     const s = search.trim().toLowerCase();
     if (!s) return ingredients;
@@ -128,7 +139,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           day: selectedDay,
           mealType: selectedMealType,
           recipeId: selectedRecipeId,
-          entryType: 'RECIPE', // your service can ignore or use this
+          entryType: WeeklyEntryType.RECIPE,
         } as any);
       } else {
         if (!selectedIngredientId) {
@@ -147,7 +158,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           ingredientId: selectedIngredientId,
           quantity: q,
           quantityType: qtyType,
-          entryType: 'INGREDIENT',
+          entryType: WeeklyEntryType.INGREDIENT,
         } as any);
       }
 
@@ -170,8 +181,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           {/* Day */}
           <Text style={styles.label}>Day of Week</Text>
           <CustomPicker
-            isPickerOpen={false}
-            setIsPickerOpen={() => {}}
+            isPickerOpen={dayPickerOpen}
+            setIsPickerOpen={setDayPickerOpen}
             quantityType={selectedDay as any}
             setQuantityType={(d: any) => setSelectedDay(d)}
             options={Object.values(DaysOfWeek)}
@@ -180,8 +191,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           {/* Meal type */}
           <Text style={[styles.label, {marginTop: 16}]}>Meal Type</Text>
           <CustomPicker
-            isPickerOpen={false}
-            setIsPickerOpen={() => {}}
+            isPickerOpen={mealPickerOpen}
+            setIsPickerOpen={setMealPickerOpen}
             quantityType={selectedMealType as any}
             setQuantityType={(m: any) => setSelectedMealType(m)}
             options={Object.values(MealType)}
@@ -247,12 +258,19 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
               <Text style={[styles.label, {marginTop: 12}]}>
                 Find ingredient
               </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Banana, muesli bar…"
-                value={search}
-                onChangeText={setSearch}
-              />
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Banana, muesli bar…"
+                  value={search}
+                  onChangeText={setSearch}
+                />
+                <AddIngredientButton
+                  searchContainerHeight={28}
+                  setAddIngredientModalVisible={setAddIngredientModalVisible}
+                />
+              </View>
+
               <View style={styles.chipsRow}>
                 {filteredIngredients.slice(0, 10).map(i => {
                   const selected = i.id === selectedIngredientId;
@@ -286,8 +304,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                 <View style={{flex: 1, marginLeft: 8}}>
                   <Text style={styles.label}>Unit</Text>
                   <CustomPicker
-                    isPickerOpen={false}
-                    setIsPickerOpen={() => {}}
+                    isPickerOpen={qtyPickerOpen}
+                    setIsPickerOpen={setQtyPickerOpen}
                     quantityType={qtyType as any}
                     setQuantityType={(qt: any) => setQtyType(qt)}
                     options={quantityTypes}
@@ -371,6 +389,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
+    flex: 1,
   },
   chipsRow: {flexDirection: 'row', flexWrap: 'wrap', marginTop: 8},
   chip: {
