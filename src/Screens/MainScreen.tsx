@@ -7,7 +7,6 @@ import {
   ScrollView,
   Text,
   ActivityIndicator,
-  TouchableOpacity,
 } from 'react-native';
 import {
   DaysOfWeek,
@@ -26,7 +25,7 @@ import {screensBackgroundColor} from '../Utils/Styiling';
 import {FloatingButton} from '../Components/FloatingButton';
 import {PlanMealModal} from '../Components/PlanMealModal';
 import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
-import {handleNavigate} from '../Utils/utils';
+import {handleNavigate, handleOnSubmitAddIngredient} from '../Utils/utils';
 import {getAuth} from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -36,6 +35,7 @@ import {
 import {WeeklyEntryType} from '../Types/Types';
 import PlannedIngredientCard from '../Components/PlannedIngredientCard';
 import {IngredientOptionsModal} from '../Components/PlannedIngredeintOptionsModal';
+import AddIngredientModal from '../Components/AddIngredientModal';
 
 export default function MainScreen(): React.JSX.Element {
   // Types
@@ -68,6 +68,9 @@ export default function MainScreen(): React.JSX.Element {
   // Shows the plan-meal modal (planning a recipe into a (day, meal)).
   const [planMealModalVisible, setPlanMealModalVisible] =
     useState<boolean>(false);
+  // Controls the AddIngredientModal visibility
+  const [addIngredientModalVisible, setAddIngredientModalVisible] =
+    useState<boolean>(false);
   // Controls the long-press options on a recipe card.
   const [recipeOptionsVisibility, setRecipeOptionsVisibility] =
     useState<boolean>(false);
@@ -93,6 +96,7 @@ export default function MainScreen(): React.JSX.Element {
     getAllRecipes,
     deleteWeeklyMeal,
     getWeeklyMealsByDayAndMealType,
+    addIngredient,
   } = useAppContext();
 
   const auth = getAuth(); // Needed for sign-out; keep outside render paths.
@@ -346,6 +350,7 @@ export default function MainScreen(): React.JSX.Element {
           initialRecipeId={
             selectedRecipe?.id !== undefined ? selectedRecipe.id : undefined
           } // Prefills with long-pressed recipe when present.
+          setAddIngredientModalVisible={setAddIngredientModalVisible}
         />
         {selectedRecipe && (
           <RecipeOptionsModal
@@ -374,6 +379,21 @@ export default function MainScreen(): React.JSX.Element {
             if (ok) setRenderFlag(f => !f);
             setIngredientOptionsVisibility(false);
           }}
+        />
+        {/* Modal added to the planMealModal to create an ingredient */}
+        <AddIngredientModal
+          onSubmit={ingredient =>
+            handleOnSubmitAddIngredient(
+              ingredient.name,
+              ingredient.category,
+              addIngredient,
+              setIngredients,
+              async () => {},
+              setAddIngredientModalVisible,
+            )
+          }
+          onClose={() => setAddIngredientModalVisible(false)}
+          visible={addIngredientModalVisible}
         />
       </>
     </View>
