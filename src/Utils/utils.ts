@@ -23,7 +23,8 @@ import {
   NavigationState,
   useNavigation,
 } from '@react-navigation/native';
-import {ToastAndroid} from 'react-native';
+import {Alert, ToastAndroid} from 'react-native';
+import {FAILED} from '../Services/db-services';
 
 export const handleOnSetQuantity = (quantity: number): number => {
   if (quantity < 0) return 0;
@@ -331,5 +332,56 @@ export function getQuantityTypeShort(type: QuantityType): string {
       return 'unit';
     default:
       return type;
+  }
+}
+
+/**
+ * Adds a new ingredient to Firestore, updates local state, selects it in UI.
+ *
+ * NOTE: Param order MUST match both the type and implementation.
+ */
+export async function handleOnSubmitAddIngredient(
+  name: string,
+  category: string,
+  addIngredient: (
+    ingredient: IngredientWithoutId,
+  ) => Promise<{created: boolean; insertedId?: string; response?: string}>,
+  setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>,
+  handleSelectIngredient: (ingredientId: string) => Promise<void>,
+  setAddIngredientModalVisible?: React.Dispatch<React.SetStateAction<boolean>>, // optional
+): Promise<boolean> {
+  try {
+    const response = await addIngredient({name, category});
+
+    if (response.created && response.insertedId) {
+      const newIngredient: Ingredient = {
+        id: response.insertedId,
+        name,
+        category,
+      };
+
+      // Correct state updater type: prev is Ingredient[]
+      setIngredients((prev: Ingredient[]) => [...prev, newIngredient]);
+
+      // Select it in the caller UI
+      await handleSelectIngredient(response.insertedId);
+
+      // Optionally close modal if provided
+      setAddIngredientModalVisible?.(false);
+
+      return true;
+    }
+
+    // Duplicate guard (backend returned a known message)
+    if (response.response === 'Ingredient already exists') {
+      Alert.alert('This ingredient already exists');
+      return false;
+    }
+
+    Alert.alert('Could not add ingredient. Please try again.');
+    return false;
+  } catch (e) {
+    Alert.alert('Error', 'Failed to add ingredient.');
+    return false;
   }
 }
