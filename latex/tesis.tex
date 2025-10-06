@@ -3,6 +3,40 @@
 \usepackage{hyperref}         % para enlaces
 \usepackage{graphicx}		  % para imágenes
 \usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinelanguage{TypeScript}{
+	keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, export, type, string, number, boolean, interface, extends, implements, import, from, as},
+	keywordstyle=\color{blue}\bfseries,
+	ndkeywords={class, export, boolean, throw, implements, import, this},
+	ndkeywordstyle=\color{teal}\bfseries,
+	identifierstyle=\color{black},
+	sensitive=true,
+	comment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	commentstyle=\color{gray}\ttfamily,
+	stringstyle=\color{green!50!black}\ttfamily,
+	morestring=[b]',
+	morestring=[b]"
+}
+
+\lstset{
+	language=TypeScript,
+	basicstyle=\ttfamily\small,
+	backgroundcolor=\color{gray!10},
+	frame=single,
+	showstringspaces=false,
+	breaklines=true,
+	framextopmargin=5pt,
+	framexbottommargin=5pt,
+	framexrightmargin=5pt,
+	columns=fullflexible,
+	tabsize=1,
+}
+
+
+
 
 
 
@@ -117,7 +151,7 @@
 		
 		\begin{figure}[H]
 			\centering
-			\includegraphics[width=1\textwidth]{./PlantillaTablaMealPlanning.png}
+			\includegraphics[width=1\textwidth]{./PlantillaMealPlanningRellenada.png}
 			\caption{Plantilla planificación de comidas}
 			\label{fig:Plantillamealplan}
 		\end{figure}	
@@ -219,8 +253,8 @@
 		
 		\item Ahora que se ha obtenido la lista definitiva, es recomendable revisar la lista para ver si falta o se ha duplicado algún ingrediente, este paso no es necesario, pero ayuda a prevenir fallos. Después de esto faltaría solo realizar la compra.
 	\end{enumerate}
-
-
+	%
+	%
 	En los últimos años la planificación dietética ha ganado popularidad gracias a diversos factores sociales y culturales. De entre ellos destacan el auge de las redes sociales y la creciente influencia del culturismo y el deporte en la vida cotidiana. Plataformas como Instagram, YouTube o TikTok han facilitado el acceso a información sobre estos tópicos, motivando a muchos a estructurar sus dietas de forma más consciente y personalizada. Esta tendencia se observa también en el ámbito deportivo, como por ejemplo en el culturismo, donde el \textit{meal planning} es una práctica habitual y está estrechamente ligada a la preparación física. Varios estudios recientes muestran que los practicantes del culturismo adoptan esta práctica como parte fundamental de su entrenamiento, y que su fuente de información principal son las redes sociales y la comunidad digital \cite{helms2019,masoga2021,benjamins2021}.
 	\\	
 	Este fenómeno no solo se refleja en ámbitos deportivos como el culturismo, sino también en la población general. Una investigación francesa descubrió que el 57,4\% de los habitantes planifican sus comidas al menos de manera ocasional, lo que evidencia un interés extendido en esta práctica como parte de la vida diaria \cite{ducrot2017}. De manera similar, en los Estados Unidos se estima que alrededor del 37\% organizan sus comidas con uno o dos días de antelación, lo que muestra el aumento del uso de la programación de menús fuera del ámbito deportivo \cite{fmi2015}. Esta convergencia entre el impacto social de las plataformas digitales, las prácticas del culturismo y la creciente adopción de \textit{meal planning} en la población aporta una razón y contexto sólidos para el desarrollo de herramientas digitales como \textit{NutriPlan}, cuyo objetivo es facilitar la organización alimentaria de manera sencilla, eficiente y accesible.
@@ -286,19 +320,7 @@
 	Como se observa en la Tabla~\ref{tab:comparativa_apps}, a pesar de que Mealime y Yazio ofrecen planificación básica y seguimiento nutricional, ambas dependen de versiones premium para acceder a sus funcionalidades completas. En el caso de Instacart, en cambio, está más orientada al comercio electrónico que a la salud. Frente a ello, NutriPlan aporta una mayor flexibilidad al permitir la creación de recetas personalizadas y gestionar la despensa, optimizando así la lista de la compra.
 	\\
 	
-	\section*{Diseño de la solución}
-	
-	%\section*{Metodología de desarrollo}
-	
-	%El desarrollo de \textit{NutriPlan} se llevó a cabo de manera individual, siguiendo un enfoque híbrido que combina una planificación inicial con un proceso de trabajo iterativo e incremental. 
-	
-	%En una primera fase, se definió la estructura general de la aplicación, las funcionalidades principales y la organización de la información en la base de datos. Sin embargo, durante el desarrollo surgieron ajustes y nuevas ideas que fueron incorporadas de manera progresiva, lo que permitió refinar el producto de forma flexible.
-	
-	%El proceso de trabajo se organizó a través de la herramienta \textit{GitHub Projects}, utilizando un tablero dividido en tres columnas: \textit{pendiente}, \textit{en progreso} y \textit{finalizado}. Esta metodología, inspirada en el sistema Kanban, facilitó la gestión de tareas y la trazabilidad del avance, permitiendo mantener un control claro sobre el estado del proyecto.
-	
-	%Cada módulo de la aplicación (gestión de recetas, gestión de despensa, lista de la compra, etc.) se desarrolló de manera incremental, con pruebas continuas que permitieron identificar errores y añadir mejoras antes de avanzar a la siguiente etapa. Este ciclo iterativo de planificación, desarrollo, prueba y ajuste contribuyó a la calidad y robustez del producto final.
-	
-	
+	\section*{Diseño de la solución}	
 	
 	\subsection*{Metodología de desarrollo}
 	El desarrollo de la \textit{NutriPlan} se realizó de manera individual, siguiendo un enfoque hibrido que combina una planificación inicial con un proceso de trabajo iterativo e incremental.
@@ -315,27 +337,224 @@
 	\\
 	Se optó por Github como plataforma de control de versiones debido a su versatilidad, compatibilidad con las demás plataformas y su integración directa con su sistema de control de cambios llamado Git. Este software no sólo te permite tener un historial de todos los cambios realizados en el código y restaurar versiones del código anteriores, sino que también proporciona Github Projects, una herramienta de organización de tareas \cite{github2025}.\\
 	Además al ser la plataforma más utilizada a nivel mundial, cuenta con una amplia comunidad y gran cantidad de documentación.
+	\\
+	Npm(Node Package Manager) fué usado como gestor de dependencias dado que es el estándar dentro del ecosistema de JavaScript y Node.js. Este permite instalar y mantener de forma sencilla todas las librerías necesarias en el proyecto \cite{npm2025}.
+	\\
+	Para la emulación se usó Android Studio, el entorno oficial de desarrollo para Android proporcionado por Google. Fue escogido ya que permite la emulación de la aplicación en desarrollo en varios tipos de dispositivos \cite{androidstudio2025}.
+	\\
+	Y por último, para el desarrollo y edición del código se utilizó el entorno de \textit{Visual Studio Code}, un editor gratuito y multiplataforma utilizado en proyectos de software modernos. Este editor ofrece soporte nativo para JavaScript y TypeScript, integración con GitHub y Git, y una amplia gama de extensiones que facilitan la programación, depuración, la estandarización del código y la productividad del desarrollador \cite{vscode2025}.
+	\\
 	
 	
-	%Se definió la estructura general de la aplicación, las funciones principales y la organización de la información en la base de datos. Sin embargo, durante el desarrollo surgieron modificaciones y nuevas ideas que fueron incorporadas, lo que permitió refinar el producto de forma flexible.
+	\subsection*{Nomenclatura del código}{
+			Al inicio del desarrollo se estableció el uso de inglés para los identificadores, dado que es el estándar en el ámbito de la programación. El uso de una nomenclatura camelCase\cite{camelCase} para los nombres de las variables y propiedades( \textit{ingredientId}, \textit{recipeId}) y \textit{PascalCase} también conocido como \textit{Upper Camel Case}\cite{PascalCase} para los tipos y enumeraciones (\textit{QuantityType}, \textit{RecipeIngredient}). Este enfoque sigue los estándares de TypeScript y JavaScript facilitando la coherencia y futura colaboración del código.
+			
+}
 	
 	
+	\subsection*{Definición de tipos en TypeScript}
 	
-	\subsection*{Arquitectura de la aplicación}
-	Describe el sistema a alto nivel (frontend React Native, backend Firebase, base de datos Firestore, control de versiones con GitHub, etc.).
-	Puedes añadir un diagrama de arquitectura.
+	Para garantizar la coherencia en el manejo de datos y la prevención de errores en la inserción y obtención de datos, se han definido varios tipos en TypeScript, se definieron los siguientes tipos y enums que estructuran las colecciones de datos.
+	
+	\subsubsection*{Enumeraciones}
+	\label{Enums}
+	
+	%Enums allow a developer to define a set of named constants. Using enums can make it easier to document intent, or create a set of distinct cases. TypeScript provides both numeric and string-based enums.
+	
+	Las enumeraciones permiten a los desarroladores definir un conjunto de constantes nombradas, haciendo fácil y genérico el uso de valores y limitando errores.
+	
+	\begin{itemize}
+		\item \textbf{QuantityType.} Define los posibles tipos de unidades de medida para los ingredientes.
+			\begin{lstlisting}
+				export enum QuantityType {
+					UNIT = 'unit',
+					GRAM = 'gram',
+					KILOGRAM = 'kilogram',
+					MILLILITER = 'milliliter',
+					LITER = 'liter',
+					CUP = 'cup',
+					TABLESPOON = 'tablespoon',
+					TEASPOON = 'teaspoon',
+				}
+			\end{lstlisting}
+		\item \textbf{WeeklyEntryType.} Define si el \textit{WeeklyMeal} guardado es un ingrediente o una receta como es comentado en la sección \nameref{disenioDB}. 
+			\begin{lstlisting}
+				export enum WeeklyEntryType {
+					RECIPE = 'RECIPE',
+					INGREDIENT = 'INGREDIENT',
+				}
+			\end{lstlisting}
+		\item \textbf{MealType.} Tipo de comida a la que se asigna una receta.
+			\begin{lstlisting}
+				export enum MealType {
+					BREAKFAST = 'Breakfast',
+					LUNCH = 'Lunch',
+					DINNER = 'Dinner',
+				}
+			\end{lstlisting}
+		\item \textbf{DaysOfWeek.} Días de la semana
+			\begin{lstlisting}
+				export enum DaysOfWeek {
+					MONDAY = 'Mon',
+					TUESDAY = 'Tue',
+					WEDNESDAY = 'Wed',
+					THURSDAY = 'Thu',
+					FRIDAY = 'Fri',
+					SATURDAY = 'Sat',
+					SUNDAY = 'Sun',
+				}
+			\end{lstlisting}
+	\end{itemize}
+	
 	
 	\subsection*{Diseño de la base de datos}
-	Explica cómo estructuraste las colecciones/tablas, campos, relaciones.  
-	Incluye un diagrama entidad-relación (si procede).
+	\label{disenioDB}
+	
+	NutriPlan necesita una base de datos para almacenar todos los datos necesarios para el correcto funcionamiento de la aplicación. Dado que \textit{Firebase} guarda los datos como grupos llamados colecciones, lo que sería correspondiente a una tabla en la base de datos no relacional, cada colección está compuesta por varios datos; las colecciones en este tipo de base de datos no se pueden relacionar entre sí dentro de la base de datos, por lo que el programador lo debe de tener en cuenta a la hora de relacionar varios datos, como en la app esta aplicación es necesaria, se han añadido identificadores únicos en cada colección. Otra característica de este tipo de base de datos es que cada instancia de la colección puede ser diferente, por lo que se han creado los tipos en TypeScript para asegurar la similitud en los tipos de cada colección.
+	También se han creado colecciones unión, que unen dos tablas para que se relacionen entre ellas, como en nuestro caso tenemos la tabla RecipeIngredient (que une a la tabla recipe con la de ingredient), PantryIngredient(que une a la tabla ingredient con Pantry), etc.
+	\\
+	Una lista de menús tiene varios componentes:
+	
+	\begin{itemize}
+		\item \textbf{Ingrediente.} Es el componente principal del programa de menús dado que cada receta está compuesta de ingredientes. En la base de datos se ha creado la colección Ingredientes que dispone de los documentos.
+		\\
+		\begin{lstlisting}
+			export type Ingredient = {
+				id: string;
+				name: string;
+				category: string;
+			};
+		\end{lstlisting}
+		
+		\begin{itemize}
+			\item \textit{id:} el identificador único del código, es del tipo \textit{string} ya que es el estándar de los identificadores.
+			\item \textit{name:} contiene el nombre del ingrediente. Es de tipo string.
+			\item \textit{category:} la categoría del ingrediente(Lácteo, fruta, verdura, ...), dado que es un texto, su tipo será string
+		\end{itemize}
+		%
+		%
+		%
+		%
+		\item \textbf{Recipe.} Se ha creado un documento para identificar a cada receta
+			\\
+			\begin{lstlisting}
+				export type Recipe = {
+					id: string;
+					name: string;
+					link?: string;
+					preparationTime?: number;
+					servingSize: number;
+				};
+			\end{lstlisting}
+			
+			\begin{itemize}
+				\item \textit{id:} el identificador único de cada receta, funciona de la misma manera que el del ingrediente.
+				\item \textit{name:} contiene el nombre de la receta. Es de tipo string.
+				\item \textit{link:} muchas recetas pueden tener instrucciones complejas, por ello se ha añadido el enlace para acceder en cualquier tiempo a las instrucciones de la receta. Su tipo es string.
+				\item \textit{preparationTime:} tiempo de cocción de la receta en minutos. Es de tipo entero.
+				\item \textit{servingSize:} porciones de la receta, de tipo entero.
+			\end{itemize}
+		%
+		%
+		%
+		%
+		\item \textbf{RecipeIngredient.} Se ha creado una colección unión para identificar a cada ingrediente perteneciente a una receta.
+		\\
+			\begin{lstlisting}
+				export type RecipeIngredient = {
+				id: string;
+				recipeId: string;
+				ingredientId: string;
+				quantity: number;
+				quantityType: QuantityType;
+				};
+			\end{lstlisting}
+			\begin{itemize}
+				\item \textit{id:} el identificador único de cada ingrediente, funciona de la misma manera que el \textit{id} del ingrediente.
+				\item \textit{name:} contiene el nombre de la receta. Es de tipo string.
+				\item \textit{recipeId:} en esta variable se guarda el identificador de la receta que contiene el ingrediente, creando un acceso fácil y sencillo. Su tipo es string.
+				\item \textit{ingredientId:} identificador del ingrediente perteneciente a la receta con identificador recipeId. Es de tipo string.
+				\item \textit{quantity:} cada receta contiene ingredientes y cada ingrediente la cantidad necesaria de este, esta variable guarda esa cantidad necesaria. Y evidentemente es de tipo string.
+				\item \textit{quantityType:} guarda la unidad métrica (explicado en la sección \nameref{Enums})
+			\end{itemize}
+		%
+		%
+		%
+		\item \textbf{Pantry.} La palabra \textit{pantry} significa despensa y esta colección almacena todos los ingredientes que el usuario tiene en su despensa, es decir su hogar.
+		\begin{lstlisting}
+			export type IngredientPantry = {
+				id: string;
+				ingredientId: string;
+				quantity: number;
+				quantityType: QuantityType;
+			};
+		\end{lstlisting}
+		\begin{itemize}
+			\item \textit{id:} identificador de la instancia de la colección.
+			\item \textit{ingredientId:} identificador del ingrediente que se encuentra en la despensa.
+			\item \textit{quantity:} la cantidad existente del ingrediente.
+			\item \textit{quantityType:} el tipo de métrica de la variable \textit{quantity}.
+		\end{itemize}
+		%
+		%
+		%
+		%
+		\item \textbf{WeeklyMeal.} Que significa comida semanal en inglés y representa cada receta o ingrediente asignados a un día de la semana(revisar Tabla~\ref{fig:Plantillamealplan}), cada vez que el usuario planifica su menú semanal y asigna una receta a su programa en la base de datos se crea una nueva fila en la colección \textit{WeeklyMeal} con la siguiente información:
+		\begin{lstlisting}
+			export type WeeklyMeal = {
+				id: string;
+				day: DaysOfWeek;
+				mealType: MealType;
+				entryType?: WeeklyEntryType; // defaults to RECIPE if undefined
+				// RECIPE variant
+				recipeId?: string;
+				// INGREDIENT variant
+				ingredientId?: string;
+				quantity?: number;
+				quantityType?: QuantityType;
+				createdAt?: number | Date;
+			};
+		\end{lstlisting}
+		\begin{itemize}
+			\item \textit{id:} identificador del \textit{WeeklyMeal}.
+			\item \textit{day:} variable que define a qué día de la semana se ha añadido la receta (lunes, martes, ..., domingo).
+			\item \textit{mealType:} almacena en qué comida será añadida la receta (desayuno, comida, cena)
+			\item \textit{entryType:} en algunos casos el usuario añade un ingrediente en el menú semanal como frutas o algún comestible que no requiera de ingredientes. Esta variable indica si el \textit{WeeklyMeal} guardado es un ingrediente o receta.
+			\item \textit{recipeId:} identificador de la receta guardada.
+			\item \textit{ingredientId:} identificador del ingrediente guardado.
+			\item \textit{quantity:} en el caso de que el \textit{WeeklyMeal} sea un ingrediente, se almacena en esta variable la cantidad de este.
+			\item \textit{quantityType:} la unidad de \textit{quantity}.
+			\item \textit{createdAt:} fecha de asignación del \textit{WeeklyMeal}.
+		\end{itemize}
+	%
+	%
+	%
+	%
+	\item \textbf{GroceryBought.} Colección que guarda los ingredientes ya comprados de la lista de la compra. Este dato es guardado cuando el usuario compra un ingrediente de la lista.
+		\begin{lstlisting}
+			export type GroceryBought = {
+				id: string;
+				ingredientId: string; // ID of the ingredient that was bought
+				timestamp: number; // Timestamp when the ingredient was bought
+			};
+		\end{lstlisting}
+		\begin{itemize}
+			\item \textit{id:} identificador.
+			\item \textit{ingredientId:} ingrediente ya comprado.
+			\item \textit{timestamp:} tiempo de compra.
+		\end{itemize}
+		
+		
+		
+		
+			
+\end{itemize}
+	
 	
 	\subsection*{Diseño de la lógica de la aplicación}
-	Explica cómo organizaste los componentes, la lógica del cálculo de lista de la compra, la gestión de la despensa.
-	
+	Explica cómo organizaste los componentes, la lógica del cálculo de lista de la compra, la gestión de la despensa.	
 	\subsection*{Diseño de la interfaz de usuario (UI/UX)}
 	Aquí metes todo lo que ya has escrito sobre minimalismo, colores, tipografía, affordances, iconografía.
-	
-	
 	\bibliographystyle{plain}       % estilo (prueba con plain, alpha, apalike, etc.)
 	\bibliography{bibliografia}     % nombre del archivo .bib SIN la extensión
 	

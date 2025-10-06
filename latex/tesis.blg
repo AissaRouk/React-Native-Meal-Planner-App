@@ -1,0 +1,94 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: tesis.aux
+The style file: plain.bst
+Database file #1: bibliografia.bib
+I was expecting a `,' or a `}'---line 27 of file bibliografia.bib
+ :  
+ :  url = {https://www.organizeyourselfskinny.com/how-to-prep-food-for-the-week-in-1-afternoon/}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Repeated entry---line 81 of file bibliografia.bib
+ : @article{helms2019
+ :                   ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 93 of file bibliografia.bib
+ : @article{masoga2021
+ :                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 102 of file bibliografia.bib
+ : @article{benjamins2021
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 113 of file bibliografia.bib
+ : @article{ducrot2017
+ :                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 124 of file bibliografia.bib
+ : @misc{fmi2015
+ :              ,
+I'm skipping whatever remains of this entry
+Warning--entry type for "mckinsey2023" isn't style-file defined
+--line 140 of file bibliografia.bib
+Repeated entry---line 154 of file bibliografia.bib
+ : @article{ducrot2017
+ :                    ,
+I'm skipping whatever remains of this entry
+Warning--entry type for "reactNative" isn't style-file defined
+--line 205 of file bibliografia.bib
+Warning--entry type for "reactNativeComnty" isn't style-file defined
+--line 212 of file bibliografia.bib
+Warning--entry type for "reactNativeRnd" isn't style-file defined
+--line 219 of file bibliografia.bib
+Warning--to sort, need author, organization, or key in firebase
+Warning--empty journal in ONUAAComercioAlimentosyObesidad
+Warning--empty year in ONUAAComercioAlimentosyObesidad
+Warning--empty title in NLMDifficultyEatingHealthy
+Warning--empty journal in NLMDifficultyEatingHealthy
+Warning--empty year in NLMDifficultyEatingHealthy
+Warning--empty journal in NLMMealPlanningBenefits
+Warning--empty year in NLMMealPlanningBenefits
+Warning--empty publisher in OMSObesidadySobrepeso
+Warning--empty journal in HowToMealPrep
+You've used 26 entries,
+            2118 wiz_defined-function locations,
+            610 strings with 7213 characters,
+and the built_in function-call counts, 5669 in all, are:
+= -- 516
+> -- 235
+< -- 0
++ -- 100
+- -- 72
+* -- 283
+:= -- 991
+add.period$ -- 64
+call.type$ -- 26
+change.case$ -- 104
+chr.to.int$ -- 0
+cite$ -- 36
+duplicate$ -- 231
+empty$ -- 515
+format.name$ -- 72
+if$ -- 1161
+int.to.chr$ -- 0
+int.to.str$ -- 26
+missing$ -- 11
+newline$ -- 119
+num.names$ -- 50
+pop$ -- 167
+preamble$ -- 1
+purify$ -- 88
+quote$ -- 0
+skip$ -- 183
+stack$ -- 0
+substring$ -- 166
+swap$ -- 29
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 102
+warning$ -- 10
+while$ -- 53
+width$ -- 28
+write$ -- 230
+(There were 7 error messages)
