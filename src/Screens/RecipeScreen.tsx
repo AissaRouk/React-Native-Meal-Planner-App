@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Image,
 } from 'react-native';
 import {
   Ingredient,
@@ -234,12 +235,41 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     loadIngredients();
   }, [fetchFlag]);
 
+  useEffect(() => {
+    console.log('RecipeScreen: ' + JSON.stringify(recipe));
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       {/* Header of the app */}
       <View style={{marginBottom: 16}}>
         <AppHeader title={title} />
       </View>
+      {editableRecipe.image ? (
+        <Image
+          source={{uri: editableRecipe.image}}
+          style={{
+            width: '100%',
+            height: 200,
+            borderRadius: 12,
+            marginBottom: 15,
+          }}
+          resizeMode="cover"
+        />
+      ) : (
+        <View
+          style={{
+            width: '100%',
+            height: 200,
+            borderRadius: 12,
+            backgroundColor: '#eee',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 15,
+          }}>
+          <Text style={{color: '#999'}}>No image available</Text>
+        </View>
+      )}
 
       {/* Main View with Recipe details for viewing/editing */}
       <View style={{flex: 1, justifyContent: 'center'}}>
