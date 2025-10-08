@@ -13,6 +13,7 @@ export type Recipe = {
   link?: string;
   preparationTime?: number;
   servingSize: number;
+  image?: string;
 };
 export type RecipeWithoutId = Omit<Recipe, 'id'>;
 
@@ -38,11 +39,6 @@ export type IngredientPantry = {
   quantityType: QuantityType;
 };
 export type IngredientPantryWithoutId = Omit<IngredientPantry, 'id'>;
-
-export enum WeeklyEntryType {
-  RECIPE = 'RECIPE',
-  INGREDIENT = 'INGREDIENT',
-}
 
 // Extend WeeklyMeal to support either a recipe or a single ingredient entry.
 // Keep entryType optional for backward-compat with old docs (treat missing as RECIPE).
@@ -79,6 +75,11 @@ export enum QuantityType {
   CUP = 'cup',
   TABLESPOON = 'tablespoon',
   TEASPOON = 'teaspoon',
+}
+
+export enum WeeklyEntryType {
+  RECIPE = 'RECIPE',
+  INGREDIENT = 'INGREDIENT',
 }
 
 //Array of the quantityTypes

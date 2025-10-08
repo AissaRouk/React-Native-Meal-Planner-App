@@ -266,26 +266,26 @@ export default function MainScreen(): React.JSX.Element {
           <Text>No Recipes Found</Text>
         ) : (
           <>
-            {currentWeeklyMealsRecipes.map((recipe, index) => (
-              <RecipeCard
-                key={index} // Consider key={recipe.id} if stable to avoid re-mounting.
-                recipe={recipe}
-                onPress={() =>
-                  handleNavigate(
-                    {screen: 'Recipe', params: {recipe: recipe}},
-                    navigation,
-                  )
-                }
-                onLongPress={() => {
-                  setSelectedRecipe(recipe);
-                  setRecipeOptionsVisibility(true);
-                }}
-              />
-            ))}
             <View style={{marginTop: 12}}>
               <Text style={{fontWeight: '700', marginBottom: 6}}>
                 Planned Ingredients
               </Text>
+              {currentWeeklyMealsRecipes.map((recipe, index) => (
+                <RecipeCard
+                  key={index} // Consider key={recipe.id} if stable to avoid re-mounting.
+                  recipe={recipe}
+                  onPress={() =>
+                    handleNavigate(
+                      {screen: 'Recipe', params: {recipe: recipe}},
+                      navigation,
+                    )
+                  }
+                  onLongPress={() => {
+                    setSelectedRecipe(recipe);
+                    setRecipeOptionsVisibility(true);
+                  }}
+                />
+              ))}
               {currentWeeklyMealsIngredients.map((instance, index) => (
                 <PlannedIngredientCard
                   ingredientName={instance.IngredientName}
