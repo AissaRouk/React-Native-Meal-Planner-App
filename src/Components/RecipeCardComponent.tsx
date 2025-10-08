@@ -11,21 +11,24 @@ const RecipeCard = ({
   recipe: Recipe;
   onPress?: () => any;
   onLongPress?: () => any;
-}) => (
-  <TouchableOpacity
-    style={styles.card}
-    onPress={() => onPress && onPress()}
-    onLongPress={() => onLongPress && onLongPress()}>
-    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-      <Image
-        source={require('../Assets/icons/breakfast_icon.png')}
-        style={{height: 100}}
-        resizeMode="contain"
-      />
-      <Text style={styles.cardTitle}>{recipe.name}</Text>
-    </View>
-  </TouchableOpacity>
-);
+}) => {
+  const defaultIcon = require('../Assets/icons/breakfast_icon.png');
+
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={onPress}
+      onLongPress={onLongPress}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Image
+          source={recipe.image ? {uri: recipe.image} : defaultIcon}
+          style={styles.image}
+        />
+        <Text style={styles.cardTitle}>{recipe.name}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -47,6 +50,13 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     color: '#666',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 12,
+    objectFit: 'cover', // only works on web. For mobile:
+    resizeMode: 'cover', // for iOS/Android
   },
 });
 

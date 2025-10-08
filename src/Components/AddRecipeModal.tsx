@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {Ingredient, QuantityType, RecipeWithoutId} from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
-import {SearchBar} from '@rneui/themed';
+import {Image, SearchBar} from '@rneui/themed';
 import MiniSearch, {Options, SearchResult, Suggestion} from 'minisearch';
 import {IngredientComponent} from './IngredientComponent';
 import {FAILED} from '../Services/db-services';
@@ -34,6 +34,7 @@ import {IngredientCard} from './IngredientCard';
 import {ModalHeader} from './ModalHeareComponent';
 import {addRecipeDb} from '../Services/recipe-db-services';
 import {AddIngredientButton} from './AddIngredientButton';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -79,6 +80,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
   // State for addIngredientModal visibility
   const [isAddIngredientModalVisible, setAddIngredientModalVisible] =
     useState<boolean>(false);
+
+  // State for image URI
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   //
   // CONSTANTS
@@ -181,6 +185,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       link: link,
       preparationTime: Number(prepTime),
       servingSize: Number(servings),
+      image: imageUri || undefined,
     };
 
     const response = await addRecipeDb(newRecipe);
@@ -213,6 +218,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     setCurrentStep(1);
     setSelectedIngredients([]);
     setSearchValue('');
+    setImageUri(null);
     onClose();
   };
 
@@ -417,6 +423,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
     }
   };
 
+  // Function to handle image picking
+  const handlePickImage = async () => {
+    const result = await launchImageLibrary({mediaType: 'photo'});
+    if (result.assets && result.assets.length > 0) {
+      setImageUri(result.assets[0].uri || null);
+    }
+  };
+
   //
   //Components
   //
@@ -438,6 +452,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                   text="Recipe Details"
                   onClose={() => handleOnClose()}
                 />
+                {imageUri && (
+                  <Image
+                    source={{uri: imageUri}}
+                    style={{width: 100, height: 100, marginBottom: 10}}
+                    resizeMode="contain"
+                  />
+                )}
+                <TouchableOpacity
+                  onPress={handlePickImage}
+                  style={[styles.nextButton, {marginBottom: 10, width: '50%'}]}>
+                  <Text style={{fontWeight: 'bold', color: 'white'}}>
+                    Select Image
+                  </Text>
+                </TouchableOpacity>
                 {/* Input fields for recipe details */}
                 <TextInput
                   placeholder="Recipe Name"
@@ -631,6 +659,15 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
                     <Text style={styles.reviewValue}>{name}</Text>
                   </View>
                   <View style={styles.reviewRow}>
+                    {imageUri && (
+                      <Image
+                        source={{uri: imageUri}}
+                        style={{width: 50, height: 50, marginRight: 10}}
+                        resizeMode="contain"
+                      />
+                    )}
+                  </View>
+                  <View style={styles.reviewRow}>
                     <Icon name="timer" size={20} style={styles.reviewIcon} />
                     <Text style={styles.reviewValue}>{prepTime} minutes</Text>
                   </View>
@@ -744,11 +781,11 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     padding: 10,
-    backgroundColor: '#fb7945',
+    backgroundColor: orangeBackgroundColor,
     borderRadius: 5,
   },
   addAnotherIngrButton: {
-    backgroundColor: '#fb7945',
+    backgroundColor: orangeBackgroundColor,
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -832,7 +869,7 @@ const styles = StyleSheet.create({
   },
   reviewIcon: {
     marginRight: 10,
-    color: '#fb7945',
+    color: orangeBackgroundColor,
   },
   ingredientsHeader: {
     fontWeight: 'bold',
