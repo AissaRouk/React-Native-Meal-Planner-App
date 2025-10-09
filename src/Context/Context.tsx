@@ -326,11 +326,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
             // Replace existing
             const updated = [...prev];
             updated[index] = newRecipe;
-            console.log('Updated recipe in context:', newRecipe);
             return updated;
           } else {
             // Append new
-            console.log('Added new recipe in context:', newRecipe);
             return [...prev, newRecipe];
           }
         });
@@ -356,7 +354,6 @@ export const AppProvider = ({children}: AppProviderProps) => {
   ): Promise<string> => {
     // Validate the newRecIng object (checks recipeId, ingredientId, etc.)
     const isValid = verifyRecipeIngredientWithoutId(newRecIng);
-    console.log('Context.addRecipeIngredient -> verify result:', isValid);
 
     if (!isValid) {
       Alert.alert('Validation error', 'Invalid recipe‐ingredient data.');
@@ -419,10 +416,6 @@ export const AppProvider = ({children}: AppProviderProps) => {
         newRecipeIngredient.recipeId,
         newRecipeIngredient.ingredientId,
       );
-      console.log(
-        'Context.updateRecipeIngredient -> found ID:',
-        recipeIngredientId,
-      );
 
       if (recipeIngredientId && recipeIngredientId != '') {
         // Call the actual SQLite update function
@@ -430,7 +423,6 @@ export const AppProvider = ({children}: AppProviderProps) => {
           id: recipeIngredientId,
           ...newRecipeIngredient,
         });
-        console.log('Updated RecipeIngredient in SQLite:', newRecipeIngredient);
       } else {
         // No matching row found
         console.error(
