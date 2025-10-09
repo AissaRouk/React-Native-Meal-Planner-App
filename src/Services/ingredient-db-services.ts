@@ -44,7 +44,6 @@ export const addIngredientDb = async (
 
     // Add the ingredient with the generated ID as a prop
     await setDoc(docRef, {...ingredient, id: docRef.id});
-    console.log('Ingredient added with ID:', docRef.id);
     return {created: true, insertedId: docRef.id};
   } catch (error) {
     throw new Error(
@@ -109,7 +108,6 @@ export const deleteIngredient: (id: number | string) => Promise<void> = async (
     // Firebase Implementation
     const ingredientDoc = doc(ingredientCollection, id.toString());
     await deleteDoc(ingredientDoc);
-    console.log('deleteIngredient -> Firestore document deleted successfully.');
   } catch (error) {
     console.error(
       'deleteIngredient -> Transaction error:',
@@ -157,10 +155,6 @@ export const getIngredientById: (id: string) => Promise<Ingredient> = async (
   const ingredientSnapShot = await getDoc(ingredientDocRef);
   if (ingredientSnapShot.exists()) {
     const ingredientData = ingredientSnapShot.data() as Ingredient;
-    console.log(
-      'getIngredientById -> Ingredient fetched successfully:',
-      ingredientData,
-    );
     ingredient = ingredientData;
   }
 
