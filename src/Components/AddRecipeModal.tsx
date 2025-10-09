@@ -179,9 +179,12 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       link: link,
       preparationTime: Number(prepTime),
       servingSize: Number(servings),
-      image: imageUri || undefined,
       userid: userId,
     };
+
+    if (imageUri) {
+      newRecipe.image = imageUri;
+    }
 
     const response = await addRecipeDb(newRecipe);
 
