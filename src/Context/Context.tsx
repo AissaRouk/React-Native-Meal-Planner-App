@@ -43,6 +43,8 @@ import {addWeeklyMealDb} from '../Services/weeklyMeals-db-services'; // Import a
 
 // Define the shape of the entire context, including methods and state values.
 type ContextProps = {
+  userId: string;
+  setUserId: React.Dispatch<React.SetStateAction<string>>;
   ingredients: Ingredient[];
   setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
 
@@ -193,6 +195,8 @@ type AppProviderProps = {
 
 // Create the actual context with default values (no-ops).
 const AppContext = React.createContext<ContextProps>({
+  userId: '',
+  setUserId: () => {},
   ingredients: [],
   setIngredients: () => Promise.resolve(),
   addOrUpdateIngredient: async () => '-1',
@@ -227,6 +231,8 @@ export const AppProvider = ({children}: AppProviderProps) => {
 
   // Local state for the list of recipes (in memory)
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+
+  const [userId, setUserId] = useState<string>('');
 
   /**
    * Adds a new ingredient or updates existing one:
@@ -622,6 +628,8 @@ export const AppProvider = ({children}: AppProviderProps) => {
   return (
     <AppContext.Provider
       value={{
+        userId,
+        setUserId,
         ingredients,
         setIngredients,
         addOrUpdateIngredient,
