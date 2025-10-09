@@ -35,6 +35,7 @@ import {ModalHeader} from './ModalHeareComponent';
 import {addRecipeDb} from '../Services/recipe-db-services';
 import {AddIngredientButton} from './AddIngredientButton';
 import {launchImageLibrary} from 'react-native-image-picker';
+import auth from '@react-native-firebase/auth';
 
 // Types of the AddRecipeModal params
 type AddRecipeModalProps = {
@@ -128,12 +129,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       else {
         minisearchRef.current?.removeAll();
         minisearchRef.current?.addAll(ingredients);
-        console.log(
-          'UseEffect: ingredients added to the minisearch',
-          ingredients,
-        );
       }
-      // console.log('UseEffect: indexed data: ', minisearchRef.current);
     } else {
       console.log('UseEffect: ingredients array is empty');
     }
@@ -151,15 +147,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       setSearchResultsVisible(true);
     }
   }, [searchResults]);
-
-  // to check the selectedIngredients
-  useEffect(() => {
-    if (selectedIngredients.length >= 1)
-      console.log(
-        'useEffect -> selectedIngredients: ' +
-          JSON.stringify(selectedIngredients, null, 1),
-      );
-  });
 
   //
   //Functions
@@ -179,6 +166,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       Alert.alert('Serving size must be a positive number.');
       return;
     }
+    const userId = auth().currentUser?.uid;
+    if (userId === undefined || '') {
+      console.error('User ID is undefined or empty. Cannot add recipe.');
+      return;
+    } else {
+      console.log('userId: ' + userId);
+    }
 
     const newRecipe: RecipeWithoutId = {
       name: name,
@@ -186,6 +180,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       preparationTime: Number(prepTime),
       servingSize: Number(servings),
       image: imageUri || undefined,
+      userid: userId,
     };
 
     const response = await addRecipeDb(newRecipe);
@@ -257,7 +252,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
           ? 'You must select at least one ingredient'
           : 'All ingredients must have a quantity higher than 0.',
       );
-      console.log('validateStep: ' + false);
       return false; // Prevents moving to the next step
     }
     return true; // Allows moving to the next step
@@ -309,7 +303,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
 
     // get the ingredient suggestions from minisearch
     const results = minisearchRef.current?.autoSuggest(text) || [];
-    // console.log('handleOnchangeText: -> results', results);
     setSuggestions(results);
     // only show when tere are suggestions
     setSuggestionsVisible(results.length >= 1);
@@ -358,14 +351,10 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       // Alert.alert(
       //   "You already selected this ingredient.\t it's already added in your list",
       // );
-      console.log('prompmt!!');
     } else {
       // if not
       // fetch the ingredient first
       const ingredient = await getIngredientById(id);
-      console.log(
-        'Ingredietn obtained from fetch: ' + JSON.stringify(ingredient),
-      );
       //  add it to the array
       setSelectedIngredients(prev => [
         ...prev,
@@ -393,7 +382,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       const updatedIngredients = prevIngredients.filter(
         ingredient => ingredient.id !== id,
       );
-      console.log('Updated Ingredients: ' + JSON.stringify(updatedIngredients));
       return updatedIngredients;
     });
   };
@@ -407,7 +395,6 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       const index: number | undefined = selectedIngredients.findIndex(
         ingredient => ingredient.id == id,
       );
-      console.log('index: ' + index);
       if (index >= 0) {
         setSelectedIngredients(prevIngredients => {
           const updatedIngredients = [...prevIngredients];
