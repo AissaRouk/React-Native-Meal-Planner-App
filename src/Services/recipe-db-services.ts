@@ -36,9 +36,7 @@ const recipeCollection = collection(firestoreDb, TABLE_RECIPE);
  * @param {RecipeWithoutId} recipe - The recipe object without the id param
  * @returns A promise that resolves when the recipe addition operation is complete.
  */
-export const addRecipeDb: (
-  recipe: RecipeWithoutId,
-) => Promise<{
+export const addRecipeDb: (recipe: RecipeWithoutId) => Promise<{
   created: boolean;
   insertedId?: string;
   response?: string;
@@ -60,6 +58,8 @@ export const addRecipeDb: (
         response: `Recipe with name "${recipe.name}" already exists.`,
       };
     }
+
+    console.log('addRecipe -> Adding recipe:', recipe);
 
     // Adding with Firebase
     const newRecipeRef = doc(recipeCollection); // Create a new document reference with auto-generated ID
@@ -96,6 +96,7 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
         link: data.link || '', // Default to empty string if category is not provided
         preparationTime: data.preparationTime || 0, // Default to 0 if preparationTime is not provided
         servingSize: data.servingSize || 0, // Default to 0 if serving
+        userid: data.userid,
       };
       firebaseRecipes.push(recipe);
     });
@@ -136,15 +137,7 @@ export const getRecipeByIdDb: (
         id: recipeSnapShot.id, // Use Firestore document ID as the recipe ID
         ...data,
       };
-      console.log(
-        'getRecipeById -> Firebase Recipe fetched successfully:' +
-          JSON.stringify(recipe),
-      );
-      // return recipeData;
-      // Optionally, you could assign ingredientData to recipe if you want to prefer Firestore data
-      // recipe = ingredientData;
     }
-
     return recipe === undefined ? null : recipe;
   } catch (error) {
     console.error(
@@ -156,34 +149,40 @@ export const getRecipeByIdDb: (
 };
 
 /**
- * Function that gets all the recipes.
- * @returns an array of all the recipes
+ * Function that gets all the recipes for a specific user.
+ * @param userid - The user ID of the logged-in user.
+ * @returns an array of all the recipes belonging to that user.
  */
-export const getAllRecipesDb = async (): Promise<Recipe[]> => {
+export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
   try {
-    // Fetching with Firebase
+    if (!userid) {
+      throw new Error('User ID is required to fetch recipes.');
+    }
+
     const firebaseRecipes: Recipe[] = [];
-    const recipesQuery = query(recipeCollection);
+
+    // Query only recipes that belong to the current user
+    const recipesQuery = query(recipeCollection, where('userid', '==', userid));
+
     const querySnapshot = await getDocs(recipesQuery);
-    querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: any}) => {
+
+    querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: string}) => {
       const data = doc.data() as RecipeWithoutId;
       const frecipe: Recipe = {
-        id: doc.id, // Use Firestore document ID as the ingredient ID
-        name: data.name, // Ensure the name is present
-        link: data.link || '', // Default to empty string if category is not provided
-        preparationTime: data.preparationTime || 0, // Default to 0 if preparationTime is not provided
-        servingSize: data.servingSize, // Default to 0 if serving
+        id: doc.id,
+        name: data.name,
+        link: data.link || '',
+        preparationTime: data.preparationTime || 0,
+        servingSize: data.servingSize || 0,
+        userid: data.userid,
+        image: data.image || undefined, // add this if your Recipe type supports images
       };
       firebaseRecipes.push(frecipe);
     });
-    console.log(
-      'getIngredients Firebase -> Ingredients fetched successfully:' +
-        JSON.stringify(firebaseRecipes),
-    );
 
     return firebaseRecipes;
   } catch (error) {
-    throw new Error('getRecipes -> Error while retrieving: ' + error);
+    throw new Error('getAllRecipesDb -> Error while retrieving: ' + error);
   }
 };
 
