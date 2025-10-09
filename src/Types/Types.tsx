@@ -10,6 +10,7 @@ export type IngredientWithoutId = Omit<Ingredient, 'id'>;
 export type Recipe = {
   id: string;
   name: string;
+  userid: string;
   link?: string;
   preparationTime?: number;
   servingSize: number;
