@@ -47,6 +47,7 @@ export type WeeklyMeal = {
   id: string;
   day: DaysOfWeek;
   mealType: MealType;
+  userId: string;
   entryType?: WeeklyEntryType; // defaults to RECIPE if undefined
   // RECIPE variant
   recipeId?: string;
