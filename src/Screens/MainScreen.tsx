@@ -176,7 +176,11 @@ export default function MainScreen(): React.JSX.Element {
       const fetingredients: Ingredient[] = await getAllIngredients();
       setIngredients(fetingredients);
 
-      const fetchedRecipes = await getAllRecipes();
+      const userId = auth.currentUser?.uid;
+      if (!userId) throw new Error('No user ID found in auth context');
+
+      // Fetch only the current user's recipes.
+      const fetchedRecipes = await getAllRecipes(userId);
 
       setRecipes(fetchedRecipes);
       setIsFetchFinished(true); // Unlocks UI; also set again in `.then` below (dup but harmless).
