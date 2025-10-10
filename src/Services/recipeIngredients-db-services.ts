@@ -35,20 +35,7 @@ const recipeIngredientCollection = collection(
 
 /**
  * Adds a new ingredient to a recipe in the database.
- *
- * This function inserts a record linking an ingredient to a recipe along with the specified quantity and quantity type.
- * If the ingredient already exists for the recipe, the `INSERT OR IGNORE` ensures no duplicate entries.
- *
- * @async
- * @function addRecipeIngredient
- * @param {RecipeIngredientWithoutId} recipeIngredient - recipeIngredient without the id param
- * @returns {Promise<void>} Resolves when the ingredient is added successfully.
- * @throws {Error} Throws an error if the insertion fails.
- *
- * @example
- * addRecipeIngredient(recipe, ingredient, 100, 'grams')
- *   .then(() => console.log('Ingredient added successfully'))
- *   .catch(error => console.error('Error adding ingredient:', error));
+ * Prevents duplicates by checking if the entry already exists.
  */
 export const addRecipeIngredientDb = async (
   recipeIngredient: RecipeIngredientWithoutId,
@@ -58,18 +45,33 @@ export const addRecipeIngredientDb = async (
   responseCode?: ErrorResponseCodes;
 }> => {
   try {
-    // Firebase Implementation
+    // Step 1: Check if it already exists
+    const existingQuery = query(
+      recipeIngredientCollection,
+      where('ingredientId', '==', recipeIngredient.ingredientId),
+    );
+    const querySnapshot = await getDocs(existingQuery);
+
+    if (!querySnapshot.empty) {
+      console.warn(
+        'addRecipeIngredient -> Ingredient already exists in recipe.',
+      );
+      return {
+        created: false,
+        responseCode: ErrorResponseCodes.ALREADY_EXISTS,
+      };
+    }
+
+    // Step 2: Add new if it doesn't exist
     const addRef = await addDoc(recipeIngredientCollection, recipeIngredient);
     console.log(
       `addRecipeIngredient -> Firestore document added with ID: ${addRef.id}`,
     );
     return {
-      created: SUCCESS,
+      created: true,
       insertedId: addRef.id,
       responseCode: ErrorResponseCodes.SUCCESS,
     };
-
-    // return result;
   } catch (error) {
     console.error('addRecipeIngredient -> Transaction failed:', error);
     throw new Error(`Failed to add ingredient to recipe: ${error}`);
