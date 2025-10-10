@@ -96,7 +96,7 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
         link: data.link || '', // Default to empty string if category is not provided
         preparationTime: data.preparationTime || 0, // Default to 0 if preparationTime is not provided
         servingSize: data.servingSize || 0, // Default to 0 if serving
-        userid: data.userid,
+        userId: data.userId,
       };
       firebaseRecipes.push(recipe);
     });
@@ -174,7 +174,7 @@ export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
         link: data.link || '',
         preparationTime: data.preparationTime || 0,
         servingSize: data.servingSize || 0,
-        userid: data.userid,
+        userId: data.userId,
         image: data.image || undefined, // add this if your Recipe type supports images
       };
       firebaseRecipes.push(frecipe);
