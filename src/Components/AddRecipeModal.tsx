@@ -179,7 +179,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({visible, onClose}) => {
       link: link,
       preparationTime: Number(prepTime),
       servingSize: Number(servings),
-      userid: userId,
+      userId: userId,
     };
 
     if (imageUri) {
