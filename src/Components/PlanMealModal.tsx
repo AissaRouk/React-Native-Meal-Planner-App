@@ -106,7 +106,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     const fetchAll = async () => {
       setIsLoadingRecipes(true);
       try {
-        const fetched = await getAllRecipes(user.uid);
+        const fetched: Recipe[] = await getAllRecipes(user.uid);
         setAllRecipes(fetched);
         if (!initialRecipeId && fetched.length > 0)
           setSelectedRecipeId(fetched[0].id);
