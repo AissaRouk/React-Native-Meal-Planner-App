@@ -132,7 +132,7 @@ type ContextProps = {
    * Function that gets all the recipes.
    * @returns an array of all the recipes
    */
-  getAllRecipes: () => Promise<Recipe[]>;
+  getAllRecipes: (userId: string) => Promise<Recipe[]>;
 
   /**
    * Fetches a recipe from the Recipe table by its ID.
@@ -304,8 +304,8 @@ export const AppProvider = ({children}: AppProviderProps) => {
   /**
    * Gets all the Recipes
    */
-  const getAllRecipes = async () => {
-    const result: Recipe[] = await getAllRecipesDb();
+  const getAllRecipes = async (userId: string) => {
+    const result: Recipe[] = await getAllRecipesDb(userId);
     return result;
   };
 
