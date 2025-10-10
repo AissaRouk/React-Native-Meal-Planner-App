@@ -49,6 +49,7 @@ export const addRecipeIngredientDb = async (
     const existingQuery = query(
       recipeIngredientCollection,
       where('ingredientId', '==', recipeIngredient.ingredientId),
+      where('recipeId', '==', recipeIngredient.recipeId),
     );
     const querySnapshot = await getDocs(existingQuery);
 
