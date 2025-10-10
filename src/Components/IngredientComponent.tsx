@@ -62,11 +62,14 @@ export function IngredientComponent({
   // Functions
   //
 
-  // Handles changes in the text input, ensuring only numeric values are allowed
   const handleChange = (text: string): void => {
     const numericRegex = /^\d*\.?\d*$/; // Regex to allow only numbers and decimal points
     if (numericRegex.test(text)) {
-      setTextValue(text); // Update the state if the input is valid
+      setTextValue(text); // Update the UI value
+      const numericValue = parseFloat(text); // Convert to number
+      if (!isNaN(numericValue)) {
+        setQuantity(numericValue); // Immediately update the state
+      }
     }
   };
 
