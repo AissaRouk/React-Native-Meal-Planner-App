@@ -34,6 +34,7 @@ import {
 } from '../Utils/Styiling';
 import {useAppContext} from '../Context/Context';
 import AddIngredientButton from './AddIngredientButton';
+import auth from '@react-native-firebase/auth';
 
 export type PlanMealModalProps = {
   visible: boolean;
@@ -85,6 +86,9 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
 
   const [isSaving, setIsSaving] = useState(false);
 
+  const user = auth().currentUser;
+  if (!user) throw new Error('No user logged in');
+
   useEffect(() => {
     if (!visible) return;
 
@@ -102,7 +106,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     const fetchAll = async () => {
       setIsLoadingRecipes(true);
       try {
-        const fetched = await getAllRecipes();
+        const fetched = await getAllRecipes(user.uid);
         setAllRecipes(fetched);
         if (!initialRecipeId && fetched.length > 0)
           setSelectedRecipeId(fetched[0].id);
@@ -140,6 +144,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           mealType: selectedMealType,
           recipeId: selectedRecipeId,
           entryType: WeeklyEntryType.RECIPE,
+          userId: user.uid,
         } as any);
       } else {
         if (!selectedIngredientId) {
@@ -159,6 +164,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           quantity: q,
           quantityType: qtyType,
           entryType: WeeklyEntryType.INGREDIENT,
+          userId: user.uid,
         } as any);
       }
 
