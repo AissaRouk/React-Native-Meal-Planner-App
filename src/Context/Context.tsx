@@ -395,9 +395,14 @@ export const AppProvider = ({children}: AppProviderProps) => {
     >,
   ) => {
     const response = await addRecipeIngredientMultipleDb(recipeId, ingredients);
-    showToast(
-      ingredients.length + " ingredient(s) added to recipe '" + recipeId + "'.",
-    );
+    const recipe = await getRecipeByIdDb(recipeId);
+    if (recipe)
+      showToast(
+        ingredients.length +
+          " ingredient(s) added to recipe '" +
+          recipe.name +
+          "'.",
+      );
     return response;
   };
 
