@@ -18,6 +18,7 @@ export const RECIPE_NAME = 'name';
 export const RECIPE_LINK = 'link';
 export const RECIPE_PREP_TIME = 'preparationTime';
 export const RECIPE_SERVING_SIZE = 'servingSize';
+export const RECIPE_USER_ID = 'userId';
 
 const firestoreDb = getFirestore();
 const recipeCollection = collection(firestoreDb, TABLE_RECIPE);
@@ -45,7 +46,7 @@ export const addRecipeDb: (recipe: RecipeWithoutId) => Promise<{
     // Check if a recipe with the same name already exists
     const recipeQuery = query(
       recipeCollection,
-      where('name', '==', recipe.name),
+      where(RECIPE_NAME, '==', recipe.name),
     );
     const querySnapshot = await getDocs(recipeQuery);
 
@@ -162,7 +163,10 @@ export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
     const firebaseRecipes: Recipe[] = [];
 
     // Query only recipes that belong to the current user
-    const recipesQuery = query(recipeCollection, where('userid', '==', userid));
+    const recipesQuery = query(
+      recipeCollection,
+      where(RECIPE_USER_ID, '==', userid),
+    );
 
     const querySnapshot = await getDocs(recipesQuery);
 
