@@ -35,6 +35,7 @@ export type AddWeeklyMealInput =
       mealType: MealType;
       recipeId: string;
       entryType?: WeeklyEntryType.RECIPE | 'RECIPE';
+      userId: string;
     }
   | {
       day: DaysOfWeek;
@@ -43,6 +44,7 @@ export type AddWeeklyMealInput =
       quantity: number;
       quantityType: QuantityType;
       entryType?: WeeklyEntryType.INGREDIENT | 'INGREDIENT';
+      userId: string;
     };
 
 export async function addWeeklyMealDb(
@@ -65,11 +67,13 @@ export async function addWeeklyMealDb(
         ingredientId: (input as any).ingredientId,
         quantity: (input as any).quantity,
         quantityType: (input as any).quantityType,
+        userId: (input as any).userId,
       }
     : {
         ...base,
         entryType: WeeklyEntryType.RECIPE,
         recipeId: (input as any).recipeId,
+        userId: (input as any).userId,
       };
 
   await setDoc(ref, payload);
