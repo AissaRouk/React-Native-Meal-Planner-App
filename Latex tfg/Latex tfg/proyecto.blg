@@ -1,0 +1,84 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: proyecto.aux
+The style file: acm.bst
+Database file #1: citas.bib
+I was expecting a `,' or a `}'---line 40 of file citas.bib
+ :  
+ :  url = {https://www.organizeyourselfskinny.com/how-to-prep-food-for-the-week-in-1-afternoon/}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Repeated entry---line 94 of file citas.bib
+ : @article{helms2019
+ :                   ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 106 of file citas.bib
+ : @article{masoga2021
+ :                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 115 of file citas.bib
+ : @article{benjamins2021
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 126 of file citas.bib
+ : @article{ducrot2017
+ :                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 137 of file citas.bib
+ : @misc{fmi2015
+ :              ,
+I'm skipping whatever remains of this entry
+Warning--entry type for "mckinsey2023" isn't style-file defined
+--line 153 of file citas.bib
+Repeated entry---line 167 of file citas.bib
+ : @article{ducrot2017
+ :                    ,
+I'm skipping whatever remains of this entry
+Warning--empty journal in ONUAAComercioAlimentosyObesidad
+Warning--empty title in NLMDifficultyEatingHealthy
+Warning--empty journal in NLMDifficultyEatingHealthy
+Warning--empty journal in NLMMealPlanningBenefits
+Warning--empty publisher in OMSObesidadySobrepeso
+Warning--empty journal in HowToMealPrep
+You've used 15 entries,
+            2253 wiz_defined-function locations,
+            602 strings with 6267 characters,
+and the built_in function-call counts, 3514 in all, are:
+= -- 318
+> -- 160
+< -- 0
++ -- 69
+- -- 52
+* -- 222
+:= -- 615
+add.period$ -- 39
+call.type$ -- 15
+change.case$ -- 69
+chr.to.int$ -- 0
+cite$ -- 21
+duplicate$ -- 130
+empty$ -- 298
+format.name$ -- 52
+if$ -- 708
+int.to.chr$ -- 0
+int.to.str$ -- 15
+missing$ -- 11
+newline$ -- 72
+num.names$ -- 30
+pop$ -- 95
+preamble$ -- 1
+purify$ -- 56
+quote$ -- 0
+skip$ -- 83
+stack$ -- 0
+substring$ -- 111
+swap$ -- 26
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 58
+warning$ -- 6
+while$ -- 33
+width$ -- 17
+write$ -- 132
+(There were 7 error messages)

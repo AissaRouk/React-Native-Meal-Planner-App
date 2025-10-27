@@ -1,0 +1,132 @@
+' ruta del fichero: latex/figures/class_diagram.puml
+@startuml
+skinparam classAttributeIconSize 0
+title Diagrama de clases (conceptual) - NutriPlan
+
+' Entidades de dominio (basadas en src/Types/Types.tsx)
+class User {
+  +uid: string
+  +email: string
+  +displayName?: string
+}
+
+class Recipe {
+  +id: string
+  +title: string
+  +description?: string
+  +ingredients: RecipeIngredient[]
+  +imageUrl?: string
+  +ownerUid: string
+}
+
+class Ingredient {
+  +id: string
+  +name: string
+  +defaultUnit?: string
+  +calories?: number
+}
+
+class RecipeIngredient {
+  +ingredientId: string
+  +quantity: number
+  +unit: string
+}
+
+class WeeklyMeal {
+  +id: string
+  +userUid: string
+  +day: string
+  +mealType: string
+  +recipeId?: string
+  +ingredientEntry?: RecipeIngredient
+}
+
+class PantryItem {
+  +id: string
+  +userUid: string
+  +ingredientId: string
+  +quantity: number
+  +unit: string
+}
+
+class GroceryItem {
+  +id: string
+  +userUid: string
+  +ingredientId: string
+  +neededQuantity: number
+  +bought: boolean
+}
+
+' Servicios (capa Services/)
+class RecipeService {
+  +create(recipe)
+  +update(id, recipe)
+  +delete(id)
+  +listByUser(uid)
+}
+
+class IngredientService {
+  +indexLocal()
+  +listAll()
+  +create(ingredient)
+}
+
+class WeeklyMealsService {
+  +fetchWeeklyMeals(userUid, day, mealType)
+  +planMeal(entry)
+  +unplan(entryId)
+}
+
+class PantryService {
+  +list(userUid)
+  +add(item)
+  +remove(itemId)
+}
+
+class GroceryService {
+  +list(userUid)
+  +add(item)
+  +markBought(itemId)
+}
+
+' Relaciones entre entidades
+User "1" -- "0..*" Recipe : posee >
+Recipe "1" -- "0..*" RecipeIngredient : contiene >
+RecipeIngredient --> Ingredient : referencia a >
+User "1" -- "0..*" WeeklyMeal : planifica >
+WeeklyMeal o-- Recipe : puede referenciar >
+User "1" -- "0..*" PantryItem : tiene >
+User "1" -- "0..*" GroceryItem : posee >
+
+' Servicios gestionan entidades
+RecipeService ..> Recipe
+RecipeService ..> RecipeIngredient
+IngredientService ..> Ingredient
+WeeklyMealsService ..> WeeklyMeal
+PantryService ..> PantryItem
+GroceryService ..> GroceryItem
+
+' Controladores / Vistas (Components / Screens)
+class MainScreen
+class RecipesScreen
+class RecipeScreen
+class PantryScreen
+class GroceryListScreen
+class LoginScreen
+
+' Relación UI -> servicios
+MainScreen ..> WeeklyMealsService
+RecipesScreen ..> RecipeService
+RecipeScreen ..> RecipeService
+PantryScreen ..> PantryService
+GroceryListScreen ..> GroceryService
+LoginScreen ..> User
+
+note right of MainScreen
+  Usa:
+  - HeaderComponent
+  - FloatingButton
+  - PlannedIngredientCard
+end note
+
+@enduml
