@@ -33,31 +33,35 @@
 \contentsline {paragraph}{Separación en capas (Components / Screens / Services / Context / Types)}{26}{section*.25}%
 \contentsline {section}{\numberline {2.3}Diseño de la interfaz}{26}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Diseño minimalista}{27}{subsection.2.3.1}%
-\contentsline {section}{\numberline {2.4}Análisis de librerías y frameworks para el frontend y la lógica}{27}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}¿Qué es un framework / librería en este contexto?}{27}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}React Native (análisis profundo)}{27}{subsection.2.4.2}%
-\contentsline {paragraph}{Alternativas principales}{28}{section*.26}%
-\contentsline {paragraph}{Ventajas y desventajas de cada alternativa}{28}{section*.27}%
-\contentsline {paragraph}{Razones para elegir React Native en este proyecto}{29}{section*.28}%
-\contentsline {subsection}{\numberline {2.4.3}Otras librerías y componentes}{29}{subsection.2.4.3}%
-\contentsline {section}{\numberline {2.5}Análisis de librerías y frameworks para back-end}{31}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Base de datos}{31}{subsection.2.5.1}%
-\contentsline {section}{\numberline {2.6}Proyectos actuales}{32}{section.2.6}%
-\contentsline {section}{\numberline {2.7}Conclusiones}{34}{section.2.7}%
-\contentsline {chapter}{\numberline {3}Diseño y descripción del sistema}{37}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Mockups}{37}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Conclusiones}{37}{section.3.2}%
-\contentsline {chapter}{\numberline {4}Prototipos y desarrollo}{38}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Prototipo 1}{38}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Prototipo 2}{38}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Prototipo 3}{38}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Conclusiones}{38}{section.4.4}%
-\contentsline {chapter}{\numberline {5}Conclusiones y mejoras futuras}{39}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Conclusiones técnicas}{39}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Conclusiones personales}{39}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Futuras mejoras}{39}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Conclusions and future works}{40}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Technical conclusions}{40}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Personal conclusions}{40}{section.6.2}%
-\contentsline {section}{\numberline {6.3}Future works}{40}{section.6.3}%
-\contentsline {chapter}{Bibliografía}{41}{section.6.3}%
+\contentsline {subsection}{\numberline {2.3.2}Decisiones de diseño}{27}{subsection.2.3.2}%
+\contentsline {subsubsection}{Creación de páginas}{27}{section*.26}%
+\contentsline {paragraph}{Pagina de inicio (LoginScreen)}{28}{section*.27}%
+\contentsline {paragraph}{Página de registro (RegisterScreen)}{28}{section*.28}%
+\contentsline {section}{\numberline {2.4}Análisis de librerías y frameworks para el frontend y la lógica}{32}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}¿Qué es un framework / librería en este contexto?}{32}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}React Native (análisis profundo)}{32}{subsection.2.4.2}%
+\contentsline {paragraph}{Alternativas principales}{32}{section*.36}%
+\contentsline {paragraph}{Ventajas y desventajas de cada alternativa}{32}{section*.37}%
+\contentsline {paragraph}{Razones para elegir React Native en este proyecto}{33}{section*.38}%
+\contentsline {subsection}{\numberline {2.4.3}Otras librerías y componentes}{33}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}Análisis de librerías y frameworks para back-end}{36}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Base de datos}{36}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.6}Proyectos actuales}{37}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Conclusiones}{38}{section.2.7}%
+\contentsline {chapter}{\numberline {3}Diseño y descripción del sistema}{42}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Mockups}{42}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Conclusiones}{42}{section.3.2}%
+\contentsline {chapter}{\numberline {4}Prototipos y desarrollo}{43}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Prototipo 1}{43}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Prototipo 2}{43}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Prototipo 3}{43}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Conclusiones}{43}{section.4.4}%
+\contentsline {chapter}{\numberline {5}Conclusiones y mejoras futuras}{44}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusiones técnicas}{44}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Conclusiones personales}{44}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Futuras mejoras}{44}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Conclusions and future works}{45}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Technical conclusions}{45}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Personal conclusions}{45}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future works}{45}{section.6.3}%
+\contentsline {chapter}{Bibliografía}{46}{section.6.3}%

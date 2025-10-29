@@ -466,18 +466,139 @@ This project will proceed with the design and development of a recipe applicatio
 		El diseño de la inteefaz de usuario juega un papel muy importante en el uso y la aceptación de la aplicación. De hecho el diseño y usabilidad son requisitos esenciales para el éxito de este tipo de apps \cite{liew2019usability}. Varios estudios señalan que los usuarios tienden a aceptar apps con facilidad de uso, utilidad percibida y calidad de contenido que ofrece la aplicación \cite{Lim2025CuestionarioUsabilidad}. Todo esto demuestra que una interfaz agradable, intuitiva y adaptada a las necesidades del usuario mejora la experiencia de uso de esta y crea un sentimiento positivo hacia la aplicación. Por ello se escogieron varios principios de diseño de interfaz y experiencia de usuario como el diseño minimalista, el uso de colores específicos, etc.
 		
 		\subsection{Diseño minimalista}
-		%El diseño minimalista es una corriente estética y funcional que se basa en reducir los elementos de una interfaz o producto al mínimo posible sin quitar lo esencial, eliminando la información superflua y destacando la fundamental. Esta corriente sigue la premisa de “menos es más”, frase popular del arquitecto Ludwig Mies van der Rohe, que subraya la importancia de la simplicidad y la funcionalidad en el diseño ¹. Jakob Nielsen, experto en usabilidad enfatiza que las interfaces deberían evitar la sobrecarga de información, mostrando al usuario solo lo esencial ¹. Este diseño se basa en los siguientes principios:
-		%de simplicidad, manteniendo solo los elementos necesarios para comunicar la información;
-		%- la funcionalidad que enfatiza que cada componente en el diseño debe tener un propósito claro haciendo que se eliminen elementos decorativos que no aportan ningún valor funcional;
-		%- el uso del espacio blanco o “negativo” en la creación de un equilibrio entre los componentes y la redirección de la atención del usuario; 
-		%- tipografía usando fuentes sencillas y legibles; 
-		%- y una jerarquía visual que favorezca organice e la información de manera que los elementos más importantes se destaquen, creando una interfaz navegable y comprensible.
 		El disño minimalista es una corriente estética y funcional que se basa en reducir los elementos de una interfaz o producto al mínimo posible sin quitar lo esencial, lo que elimina la información innecesaria y destaca la fundamental. Esta corriente sigue la premisa de "menos es más", frase popular del arquitecto Ludwig Mies van der Rohe, que subraya la importancia de la simplicidad y la funcionalidad en el diseño \cite{wikipediaLessIsMore}. Jakob Nielsen, experti en usabilidad enfatiza que las interfaces deberían evitar la sobrecarga de información, mostrando solo lo esencial \cite{nielsen1994}. Este diseño se basa en los siguientes principios:
 		\begin{enumerate}
-			\item 
-		\end{enmuerate}
+			\item \textbf{Simplicidad:} mantiene solo los elementos necesarios para comunicar la información.
+			\item \textbf{Funcionalidad:} enfatiza que cada componente en el diseño debe tener un propósito claro haciendo que se eliminen elementos decorativos que no aportan ningún propósito claro haciendo que se elmininen elementos decorativos que no aportan ningún valor funcional.
+			\item \textbf{Uso de espacio blanco o "negativo":} se usa en la creación de un equilibrio entre los componentes y la redirección de la atención del usuario.
+			\item \textbf{Jerarquía visual:} el uso de una jerarquía visual que favorezca y organice la información de manera que los elementos más importantes se destaquen, creando una interfaz navegable y comprensible.
+		\end{enumerate}
 		
 		
+		% ...existing code after diseño minimalista section...
+		
+		\subsection{Decisiones de diseño}
+		Basándonos en los principios minimalistas mencionados y considerando los casos de uso principales de la aplicación, se tomaron las siguientes decisiones de diseño:
+		
+		\subsubsection{Creación de páginas}
+		Como en cada aplicación, hay que crear páginas para mostrar toda la información necesaria al usuario, pero sin sobrecargarlas de información  y al mismo tiempo satisfaciendo los casos de uso. En nuestro caso, se han tomado varios factores en la decisión del diseño de las páginas. Como en todas las aplicaciones, se tiene que crear una página de inicio de sesión y registro para permitir el acceso al contenido específico de cada usuario, seguido de ello se tiene que crear una página principal, que es considerada el punto intermedio de todas las páginas, es decir, desde ella se puede acceder a todas las páginas de la aplicación.
+		
+		\paragraph{Pagina de inicio (LoginScreen)} 
+		\label{LoginScreenEstadoDelArte}
+		En la página de inicio se ha decidido introducir lo esencial para satisfacer el caso de uso de "\textit{inicio de sesión}". Esta se trata de:
+		
+		\begin{itemize}
+			\item Un título con el texto "\textit{Login}" que en inglés significa inicio de sesión para poner al usuario en contexto e indicarle la funcionalidad de la página.
+			\item Dos campos de texto situados uno encima del otro y que el primero capta el correo y el segundo la contraseña. Se han insterado textos y marcadores de posición encima de los campos para mostrar qué contenido es introducido en cada uno.
+			\item Debajo de los campos de texto se encuentra un botón de inicio de sesión.
+			\item Como último componente se encuentra un texto que al pulsarlo redirige a la página de registro.
+			\item Una alerta mostrando un texto indicando que los campos deben estar rellenados antes de proceder al inicio de sesión. Esta sólo es visible cuando el usuario no rellena un campo.
+			\item Otra alerta del mismo estilo solo que esta es visible cuando falla el inicio de sesión por cualquier motivo.
+		\end{itemize}
+		
+		\paragraph{Página de registro (RegisterScreen)}
+		En el caso de esta página, su función es crear un usuario no existente y para realizar ello, el sistema necesita un correo electrónico y contraseña del usuario.
+		El diseño de la página es el siguiente:
+		
+		\begin{itemize}
+			\item Un título mostrando al usuario su posición actual.
+			\item Dos campos de texto similares al de la página de inicio de sesión pero en este caso recogen los datos de \textit{email} (correo electrónico) y \textit{password} (contraseña).
+			\item Un botón como último componente y que contiene el texto de "registrarse" (\textit{"sign up"} en inglés).
+		\end{itemize}
+	
+		En estas dos páginas (\textit{LoginScreen e RegisterScreen}) era posible introducir más componentes, pero dado el principio del minimalismo se decidió mantenerse al menor número de componentes posibles para no sobrecargar las páginas de manera visual y en rendimiento. Por otra parte, no era necesario añadir algo adicional dado que no se requieren datos adicionales.
+		
+		\paragraph{Página principal (MainScreen)}
+		En la planificación del diseño se decidió mostrar el calendario semanal de las recetas planificadas para cada día, pero no era posible mostrar todas las comidas planificadas para toda la semana en una sola pantalla móvil y tampoco era muy minimalista mostrar toda esa información en una sola página; por ello se crearon dos componentes de selección, el primero permite al usuario elegir el día de la semana y el segundo el tipo de comida (desayuno, comida o cena), esto hace que sólo se muestre la lista de una comida de un día específico, simplifica y evita la sobrecarga d´el diseño de la app.
+		La página contiene los componentes en la siguiente orden:
+		
+		
+		Nuestra aplicación comienzaa por la página de inicio de sesión (\hyperref[LoginScreen]{LoginScreen} en el caso de no haber iniciado sesión previamente) que tiene acceso a la página de registro (\hyperref[RegisterScreen]{RegisterScreen}) en la que el usuario puede crear una cuenta nueva. Una vez registrado o iniciado sesión, se pasa directamente a la página principal(\hyperref[MainScreen]{MainScreen}) que desde ella se puede acceder a todo el contenido directa e indirectamente, en esta también se muestra la información más relevante y se tiene acceso a \hyperref[RecipesScreen]{RecipesScreen}, \hyperref[PantryScreen]{PantryScreen} y \hyperref[GroceryListScreen]{GroceryListScreen}; se tiene que saber que todas las páginas a las que se accede desde la página principal tienen permitido volver a esta.
+		Al mismo tiempo \hyperref[RecipesScreen]{RecipesScreen} que es la página en donde se muestran todas las recetas creadas por el usuario; tiene acceso a \hyperref[RecipeScreen]{RecipeScreen} y esta tiene acceso de vuelta a la página de recetas.
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=\textwidth]{imagenes/navigation_flow}
+			\caption{Diagrama de flujo de navegación de NutriPlan}
+			\label{fig:navigation_flow}
+		\end{figure}
+		
+		\subsubsection*{Organización y estructura visual}
+		La interfaz se organizó priorizando la jerarquía visual y la facilidad de navegación:
+		
+		\begin{itemize}
+			\item \textbf{Barra superior consistente:} Implementada en \texttt{AppHeader}, mantiene el contexto de navegación mostrando títulos en cada sección y provee acceso rápido a funciones y páginas principales. Esta decisión responde al principio de consistencia y reduce la carga cognitiva del usuario al mantener puntos de referencia estables.
+			
+			\item \textbf{Botones flotantes de acción:} El componente \texttt{FloatingButton} se utiliza para acciones principales (añadir receta, planificar comida) siguiendo patrones de Material Design. Su posición fija en la esquina inferior derecha facilita el acceso con el pulgar, mejorando la ergonomía en uso móvil.
+			
+			\item \textbf{Tarjetas y listas:} Los componentes \texttt{IngredientCard} y \texttt{RecipeCardComponent} presentan información en bloques visuales claramente delimitados, facilitando el escaneo rápido y la comprensión del contenido.
+		\end{itemize}
+		
+		\subsubsection*{Paleta de colores}
+		La selección de colores responde tanto a principios de accesibilidad como a la psicología del color en aplicaciones de alimentación:
+		
+		\begin{itemize}
+			\item \textbf{Color primario:} Se eligieron como colores principales el blanco (\#FFF) y el naranja (\#FB7945). El blanco se utiliza principalmente para fondos de pantallas y de componentes; y los colores de las letras. El naranja se utiliza como color de fondo de los componentes(mayoritariamente botones) y también como color para resaltar elementos seleccionados.
+			
+			\item \textbf{Colores secundarios:} estos también son utilizados frecuentemente y son el gris claro (\#CCC) utilizado para separación sutil entre elementos, color de letras o como fondo de pantalla de otros. Los colores negro y blanco han sido usados para la letra.
+			
+		\end{itemize}
+		
+		Esta paleta no solo es estéticamente agradable sino que cumple con ratios de contraste WCAG 2.1 para garantizar accesibilidad.
+		
+		\subsubsection*{Interacción y feedback}
+		El diseño de interacciones prioriza la eficiencia y claridad:
+		
+		\begin{itemize}
+			
+			\item \textbf{Gestos intuitivos:} Se implementaron gestos naturales como el mantener pulsado en un el \texttt{RecipeCard} para mostrar el modal de opciones
+			
+			\item \textbf{Feedback visual inmediato:} Cada acción (marcar ingrediente como comprado, añadir a la planificación) tiene una respuesta visual clara que confirma la operación.
+		\end{itemize}
+		
+		\subsubsection*{Tipografía y legibilidad}
+		Se utilizó una jerarquía tipográfica clara:
+		
+		\begin{itemize}
+			\item \textbf{Títulos:} Fuente System Bold a 20pt para encabezados principales, garantizando visibilidad sin ser intrusiva.
+			\item \textbf{Contenido:} System Regular a 16pt para el cuerpo, optimizando legibilidad en pantallas móviles.
+			\item \textbf{Información secundaria:} System Light a 14pt para metadatos y detalles adicionales.
+		\end{itemize}
+		
+		\subsubsection*{Adaptación a casos de uso}
+		El diseño se alineó específicamente con los casos de uso principales:
+		
+		\begin{itemize}
+			\item \textbf{Planificación semanal:} La vista principal (\texttt{MainScreen}) organiza la información por días y comidas, con un selector superior (\texttt{HeaderComponent}) que facilita la navegación temporal.
+			
+			\item \textbf{Gestión de recetas:} La interfaz de recetas prioriza imágenes y datos clave, permitiendo acceso rápido a ingredientes y cantidades mediante \texttt{IngredientComponent}.
+			
+			\item \textbf{Lista de compra:} \texttt{GroceryListScreen} implementa una visualización clara de items pendientes vs. comprados, con actualización inmediata del estado.
+			
+			\item \textbf{Control de despensa:} \texttt{PantryScreen} organiza ingredientes en categorías visuales claras, facilitando el inventario rápido.
+		\end{itemize}
+		
+		\subsubsection*{Consideraciones de accesibilidad}
+		El diseño incorpora elementos de accesibilidad básicos:
+		
+		\begin{itemize}
+			\item Textos alternativos para imágenes
+			\item Áreas táctiles generosas (mínimo 44x44 puntos)
+			\item Contraste suficiente entre texto y fondo
+			\item Soporte para el escalado de texto del sistema
+		\end{itemize}
+		
+		\subsubsection*{Validación y mejoras futuras}
+		El diseño actual establece una base sólida pero contempla evolución:
+		
+		\begin{itemize}
+			\item Incorporación de temas oscuros para reducir fatiga visual
+			\item Expansión de gestos y atajos para usuarios avanzados
+			\item Mejora de la visualización de datos nutricionales
+			\item Implementación de vistas adaptativas para tablets
+		\end{itemize}
+		
+		Las decisiones de diseño tomadas buscan equilibrar simplicidad, eficiencia y satisfacción del usuario, creando una experiencia coherente que facilita la planificación alimentaria y reduce la fricción en tareas cotidianas. La adherencia a principios minimalistas y patrones establecidos de UX móvil contribuye a una curva de aprendizaje suave mientras se mantiene la potencia funcional necesaria.
 	\section{Análisis de librerías y frameworks para el frontend y la lógica}
 	En este apartado se explican qué son los frameworks y librerías más relevantes utilizados en el proyecto, se presentan las alternativas principales del mercado con sus ventajas e inconvenientes, y se justifica la elección final. Para facilitar la lectura se aborda con detalle React Native y Firebase (pues condicionan arquitectura y despliegue).
 	
