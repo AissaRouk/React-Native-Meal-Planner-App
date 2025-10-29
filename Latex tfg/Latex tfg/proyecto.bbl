@@ -54,8 +54,21 @@
   2014.
 
 \bibitem{NLMDifficultyEatingHealthy}
-{\sc Lappalainen, R. e. a. a. i. t. t. e. h. d. a. o. p. b. f. h. e. E. j. o.
-  c. n. v. . S. . . S.-.}
+{\sc Lappalainen, R. e. a. E. j. o. c. n.~v.}
+\newblock Difficulties in trying to eat healthier: descriptive analysis of
+  perceived barriers for healthy eating.
+
+\bibitem{liew2019usability}
+{\sc Liew, M., Zhang, J., See, J., and Ong, Y.}
+\newblock Usability challenges for health and wellness mobile apps:
+  Mixed-methods study among mhealth experts and consumers.
+\newblock {\em JMIR mHealth and uHealth 7}, 1 (2019), e12160.
+
+\bibitem{Lim2025CuestionarioUsabilidad}
+{\sc Lim, P., Lim, Y., Rajah, R., et~al.}
+\newblock Cuestionario de usabilidad para aplicaciones móviles de salud
+  independientes o interactivas: una revisión sistemática.
+\newblock {\em BMC Digital Health 3\/} (2025), 11.
 
 \bibitem{masoga2021}
 {\sc Masoga, S.}
@@ -70,6 +83,13 @@
   \url{https://www.businessresearchinsights.com/es/market-reports/meal-planning-app-market-113013},
   2023.
 
+\bibitem{nielsen1994}
+{\sc Nielsen, J.}
+\newblock Las diez heurísticas de usabilidad.
+\newblock \url{https://www.nngroup.com/articles/ten-usability-heuristics},
+  1994.
+\newblock Consultado en octubre de 2025.
+
 \bibitem{NLMMealPlanningBenefits}
 {\sc of~Medicine, N.~L.}
 \newblock Meal planning is associated with food variety, diet quality and body
@@ -83,5 +103,10 @@
 \bibitem{HowToMealPrep}
 {\sc Overhoff, T.}
 \newblock How to meal prep for the week.
+
+\bibitem{wikipediaLessIsMore}
+{\sc {Wikipedia contributors}}.
+\newblock {Less is more} --- wikipedia, the free encyclopedia, 2025.
+\newblock Consultado el 7 de octubre de 2025.
 
 \end{thebibliography}
