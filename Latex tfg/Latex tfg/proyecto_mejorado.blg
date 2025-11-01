@@ -1,0 +1,58 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: proyecto_mejorado.aux
+The style file: acm.bst
+Database file #1: citas.bib
+I was expecting a `,' or a `}'---line 43 of file citas.bib
+ :  
+ :  url = {https://www.organizeyourselfskinny.com/how-to-prep-food-for-the-week-in-1-afternoon/}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "mckinsey2023" isn't style-file defined
+--line 196 of file citas.bib
+Warning--empty journal in ONUAAComercioAlimentosyObesidad
+Warning--empty journal in NLMDifficultyEatingHealthy
+Warning--empty journal in NLMMealPlanningBenefits
+Warning--empty publisher in OMSObesidadySobrepeso
+You've used 7 entries,
+            2253 wiz_defined-function locations,
+            560 strings with 5109 characters,
+and the built_in function-call counts, 1529 in all, are:
+= -- 138
+> -- 64
+< -- 0
++ -- 28
+- -- 20
+* -- 82
+:= -- 276
+add.period$ -- 18
+call.type$ -- 7
+change.case$ -- 29
+chr.to.int$ -- 0
+cite$ -- 11
+duplicate$ -- 62
+empty$ -- 131
+format.name$ -- 20
+if$ -- 307
+int.to.chr$ -- 0
+int.to.str$ -- 7
+missing$ -- 6
+newline$ -- 35
+num.names$ -- 14
+pop$ -- 43
+preamble$ -- 1
+purify$ -- 23
+quote$ -- 0
+skip$ -- 39
+stack$ -- 0
+substring$ -- 42
+swap$ -- 11
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 26
+warning$ -- 4
+while$ -- 15
+width$ -- 8
+write$ -- 62
+(There was 1 error message)

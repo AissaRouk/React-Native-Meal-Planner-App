@@ -1,0 +1,143 @@
+%\documentclass[a4paper,twoside,12pt]{book}
+\documentclass[twoside, openright, 11pt]{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} %Para poder insertar las imagenes
+%\usepackage{url}
+%\usepackage{blindtext}
+
+\begin{document}
+
+\begin{titlepage}
+
+
+\newlength{\centeroffset}
+\setlength{\centeroffset}{-0.5\oddsidemargin}
+\addtolength{\centeroffset}{0.5\evensidemargin}
+\thispagestyle{empty}
+
+\noindent\hspace*{\centeroffset}\begin{minipage}{\textwidth}
+
+\centering
+\includegraphics[width=0.9\textwidth]{imagenes/logo_ugr}\\[1.4cm]
+
+\textsc{ \Large TRABAJO FIN DE GRADO\\[0.2cm]}
+\textsc{ GRADO DE INGENIERÍA EN INFORMÁTICA}\\[1cm]
+% Upper part of the page
+%
+% Title
+{\huge\bfseries NutriPlan\\
+}
+\noindent\rule[-1ex]{\textwidth}{3pt}\\[3.5ex]
+{\large\bfseries Aplicación para la Gestión de Recetas}
+\end{minipage}
+
+\vspace{0.5cm}
+\noindent\hspace*{\centeroffset}\begin{minipage}{\textwidth}
+\centering
+
+\textbf{Autor}\\ {Aissa Rouk El Masoudi}\\[2.5ex]
+\textbf{Directores}\\
+{CARLOS RODRIGUEZ DOMINGUEZ}\\[2cm]
+\includegraphics[width=0.3\textwidth]{imagenes/logo-ceuta.jpg}\\[0.1cm]
+\textsc{Facultad de Educación, Tecnología y Economía de Ceuta}\\
+\textsc{---}\\
+Granada, 15 de Junio de 2025
+\end{minipage}
+\end{titlepage}
+\let\cleardoublepage\clearpage
+
+\chapter*{}
+\begin{flushright}
+\textit{Dedicado a \\
+...}
+\end{flushright}
+\thispagestyle{empty}
+
+
+\chapter*{Resumen} % si no queremos que añada la palabra "Capitulo"
+\addcontentsline{toc}{chapter}{Resumen} % si queremos que aparezca en el índice
+\markboth{RESUMEN}{RESUMEN} % encabezado
+\thispagestyle{empty}
+En este proyecto se procederá con el diseño y el desarrollo de una aplicación de recetas...
+
+\chapter*{Abstract} % si no queremos que añada la palabra "Capitulo"
+\addcontentsline{toc}{chapter}{Abstract} % si queremos que aparezca en el índice
+\markboth{ABSTRACT}{ABSTRACT} % encabezado
+\thispagestyle{empty}
+This project will proceed with the design and development of a recipe application...
+
+\tableofcontents % indice de contenidos
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Lista de figuras} % para que aparezca en el indice de contenidos
+\listoffigures % indice de figuras
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Lista de tablas} % para que aparezca en el indice de contenidos
+\listoftables % indice de tablas
+
+\chapter{Introducción}\label{cap.introduccion}
+  \section{Motivación}
+  %Estudiar las diferentes variantes dentro del mundo en 3D
+  
+  \section{Objetivos}
+  
+  \section{Estructura de la memoria}
+  %Explicar de qué va la memoria capítulo por capítulo brevemente
+  
+  \section{Recursos utilizados}
+  
+  \section{Planificación temporal}
+  
+
+\chapter{Estado del arte}\label{cap.estado del arte}
+  \section{Fundamentos}
+  	
+  \section{Análisis de librerías y frameworks para el desarrollo de aplicaciones móviles}
+   %En cada subsección, explicar quién lo propone y por qué lo propone. Cuándo lo propone, sus características. Ventajas e inconvenientes.
+    
+
+  \section{Análisis de librerías y frameworks para back-end}
+  %En cada subsección, cada tecnología, quién la propone, sus características. Ventajas e inconvenientes.
+  	
+  \section{Proyectos actuales}
+  %Nombrar aplicaciones que hayan resultado de inspiración para el proyecto y explicar un poco de qué van esas aplicaciones
+
+  \section{Conclusiones}
+  %Análisis propio (sin referencias bibliográficas) de lo que el autor considera sobre todo lo que ha explicado en el apartado de "Estado del arte". En nuestro caso, considerar qué librería es mejor que otra y en qué aspectos
+
+\chapter{Diseño y descripción del sistema}\label{cap.diseno y descripcion del sistema} %En este apartado se detallarían decisiones de diseño e implementación, como la decisión de utilizar React-Native y explicar por qué se ha elegido ese motor sobre otros
+  \section{Mockups}
+  %Explicar el diseño de la interfaz gráfica
+  
+  \section{Conclusiones}
+
+\chapter{Prototipos y desarrollo}\label{cap.prototipos y desarrollo}
+%Poner tantos prototipos como estimes necesario. En cada prototipo, meter alguna funcionalidad o completar alguna parte de la aplicación. Si mejoramos mucho algo, crear un prototipo nuevo.
+  \section{Prototipo 1}
+  \section{Prototipo 2}
+  \section{Prototipo 3}
+  \section{Conclusiones}
+
+\chapter{Conclusiones y mejoras futuras}\label{cap.conclusiones y mejoras futuras}
+  \section{Conclusiones técnicas}
+  %Hablar desde el punto de vista del software de aspectos como el hecho de lo que nos ayuda React-Native
+  \section{Conclusiones personales}
+  %Valoración personal sobre cada una de las cosas vistas durante el proyecto
+  \section{Futuras mejoras}
+  %Trabajos futuros que se puedan relacionar con este
+
+\chapter{Conclusions and future works}\label{cap.conclusions and future works}
+  \section{Technical conclusions}
+  \section{Personal conclusions}
+  \section{Future works}
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliografía}
+\bibliographystyle{acm} % estilo de la bibliografía.
+\bibliography{citas} % citas.bib es el fichero donde está salvada la bibliografía.
+
+
+
+\end{document}

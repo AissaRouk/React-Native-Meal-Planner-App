@@ -1,0 +1,39 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Resumen}{3}{}%
+\contentsline {chapter}{Abstract}{4}{}%
+\contentsline {chapter}{Lista de figuras}{7}{}%
+\contentsline {chapter}{Lista de tablas}{8}{}%
+\contentsline {chapter}{\numberline {1}Introducción}{9}{}%
+\contentsline {section}{\numberline {1.1}Motivación}{9}{}%
+\contentsline {section}{\numberline {1.2}Objetivos}{9}{}%
+\contentsline {section}{\numberline {1.3}Estructura de la memoria}{10}{}%
+\contentsline {section}{\numberline {1.4}Recursos utilizados}{10}{}%
+\contentsline {section}{\numberline {1.5}Planificación temporal}{11}{}%
+\contentsline {chapter}{\numberline {2}Estado del arte}{12}{}%
+\contentsline {section}{\numberline {2.1}Fundamentos}{12}{}%
+\contentsline {section}{\numberline {2.2}Análisis de librerías y frameworks para el desarrollo de aplicaciones móviles}{12}{}%
+\contentsline {section}{\numberline {2.3}Análisis de librerías y frameworks para back‑end}{13}{}%
+\contentsline {section}{\numberline {2.4}Proyectos actuales}{13}{}%
+\contentsline {section}{\numberline {2.5}Conclusiones}{13}{}%
+\contentsline {chapter}{\numberline {3}Diseño y descripción del sistema}{14}{}%
+\contentsline {section}{\numberline {3.1}Requisitos funcionales y no funcionales}{14}{}%
+\contentsline {subsection}{\numberline {3.1.1}Requisitos funcionales}{14}{}%
+\contentsline {subsection}{\numberline {3.1.2}Requisitos no funcionales}{14}{}%
+\contentsline {section}{\numberline {3.2}Arquitectura de la aplicación}{15}{}%
+\contentsline {section}{\numberline {3.3}Modelo de datos}{16}{}%
+\contentsline {section}{\numberline {3.4}Mockups}{16}{}%
+\contentsline {section}{\numberline {3.5}Conclusiones}{16}{}%
+\contentsline {chapter}{\numberline {4}Prototipos y desarrollo}{18}{}%
+\contentsline {section}{\numberline {4.1}Prototipo 1}{18}{}%
+\contentsline {section}{\numberline {4.2}Prototipo 2}{18}{}%
+\contentsline {section}{\numberline {4.3}Prototipo 3}{18}{}%
+\contentsline {section}{\numberline {4.4}Conclusiones}{19}{}%
+\contentsline {chapter}{\numberline {5}Conclusiones y mejoras futuras}{20}{}%
+\contentsline {section}{\numberline {5.1}Conclusiones técnicas}{20}{}%
+\contentsline {section}{\numberline {5.2}Conclusiones personales}{20}{}%
+\contentsline {section}{\numberline {5.3}Futuras mejoras}{20}{}%
+\contentsline {chapter}{\numberline {6}Conclusions and future works}{22}{}%
+\contentsline {section}{\numberline {6.1}Technical conclusions}{22}{}%
+\contentsline {section}{\numberline {6.2}Personal conclusions}{22}{}%
+\contentsline {section}{\numberline {6.3}Future works}{22}{}%
+\contentsline {chapter}{Bibliografía}{23}{}%

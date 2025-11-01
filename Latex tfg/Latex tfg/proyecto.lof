@@ -3,8 +3,34 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Plantilla planificación de comidas}}{13}{figure.2.1}%
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Plantilla planificación de comidas}}{14}{figure.2.2}%
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Diagrama de flujo de navegación de NutriPlan}}{29}{figure.2.3}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Página de inicio de sesión \hyperref [LoginScreen]{LoginScreen}}}{44}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Página de registro (RegisterScreen)}}{47}{figure.3.2}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Página principal (MainScreen)}}{50}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Página de recetas (RecipesScreen)}}{53}{figure.3.4}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Página de receta individual (RecipeScreen)}}{56}{figure.3.5}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Página de la despensa (PantryScreen)}}{58}{figure.3.6}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Página de la lista de la compra (\textit {GroceryListScreen})}}{60}{figure.3.7}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Diagrama de flujo de navegación de NutriPlan}}{61}{figure.3.8}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces \textit {FloatingButton} — ejemplo de botón flotante}}{66}{figure.3.9}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Ejemplos del componente \textit {IngredientCard}}}{67}{figure.3.10}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces \textit {AppHeader}}}{68}{figure.3.11}%
+\contentsline {figure}{\numberline {3.12}{\ignorespaces \textit {HeaderComponent} debajo de \textit {AppHeader}}}{69}{figure.3.12}%
+\contentsline {figure}{\numberline {3.13}{\ignorespaces \textit {IngredientComponent}}}{70}{figure.3.13}%
+\contentsline {figure}{\numberline {3.14}{\ignorespaces Modal de \textit {AddIngredient}}}{71}{figure.3.14}%
+\contentsline {figure}{\numberline {3.15}{\ignorespaces Primera sección del \textit {AddRecipe} Modal}}{72}{figure.3.15}%
+\contentsline {figure}{\numberline {3.16}{\ignorespaces Segunda sección de \textit {AddRecipe} Modal (selección de RecipeIngredients)}}{74}{figure.3.16}%
+\contentsline {figure}{\numberline {3.17}{\ignorespaces Tercera sección de \textit {Addrecipe} Modal}}{76}{figure.3.17}%
+\contentsline {figure}{\numberline {3.18}{\ignorespaces \textit {IngredientSearch} modal}}{77}{figure.3.18}%
+\contentsline {figure}{\numberline {3.19}{\ignorespaces \textit {CustomPicker}}}{78}{figure.3.19}%
+\contentsline {figure}{\numberline {3.20}{\ignorespaces \textit {CustomPickerModal}}}{78}{figure.3.20}%
+\contentsline {figure}{\numberline {3.21}{\ignorespaces \textit {AddIngredientButton} modal}}{79}{figure.3.21}%
+\contentsline {figure}{\numberline {3.22}{\ignorespaces \textit {AddIngredientButton} modal}}{79}{figure.3.22}%
+\contentsline {figure}{\numberline {3.23}{\ignorespaces \textit {Lista de \textit {PlannedIngredientCard}} modal en \hyperref [fig:MainScreen]{\textit {MainScreen} (página principal)}}}{80}{figure.3.23}%
+\contentsline {figure}{\numberline {3.24}{\ignorespaces \textit {Lista de \textit {RecipeCardComponent}} modal en \hyperref [fig:RecipesScreen]{\textit {RecipesScreen} (página de recetas)}}}{81}{figure.3.24}%
+\contentsline {figure}{\numberline {3.25}{\ignorespaces \textit {RecipeOptionsModal} en \hyperref [fig:MainScreen]{\textit {MainScreen}}}}{81}{figure.3.25}%
+\contentsline {figure}{\numberline {3.26}{\ignorespaces \textit {PlanMealModal} en \hyperref [fig:MainScreen]{\textit {MainScreen}}}}{82}{figure.3.26}%
+\contentsline {figure}{\numberline {3.27}{\ignorespaces \textit {PlannedIngredientOptionsModal} en \hyperref [fig:MainScreen]{\textit {MainScreen}}}}{83}{figure.3.27}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
