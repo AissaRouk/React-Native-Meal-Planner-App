@@ -1,0 +1,64 @@
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam roundCorner 10
+skinparam ArrowColor #666666
+
+title Diagrama de Flujo de Navegación - NutriPlan
+
+' Estados de autenticación
+state "No autenticado" as NoAuth {
+    [*] -> LoginScreen
+    LoginScreen -> RegisterScreen : Registro
+    RegisterScreen -> LoginScreen : Volver
+}
+
+state "Autenticado" as Auth {
+    ' Pantalla principal y sus conexiones
+    MainScreen -> RecipesScreen : Ver recetas
+    MainScreen -> PantryScreen : Ver despensa
+    MainScreen -> GroceryListScreen : Lista compra
+    MainScreen --> RecipeScreen : Ver receta\nseleccionada
+
+    ' Navegación desde RecipesScreen
+    RecipesScreen --> RecipeScreen : Ver/Editar\nreceta
+    RecipesScreen --> MainScreen : Volver
+
+    ' Navegaciones secundarias
+    RecipeScreen --> RecipesScreen : Volver
+    PantryScreen --> MainScreen : Volver
+    GroceryListScreen --> MainScreen : Volver
+}
+
+' Transición entre estados
+LoginScreen --> MainScreen : Login exitoso
+[*] -> LoginScreen
+
+note right of MainScreen
+  Pantalla central que permite:
+  * Planificación semanal
+  * Acceso a todas las funciones
+  * Gestión de comidas
+end note
+
+note right of RecipesScreen
+  Permite:
+  * Ver todas las recetas
+  * Crear nuevas
+  * Buscar y filtrar
+end note
+
+note right of PantryScreen
+  Gestión de:
+  * Inventario
+  * Ingredientes disponibles
+end note
+
+note right of GroceryListScreen
+  Muestra:
+  * Items a comprar
+  * Estado de compra
+  * Cantidades necesarias
+end note
+
+@enduml

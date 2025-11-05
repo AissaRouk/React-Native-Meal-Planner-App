@@ -1,0 +1,106 @@
+@startuml
+title Arquitectura de la aplicación — NutriPlan
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam ArrowColor #555555
+skinparam DefaultTextAlignment center
+
+'==== Agrupaciones ====
+package "UI (React Native)" as UI {
+  [LoginScreen] as Login
+  [RegisterScreen] as Register
+  [MainScreen] as Main
+  [RecipesScreen] as Recipes
+  [RecipeScreen] as RecipeDetail
+  [PantryScreen] as Pantry
+  [GroceryListScreen] as GroceryList
+}
+
+package "Navegación (@react-navigation)" as Nav {
+  [Stack Navigator] as Stack
+  [Bottom Tabs] as Tabs
+}
+
+package "Lógica de dominio / Servicios" as Services {
+  [RecipeService]
+  [PantryService]
+  [GroceryService]
+  [WeeklyMealsService]
+}
+
+package "Gestión de estado" as State {
+  component "Redux Store" as Store
+  [Actions/Reducers] as AR
+}
+
+package "Datos locales" as Data {
+  [AsyncStorage]
+}
+
+'==== Relaciones de navegación (UI) ====
+Login -down-> Main : login exitoso
+Register -down-> Login : volver / login
+Main -down-> Recipes
+Main -down-> Pantry
+Main -down-> GroceryList
+Recipes -down-> RecipeDetail : ver detalle
+RecipeDetail -up-> Recipes : volver
+
+'==== Navegación técnica ====
+Stack -[hidden]-> Tabs
+Main -right-> Tabs : pestañas
+Tabs -down-> Recipes
+Tabs -down-> Pantry
+Tabs -down-> GroceryList
+Login -right-> Stack
+Register -right-> Stack
+RecipeDetail -right-> Stack
+
+'==== Flujo de datos UI <-> Estado <-> Servicios ====
+Login --> Store : dispatch(login)
+Register --> Store : dispatch(register)
+Recipes --> Store : useSelector(), dispatch(loadRecipes)
+RecipeDetail --> Store : dispatch(addIngredient), dispatch(updateRecipe)
+Pantry --> Store : dispatch(loadPantry)
+GroceryList --> Store : dispatch(generateGroceryList)
+
+Store <-- AR
+Store --> Services : thunks/sagas\npeticiones de dominio
+Services --> Data : persistencia local\n(lectura/escritura)
+Data --> Store : hidratación inicial
+
+'==== Uso específico por servicio ====
+RecipeService --> Data
+PantryService --> Data
+GroceryService --> Data
+WeeklyMealsService --> Data
+
+'==== Notas ====
+note right of Services
+Servicios de dominio:
+- RecipeService
+- PantryService
+- GroceryService
+- WeeklyMealsService
+Se invocan desde thunks/reducers y
+persisten en AsyncStorage.
+end note
+
+note bottom of Nav
+@react-navigation:
+- Stack para pantallas de detalle
+- Bottom Tabs para vistas principales
+end note
+
+legend left
+  == Leyenda ==
+  Rectángulo: Componente/pantalla/servicio
+  Paquete: Capa lógica
+  Flecha sólida: flujo / invocación
+  Flecha con texto: acción principal
+endlegend
+
+@enduml

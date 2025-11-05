@@ -1,0 +1,103 @@
+@startuml
+title NutriPlan – Diagrama de clases (modelo lógico principal)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam ArrowColor #555555
+skinparam ClassBackgroundColor #FFFFFF
+skinparam ClassBorderColor #333333
+hide circle
+hide empty methods
+
+' ========= Entidades principales =========
+class Ingredient {
+  +id: string
+  +name: string
+  +category: string
+}
+
+class Recipe {
+  +id: string
+  +name: string
+  +userId: string
+  +link: string?
+  +preparationTime: number?
+  +servingSize: number
+}
+
+class RecipeIngredient {
+  +id: string
+  +recipeId: string
+  +ingredientId: string
+  +quantity: number
+  +quantityType: QuantityType
+}
+
+class WeeklyMeal {
+  +id: string
+  +dayOfWeek: DaysOfWeek
+  +mealType: MealType
+  +entryType: WeeklyEntryType   ' RECIPE | INGREDIENT
+  +recipeId: string?            ' si entryType == RECIPE
+  +ingredientId: string?        ' si entryType == INGREDIENT
+  +quantity: number?            ' sólo si entryType == INGREDIENT
+  +quantityType: QuantityType?  ' idem
+}
+
+class IngredientPantry {
+  +id: string
+  +ingredientId: string
+  +quantity: number
+  +quantityType: QuantityType
+}
+
+class GroceryBought {
+  +id: string
+  +ingredientId: string
+}
+
+' ========= Enums =========
+enum QuantityType {
+  GRAM
+  KILOGRAM
+  MILLILITER
+  LITER
+  CUP
+  TABLESPOON
+  TEASPOON
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+enum DaysOfWeek {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+enum WeeklyEntryType {
+  RECIPE
+  INGREDIENT
+}
+
+' ========= Relaciones =========
+Recipe "1" -- "0..*" RecipeIngredient : contiene
+Ingredient "1" -- "0..*" RecipeIngredient : aparece en
+
+' En WeeklyMeal, la referencia es condicional según entryType:
+WeeklyMeal "0..*" ..> Recipe : usa (si entryType = RECIPE)
+WeeklyMeal "0..*" ..> Ingredient : usa (si entryType = INGREDIENT)
+
+Ingredient "1" -- "0..1" IngredientPantry : stock
+Ingredient "1" -- "0..1" GroceryBought : marcado como comprado
+
+@enduml

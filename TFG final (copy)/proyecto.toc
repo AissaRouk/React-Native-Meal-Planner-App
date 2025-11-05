@@ -1,0 +1,118 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Resumen}{3}{chapter*.2}%
+\contentsline {chapter}{Abstract}{4}{chapter*.3}%
+\contentsline {chapter}{Lista de figuras}{7}{chapter*.4}%
+\contentsline {chapter}{Lista de tablas}{8}{chapter*.5}%
+\contentsline {chapter}{\numberline {1}Introducción}{9}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivación}{9}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objetivos}{10}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Estructura de la memoria}{10}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Recursos utilizados}{11}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Planificación temporal}{12}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Estado del arte}{13}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Fundamentos}{13}{section.2.1}%
+\contentsline {subsubsection}{El auge de la planificación dietética}{17}{section*.8}%
+\contentsline {subsubsection}{Aplicaciones de planificación dietética}{18}{section*.9}%
+\contentsline {subsubsection}{Beneficios del \textit {meal planning}}{18}{section*.10}%
+\contentsline {section}{\numberline {2.2}Diseño de la interfaz}{19}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Diseño minimalista}{19}{subsection.2.2.1}%
+\contentsline {section}{\numberline {2.3}Análisis de librerías y frameworks para el frontend y la lógica}{20}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}¿Qué es un framework / librería en este contexto?}{20}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}React Native (análisis profundo)}{20}{subsection.2.3.2}%
+\contentsline {paragraph}{Alternativas principales}{20}{section*.11}%
+\contentsline {paragraph}{Ventajas y desventajas de cada alternativa}{20}{section*.12}%
+\contentsline {paragraph}{Razones para elegir React Native en este proyecto\\}{21}{section*.13}%
+\contentsline {subsection}{\numberline {2.3.3}Otras librerías y componentes}{21}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Análisis de librerías y frameworks para back-end}{24}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Base de datos}{24}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.5}Proyectos actuales}{25}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Conclusiones}{26}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Diseño y descripción del sistema}{29}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Decisiones de diseño: estructura, clases y casos de uso}{29}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Casos de uso}{29}{subsection.3.1.1}%
+\contentsline {subsubsection}{1. Registro e inicio de sesión}{29}{section*.30}%
+\contentsline {subsubsection}{2. Gestión de recetas (CRUD)}{30}{section*.31}%
+\contentsline {subsubsection}{3. Búsqueda de ingredientes y selección rápida}{30}{section*.32}%
+\contentsline {subsubsection}{4. Planificación semanal de comidas}{30}{section*.33}%
+\contentsline {subsubsection}{5. Gestión de despensa (inventario)}{30}{section*.34}%
+\contentsline {subsubsection}{6. Generación y gestión de la lista de la compra}{31}{section*.35}%
+\contentsline {subsubsection}{7. Gestión de imágenes y multimedia}{31}{section*.36}%
+\contentsline {subsection}{\numberline {3.1.2}Diagrama de clases y decisiones de diseño}{31}{subsection.3.1.2}%
+\contentsline {subsubsection}{Separación en capas (Components / Screens / Services / Context / Types)}{34}{section*.38}%
+\contentsline {section}{\numberline {3.2}Diseño de las capas aplicación}{34}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Archivo de entrada (App.tsx)}{34}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Tipos (Types)}{35}{subsection.3.2.2}%
+\contentsline {subsubsection}{Tipos definidos \\}{35}{section*.39}%
+\contentsline {paragraph}{Enumeraciones}{38}{section*.40}%
+\contentsline {subsection}{\numberline {3.2.3}Páginas (Screens)}{40}{subsection.3.2.3}%
+\contentsline {subsubsection}{Creación de páginas}{40}{section*.41}%
+\contentsline {paragraph}{Pagina de inicio (LoginScreen)}{40}{section*.42}%
+\contentsline {paragraph}{Lógica de implementación\\}{40}{section*.43}%
+\contentsline {paragraph}{Estilos y diseño visual\\}{41}{section*.44}%
+\contentsline {paragraph}{Página de registro (RegisterScreen)}{42}{section*.45}%
+\contentsline {paragraph}{Lógica de implementación\\}{43}{section*.46}%
+\contentsline {paragraph}{Estilos y diseño visual\\}{43}{section*.47}%
+\contentsline {paragraph}{Página principal (MainScreen)}{45}{section*.48}%
+\contentsline {paragraph}{Lógica de implementación\\}{45}{section*.49}%
+\contentsline {paragraph}{Estilos y diseño visual\\}{46}{section*.50}%
+\contentsline {paragraph}{Página de recetas (RecipesScreen)}{47}{section*.51}%
+\contentsline {paragraph}{Estilos y diseño visual\\}{48}{section*.52}%
+\contentsline {paragraph}{Página de receta individual (RecipeScreen)\\}{50}{section*.53}%
+\contentsline {paragraph}{Lógica de implementación\\}{51}{section*.54}%
+\contentsline {paragraph}{Estilos y diseño visual\\}{52}{section*.55}%
+\contentsline {paragraph}{Página de despensa (PantryScreen)}{53}{section*.56}%
+\contentsline {paragraph}{Diseño de la lógica\\}{54}{section*.57}%
+\contentsline {paragraph}{Página de lista de la compra (GroceryListScreen)}{55}{section*.58}%
+\contentsline {paragraph}{Diseño de la lógica\\}{56}{section*.59}%
+\contentsline {subsubsection}{Flujo de páginas y navegación}{58}{section*.60}%
+\contentsline {paragraph}{Iconografía y motivos de elección}{60}{section*.67}%
+\contentsline {paragraph}{Librería usada}{60}{section*.68}%
+\contentsline {paragraph}{Iconos principales y motivos}{61}{section*.69}%
+\contentsline {subsection}{\numberline {3.2.4}Componentes de la aplicación (Components)}{62}{subsection.3.2.4}%
+\contentsline {subsubsection}{Componentes de la interfaz}{62}{section*.70}%
+\contentsline {paragraph}{FloatingButton\\\\}{62}{section*.71}%
+\contentsline {paragraph}{Parámetros (props)\\}{62}{section*.72}%
+\contentsline {paragraph}{IngredientCard\\\\}{63}{section*.73}%
+\contentsline {paragraph}{AppHeader\\\\}{64}{section*.74}%
+\contentsline {paragraph}{HeaderComponent\\\\}{65}{section*.75}%
+\contentsline {paragraph}{IngredientComponent\\\\}{66}{section*.76}%
+\contentsline {subsubsection}{Componentes modales}{67}{section*.77}%
+\contentsline {paragraph}{AddIngredientModal\\\\}{67}{section*.78}%
+\contentsline {paragraph}{AddRecipeModal\\\\}{68}{section*.79}%
+\contentsline {paragraph}{IngredientSearchModal\\\\}{74}{section*.80}%
+\contentsline {paragraph}{IngredientSearchSelectorComponent\\\\}{74}{section*.81}%
+\contentsline {paragraph}{CustomPicker\\\\}{74}{section*.82}%
+\contentsline {paragraph}{AddIngredientButton\\\\}{76}{section*.83}%
+\contentsline {paragraph}{MealsHeader\\\\}{76}{section*.84}%
+\contentsline {paragraph}{MealTypeComponent\\\\}{76}{section*.85}%
+\contentsline {paragraph}{ModalHeaderComponent\\}{76}{section*.86}%
+\contentsline {paragraph}{PlannedIngredientCard}{77}{section*.87}%
+\contentsline {paragraph}{RecipeCardComponent}{77}{section*.88}%
+\contentsline {paragraph}{RecipeOptionsModal\\}{78}{section*.89}%
+\contentsline {paragraph}{PlanMealModal\\}{79}{section*.90}%
+\contentsline {paragraph}{PlannedIngredientOptionsModal}{79}{section*.91}%
+\contentsline {subsection}{\numberline {3.2.5}Servicios de backend (Services)}{80}{subsection.3.2.5}%
+\contentsline {subsubsection}{Ingrediente (\textit {Ingredient})}{80}{section*.92}%
+\contentsline {subsubsection}{Servicio de utilidades y nombres (\texttt {db-services.tsx})}{80}{section*.93}%
+\contentsline {subsubsection}{Ingredient (\texttt {ingredient-db-services.ts})}{81}{section*.94}%
+\contentsline {subsubsection}{GroceryBought (\texttt {groceryBought-db-services.ts})}{81}{section*.95}%
+\contentsline {subsubsection}{IngredientPantry (\texttt {ingredientPantry-db-services.ts})}{81}{section*.96}%
+\contentsline {subsubsection}{Recipe (\texttt {recipe-db-services.ts})}{81}{section*.97}%
+\contentsline {subsubsection}{RecipeIngredients (\texttt {recipeIngredients-db-services.ts})}{82}{section*.98}%
+\contentsline {subsubsection}{WeeklyMeals (\texttt {weeklyMeals-db-services.ts})}{82}{section*.99}%
+\contentsline {subsection}{\numberline {3.2.6}Contexto (Context)}{82}{subsection.3.2.6}%
+\contentsline {section}{\numberline {3.3}Mockups}{83}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Conclusiones}{83}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Prototipos y desarrollo}{84}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Prototipo 1}{84}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Prototipo 2}{84}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Prototipo 3}{85}{section.4.3}%
+\contentsline {chapter}{\numberline {5}Conclusiones y mejoras futuras}{87}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusiones técnicas}{87}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Conclusiones personales}{88}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Futuras mejoras}{88}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Conclusions and future works}{90}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Technical conclusions}{90}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Personal conclusions}{90}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future works}{91}{section.6.3}%
+\contentsline {chapter}{Bibliografía}{92}{section.6.3}%

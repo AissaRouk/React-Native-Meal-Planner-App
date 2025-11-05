@@ -1,0 +1,109 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Resumen}{3}{chapter*.2}%
+\contentsline {chapter}{Abstract}{4}{chapter*.3}%
+\contentsline {chapter}{Lista de figuras}{7}{chapter*.4}%
+\contentsline {chapter}{Lista de tablas}{8}{chapter*.5}%
+\contentsline {chapter}{\numberline {1}Introducción}{9}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivación}{9}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objetivos}{10}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Estructura de la memoria}{11}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Recursos utilizados}{11}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Planificación temporal}{12}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Estado del arte}{14}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Fundamentos}{14}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Diseño de la interfaz}{20}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Diseño minimalista}{20}{subsection.2.2.1}%
+\contentsline {section}{\numberline {2.3}Análisis de librerías y frameworks para el frontend y la lógica}{20}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}¿Qué es un framework / librería en este contexto?}{21}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}React Native (análisis profundo)}{21}{subsection.2.3.2}%
+\contentsline {paragraph}{Alternativas principales}{21}{section*.8}%
+\contentsline {paragraph}{Ventajas y desventajas de cada alternativa}{21}{section*.9}%
+\contentsline {paragraph}{Razones para elegir React Native en este proyecto}{22}{section*.10}%
+\contentsline {subsection}{\numberline {2.3.3}Otras librerías y componentes}{22}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Análisis de librerías y frameworks para back-end}{24}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Base de datos}{24}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.5}Proyectos actuales}{25}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Conclusiones}{27}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Diseño y descripción del sistema}{30}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Lógica de la aplicación}{30}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Decisiones de diseño: estructura, clases y casos de uso}{30}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Casos de uso}{30}{subsection.3.1.2}%
+\contentsline {subsubsection}{1. Registro e inicio de sesión}{30}{section*.27}%
+\contentsline {subsubsection}{2. Gestión de recetas (CRUD)}{31}{section*.28}%
+\contentsline {subsubsection}{3. Búsqueda de ingredientes y selección rápida}{31}{section*.29}%
+\contentsline {subsubsection}{4. Planificación semanal de comidas}{31}{section*.30}%
+\contentsline {subsubsection}{5. Gestión de despensa (inventario)}{32}{section*.31}%
+\contentsline {subsubsection}{6. Generación y gestión de la lista de la compra}{32}{section*.32}%
+\contentsline {subsubsection}{7. Gestión de imágenes y multimedia}{32}{section*.33}%
+\contentsline {subsection}{\numberline {3.1.3}Justificación del diagrama de clases y decisiones de diseño}{35}{subsection.3.1.3}%
+\contentsline {subsubsection}{Criterio general de separación}{35}{section*.35}%
+\contentsline {subsubsection}{Entidades del dominio: elección de atributos}{35}{section*.36}%
+\contentsline {subsubsection}{Relaciones entre entidades: multiplicidad y tipo}{36}{section*.37}%
+\contentsline {subsubsection}{Servicios por dominio: motivos y alternativas}{37}{section*.38}%
+\contentsline {subsubsection}{Screens y Components: razones de la componetización}{37}{section*.39}%
+\contentsline {subsubsection}{Consideraciones sobre diseño de API y persistencia (Firestore)}{37}{section*.40}%
+\contentsline {subsubsection}{Conclusión y balance de alternativas}{38}{section*.41}%
+\contentsline {subsubsection}{Punto de entrada y control de sesión}{38}{section*.42}%
+\contentsline {subsubsection}{Separación en capas (Components / Screens / Services / Context / Types)}{38}{section*.43}%
+\contentsline {subsection}{\numberline {3.1.4}Justificación de los tipos y colecciones empleadas}{39}{subsection.3.1.4}%
+\contentsline {subsubsection}{Motivación general de los tipos definidos en \texttt {src/Types/Types.tsx}}{39}{section*.44}%
+\contentsline {subsubsection}{Tipos definidos \\}{39}{section*.45}%
+\contentsline {paragraph}{Enumeraciones}{42}{section*.46}%
+\contentsline {paragraph}{Decisiones generales sobre tipos}{43}{section*.47}%
+\contentsline {subsection}{\numberline {3.1.5}Diseño y lógica de las páginas}{44}{subsection.3.1.5}%
+\contentsline {subsubsection}{Creación de páginas}{44}{section*.48}%
+\contentsline {paragraph}{Pagina de inicio (LoginScreen)}{44}{section*.49}%
+\contentsline {paragraph}{Página de registro (RegisterScreen)}{46}{section*.50}%
+\contentsline {paragraph}{Página principal (MainScreen)}{49}{section*.51}%
+\contentsline {paragraph}{Página de recetas (RecipesScreen)}{51}{section*.52}%
+\contentsline {paragraph}{Página de receta individual (RecipeScreen)\\}{54}{section*.53}%
+\contentsline {paragraph}{Página de despensa (PantryScreen)}{57}{section*.54}%
+\contentsline {paragraph}{Página de lista de la compra (GroceryListScreen)}{59}{section*.55}%
+\contentsline {subsubsection}{Flujo de páginas y navegación}{62}{section*.56}%
+\contentsline {paragraph}{Iconografía y motivos de elección}{64}{section*.63}%
+\contentsline {paragraph}{Librería usada}{64}{section*.64}%
+\contentsline {paragraph}{Iconos principales y motivos}{65}{section*.65}%
+\contentsline {subsubsection}{Validación y mejoras futuras}{66}{section*.66}%
+\contentsline {subsection}{\numberline {3.1.6}Componentes de la aplicación}{66}{subsection.3.1.6}%
+\contentsline {subsubsection}{Componentes de la interfaz}{66}{section*.67}%
+\contentsline {paragraph}{FloatingButton\\}{66}{section*.68}%
+\contentsline {paragraph}{IngredientCard\\}{67}{section*.69}%
+\contentsline {paragraph}{AppHeader\\}{69}{section*.70}%
+\contentsline {paragraph}{HeaderComponent\\}{70}{section*.71}%
+\contentsline {paragraph}{IngredientComponent\\}{72}{section*.72}%
+\contentsline {paragraph}{Descripción funcional}{72}{section*.73}%
+\contentsline {paragraph}{Interfaz (props) y contrato}{72}{section*.74}%
+\contentsline {paragraph}{Estructura interna y dependencias}{73}{section*.75}%
+\contentsline {paragraph}{Comportamiento y detalles de UX}{73}{section*.76}%
+\contentsline {paragraph}{Consideraciones de robustez y accesibilidad}{74}{section*.77}%
+\contentsline {subsubsection}{Componentes modales}{74}{section*.78}%
+\contentsline {paragraph}{AddIngredientModal}{74}{section*.79}%
+\contentsline {paragraph}{AddRecipeModal}{75}{section*.80}%
+\contentsline {paragraph}{IngredientSearchModal}{81}{section*.81}%
+\contentsline {paragraph}{IngredientSearchSelectorComponent}{81}{section*.82}%
+\contentsline {paragraph}{CustomPicker}{81}{section*.83}%
+\contentsline {paragraph}{AddIngredientButton}{82}{section*.84}%
+\contentsline {paragraph}{MealsHeader}{83}{section*.85}%
+\contentsline {paragraph}{MealTypeComponent}{83}{section*.86}%
+\contentsline {paragraph}{ModalHeareComponent}{83}{section*.87}%
+\contentsline {paragraph}{PlannedIngredientCard}{83}{section*.88}%
+\contentsline {paragraph}{RecipeCardComponent}{83}{section*.89}%
+\contentsline {paragraph}{RecipeOptionsModal}{84}{section*.90}%
+\contentsline {paragraph}{PlanMealModal}{84}{section*.91}%
+\contentsline {paragraph}{PlannedIngredeintOptionsModal}{84}{section*.92}%
+\contentsline {section}{\numberline {3.2}Mockups}{84}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Conclusiones}{84}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Prototipos y desarrollo}{85}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Prototipo 1}{85}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Prototipo 2}{85}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Prototipo 3}{86}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Conclusiones}{86}{section.4.4}%
+\contentsline {chapter}{\numberline {5}Conclusiones y mejoras futuras}{87}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Conclusiones técnicas}{87}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Conclusiones personales}{87}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Futuras mejoras}{87}{section.5.3}%
+\contentsline {chapter}{\numberline {6}Conclusions and future works}{88}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Technical conclusions}{88}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Personal conclusions}{88}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Future works}{88}{section.6.3}%
+\contentsline {chapter}{Bibliografía}{89}{section.6.3}%

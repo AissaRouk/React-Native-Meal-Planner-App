@@ -1,0 +1,88 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: proyecto_mejorado(1).aux
+The style file: acm.bst
+Database file #1: citas.bib
+I was expecting a `,' or a `}'---line 43 of file citas.bib
+ :  
+ :  url = {https://www.organizeyourselfskinny.com/how-to-prep-food-for-the-week-in-1-afternoon/}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Repeated entry---line 106 of file citas.bib
+ : @article{helms2019
+ :                   ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 118 of file citas.bib
+ : @article{masoga2021
+ :                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 127 of file citas.bib
+ : @article{benjamins2021
+ :                       ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 138 of file citas.bib
+ : @article{ducrot2017
+ :                    ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 180 of file citas.bib
+ : @misc{fmi2015
+ :              ,
+I'm skipping whatever remains of this entry
+Warning--entry type for "mckinsey2023" isn't style-file defined
+--line 196 of file citas.bib
+Repeated entry---line 210 of file citas.bib
+ : @article{ducrot2017
+ :                    ,
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "flutterVsReact"
+Warning--I didn't find a database entry for "kotlinVsReact"
+Warning--I didn't find a database entry for "gdprarticle25"
+Warning--I didn't find a database entry for "sus"
+Warning--I didn't find a database entry for "tasteOfHomeMealPlanning"
+Warning--empty journal in ONUAAComercioAlimentosyObesidad
+Warning--empty journal in NLMDifficultyEatingHealthy
+Warning--empty journal in NLMMealPlanningBenefits
+Warning--empty publisher in OMSObesidadySobrepeso
+Warning--empty journal in HowToMealPrep
+You've used 19 entries,
+            2253 wiz_defined-function locations,
+            634 strings with 7138 characters,
+and the built_in function-call counts, 4641 in all, are:
+= -- 423
+> -- 218
+< -- 0
++ -- 93
+- -- 72
+* -- 298
+:= -- 808
+add.period$ -- 53
+call.type$ -- 19
+change.case$ -- 91
+chr.to.int$ -- 0
+cite$ -- 24
+duplicate$ -- 164
+empty$ -- 392
+format.name$ -- 72
+if$ -- 941
+int.to.chr$ -- 0
+int.to.str$ -- 19
+missing$ -- 13
+newline$ -- 94
+num.names$ -- 38
+pop$ -- 118
+preamble$ -- 1
+purify$ -- 73
+quote$ -- 0
+skip$ -- 109
+stack$ -- 0
+substring$ -- 155
+swap$ -- 34
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 74
+warning$ -- 5
+while$ -- 43
+width$ -- 21
+write$ -- 176
+(There were 7 error messages)
