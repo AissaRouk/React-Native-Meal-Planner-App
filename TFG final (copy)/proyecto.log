@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.10.22)  5 NOV 2025 15:41
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2025.10.22)  5 NOV 2025 20:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -388,7 +388,7 @@ LaTeX Info: Redefining \nameref on input line 12.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \centeroffset=\skip50
-<imagenes/logo_ugr.pdf, id=195, 671.44951pt x 213.11218pt>
+<imagenes/logo_ugr.pdf, id=191, 671.44951pt x 213.11218pt>
 File: imagenes/logo_ugr.pdf Graphic file (type pdf)
 <use imagenes/logo_ugr.pdf>
 Package pdftex.def Info: imagenes/logo_ugr.pdf  used on input line 25.
@@ -404,7 +404,7 @@ Overfull \hbox (18.42906pt too wide) in paragraph at lines 22--35
 | $[]$ 
  []
 
-<imagenes/logo-ceuta.jpg, id=196, 250.9375pt x 100.375pt>
+<imagenes/logo-ceuta.jpg, id=192, 250.9375pt x 100.375pt>
 File: imagenes/logo-ceuta.jpg Graphic file (type jpg)
 <use imagenes/logo-ceuta.jpg>
 Package pdftex.def Info: imagenes/logo-ceuta.jpg  used on input line 43.
@@ -421,18 +421,18 @@ Overfull \hbox (18.42906pt too wide) in paragraph at lines 37--48
 
 ] [3
 
-] [4
+] [4] [5
 
-] (./proyecto.toc
+] [6] (./proyecto.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
- [5
+ [7
 
 ])
 \tf@toc=\write4
 \openout4 = `proyecto.toc'.
 
- [6]
+ [8]
 (./proyecto.lof
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
@@ -440,7 +440,7 @@ LaTeX Info: Redefining \% on input line 1.
 \tf@lof=\write5
 \openout5 = `proyecto.lof'.
 
- [7
+ [9
 
 
 ] (./proyecto.lot
@@ -450,7 +450,7 @@ LaTeX Info: Redefining \% on input line 1.
 \tf@lot=\write6
 \openout6 = `proyecto.lot'.
 
- [8
+ [10
 
 
 ]
@@ -458,103 +458,103 @@ Cap\'{\i }tulo 1.
 
 Underfull \vbox (badness 1297) has occurred while \output is active []
 
- [9
+ [11
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 127--131
+Underfull \hbox (badness 10000) in paragraph at lines 193--197
 
  []
 
-[10]
-Overfull \hbox (19.97328pt too wide) in paragraph at lines 175--176
+[12]
+Overfull \hbox (19.97328pt too wide) in paragraph at lines 241--242
 []\OT1/cmr/bx/n/10.95 Bibliotecas y li-brer^^S^^Pas de la app. \OT1/cmr/m/n/10.
 95 En la ca-pa de pre-sen-ta-ci^^Son se em-ple^^So \OT1/cmtt/m/n/10.95 @rneui/t
 hemed
  []
 
-[11] [12]
+[13] [14]
 Cap\'{\i }tulo 2.
 
-Underfull \hbox (badness 10000) in paragraph at lines 195--204
+Underfull \hbox (badness 10000) in paragraph at lines 261--270
 
  []
 
-<./imagenes/PlantillaTablamealPlanning.png, id=413, 975.645pt x 643.40375pt>
+<./imagenes/PlantillaTablamealPlanning.png, id=421, 975.645pt x 643.40375pt>
 File: ./imagenes/PlantillaTablamealPlanning.png Graphic file (type png)
 <use ./imagenes/PlantillaTablamealPlanning.png>
 Package pdftex.def Info: ./imagenes/PlantillaTablamealPlanning.png  used on inp
-ut line 209.
+ut line 275.
 (pdftex.def)             Requested size: 430.00462pt x 283.56976pt.
-[13
+[15
 
 ]
-<./imagenes/PlantillaMealPlanningRellenada.png, id=424, 908.39375pt x 571.13374
+<./imagenes/PlantillaMealPlanningRellenada.png, id=431, 908.39375pt x 571.13374
 pt>
 File: ./imagenes/PlantillaMealPlanningRellenada.png Graphic file (type png)
 <use ./imagenes/PlantillaMealPlanningRellenada.png>
 Package pdftex.def Info: ./imagenes/PlantillaMealPlanningRellenada.png  used on
- input line 216.
+ input line 282.
 (pdftex.def)             Requested size: 430.00462pt x 270.35887pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [14 <./imagenes/PlantillaTablaMealPlanning.png>]
-Underfull \hbox (badness 1546) in paragraph at lines 229--229
+ [16 <./imagenes/PlantillaTablaMealPlanning.png>]
+Underfull \hbox (badness 1546) in paragraph at lines 295--295
 []\OT1/cmr/m/n/10.95 Pollo a la plan-cha
  []
 
 
-Underfull \hbox (badness 5667) in paragraph at lines 231--231
+Underfull \hbox (badness 5667) in paragraph at lines 297--297
 \OT1/cmr/m/n/10.95 120 g; Le-chu-ga
  []
 
-[15 <./imagenes/PlantillaMealPlanningRellenada.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 288--288
+[17 <./imagenes/PlantillaMealPlanningRellenada.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 354--354
 []\OT1/cmr/bx/n/10.95 Cantidad a
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [16]
-[17] [18] [19]
-Overfull \hbox (5.07283pt too wide) in paragraph at lines 356--357
+ [18]
+[19] [20] [21]
+Overfull \hbox (5.07283pt too wide) in paragraph at lines 422--423
 []\OT1/cmr/bx/n/10.95 Desarrollo na-ti-vo (Kotli-n/-Ja-va pa-ra An-dro-id, Swif
 t/Objective[]C pa-ra iOS). 
  []
 
-[20] [21]
+[22] [23]
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 415.
- [22]
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 481.
+ [24]
 
-LaTeX Warning: Hyper reference `CustomPicker' on page 23 undefined on input lin
-e 433.
+LaTeX Warning: Hyper reference `CustomPicker' on page 25 undefined on input lin
+e 499.
 
 
-Overfull \hbox (38.59245pt too wide) in paragraph at lines 433--437
+Overfull \hbox (38.59245pt too wide) in paragraph at lines 499--503
 \OT1/cmr/m/n/10.95 el \OT1/cmtt/m/n/10.95 quantityType\OT1/cmr/m/n/10.95 (unida
 d de m^^Setri-ca del in-gre-dien-te). Al-ter-na-ti-vas: \OT1/cmtt/m/n/10.95 @re
 act-native-picker/picker
  []
 
 
-Overfull \hbox (84.03304pt too wide) in paragraph at lines 441--445
+Overfull \hbox (84.03304pt too wide) in paragraph at lines 507--511
 []\OT1/cmr/m/n/10.95 Librer^^S^^Pa de ges-ti^^Son de im^^Sage-nes me-dian-te bi
 -blio-te-cas na-ti-vas (por ejem-plo \OT1/cmtt/m/n/10.95 react-native-image-pic
 ker\OT1/cmr/m/n/10.95 ).
  []
 
-[23] [24] [25] [26] [27] [28]
+[25] [26] [27] [28] [29] [30]
 Cap\'{\i }tulo 3.
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--582
+Underfull \hbox (badness 10000) in paragraph at lines 645--648
 
  []
 
-[29
+[31
 
-] [30] [31]
+] [32] [33]
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: pdftex
 * paper: <default>
@@ -587,16 +587,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 579--582
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-<imagenes/class_diagram.png, id=576, 797.98125pt x 546.04pt>
+<imagenes/class_diagram.png, id=584, 797.98125pt x 546.04pt>
 File: imagenes/class_diagram.png Graphic file (type png)
 <use imagenes/class_diagram.png>
-Package pdftex.def Info: imagenes/class_diagram.png  used on input line 618.
+Package pdftex.def Info: imagenes/class_diagram.png  used on input line 684.
 (pdftex.def)             Requested size: 614.3257pt x 420.36877pt.
- [32
+ [34
 
 
  <./imagenes/class_diagram.png (PNG copy)>]
-Overfull \hbox (4.90071pt too wide) in paragraph at lines 630--641
+Overfull \hbox (4.90071pt too wide) in paragraph at lines 696--707
 \OT1/cmr/m/n/10.95 Finalmente, los dis-tin-tos \OT1/cmr/m/it/10.95 enums \OT1/c
 mr/m/n/10.95 (\OT1/cmtt/m/n/10.95 QuantityType\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/
 n/10.95 MealType\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/n/10.95 DaysOfWeek\OT1/cmr/m/n
@@ -606,493 +606,476 @@ n/10.95 MealType\OT1/cmr/m/n/10.95 , \OT1/cmtt/m/n/10.95 DaysOfWeek\OT1/cmr/m/n
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [33
+ [35
 
 
 ]
-[34]
-Underfull \hbox (badness 10000) in paragraph at lines 666--666
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 732--732
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 668--671
+Underfull \hbox (badness 10000) in paragraph at lines 734--737
 
  []
 
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 672.
-[35] [36] [37] [38]
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 738.
+[37] [38] [39] [40]
 
-LaTeX Warning: Reference `disenioDB' on page 39 undefined on input line 842.
+LaTeX Warning: Reference `disenioDB' on page 41 undefined on input line 908.
 
-[39] [40]
-<imagenes/LoginScreen.png, id=708, 307.1475pt x 691.08188pt>
+[41] [42]
+<imagenes/LoginScreen.png, id=715, 307.1475pt x 691.08188pt>
 File: imagenes/LoginScreen.png Graphic file (type png)
 <use imagenes/LoginScreen.png>
-Package pdftex.def Info: imagenes/LoginScreen.png  used on input line 930.
+Package pdftex.def Info: imagenes/LoginScreen.png  used on input line 996.
 (pdftex.def)             Requested size: 153.57336pt x 345.54008pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [41]
-[42 <./imagenes/LoginScreen.png>]
-Overfull \hbox (3.02774pt too wide) in paragraph at lines 968--969
+ [43]
+[44 <./imagenes/LoginScreen.png>]
+Overfull \hbox (3.02774pt too wide) in paragraph at lines 1034--1035
 []\OT1/cmr/bx/n/10.95 Adaptaci^^Son mul-ti-pla-ta-for-ma: \OT1/cmr/m/n/10.95 Al
  igual que en lo-gin, se usa \OT1/cmtt/m/n/10.95 KeyboardAvoidingView
  []
 
-<imagenes/RegisterScreen.png, id=721, 409.53pt x 921.4425pt>
+<imagenes/RegisterScreen.png, id=729, 409.53pt x 921.4425pt>
 File: imagenes/RegisterScreen.png Graphic file (type png)
 <use imagenes/RegisterScreen.png>
-Package pdftex.def Info: imagenes/RegisterScreen.png  used on input line 989.
+Package pdftex.def Info: imagenes/RegisterScreen.png  used on input line 1055.
 (pdftex.def)             Requested size: 204.7645pt x 460.72012pt.
-[43] [44 <./imagenes/RegisterScreen.png>]
+[45] [46 <./imagenes/RegisterScreen.png>]
 
-LaTeX Warning: Hyper reference `RecipesScreen' on page 45 undefined on input li
-ne 1002.
+LaTeX Warning: Hyper reference `RecipesScreen' on page 47 undefined on input li
+ne 1068.
 
-[45]
-Overfull \hbox (23.23941pt too wide) in paragraph at lines 1052--1053
+[47]
+Overfull \hbox (23.23941pt too wide) in paragraph at lines 1118--1119
 []\OT1/cmr/bx/n/10.95 Contenedor prin-ci-pal: \OT1/cmr/m/n/10.95 Uti-li-za \OT1
 /cmtt/m/n/10.95 flex: 1 \OT1/cmr/m/n/10.95 con fon-do de-fi-ni-do en \OT1/cmtt/
 m/n/10.95 screensBackgroundColor 
  []
 
-<imagenes/MainScreenScreenshot.png, id=739, 1084.05pt x 2409.0pt>
+<imagenes/MainScreenScreenshot.png, id=746, 1084.05pt x 2409.0pt>
 File: imagenes/MainScreenScreenshot.png Graphic file (type png)
 <use imagenes/MainScreenScreenshot.png>
 Package pdftex.def Info: imagenes/MainScreenScreenshot.png  used on input line 
-1062.
+1128.
 (pdftex.def)             Requested size: 216.80615pt x 481.79147pt.
-[46] [47 <./imagenes/MainScreenScreenshot.png>] [48]
-<imagenes/RecipesScreen.jpeg, id=756, 751.80875pt x 1606.0pt>
+[48] [49 <./imagenes/MainScreenScreenshot.png>] [50]
+<imagenes/RecipesScreen.jpeg, id=764, 751.80875pt x 1606.0pt>
 File: imagenes/RecipesScreen.jpeg Graphic file (type jpg)
 <use imagenes/RecipesScreen.jpeg>
-Package pdftex.def Info: imagenes/RecipesScreen.jpeg  used on input line 1111.
+Package pdftex.def Info: imagenes/RecipesScreen.jpeg  used on input line 1177.
 (pdftex.def)             Requested size: 225.54436pt x 481.80373pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [49]
-[50 <./imagenes/RecipesScreen.jpeg>] [51]
-<imagenes/RecipeScreen.jpeg, id=772, 722.7pt x 1606.0pt>
+ [51]
+[52 <./imagenes/RecipesScreen.jpeg>] [53]
+<imagenes/RecipeScreen.jpeg, id=779, 722.7pt x 1606.0pt>
 File: imagenes/RecipeScreen.jpeg Graphic file (type jpg)
 <use imagenes/RecipeScreen.jpeg>
-Package pdftex.def Info: imagenes/RecipeScreen.jpeg  used on input line 1164.
+Package pdftex.def Info: imagenes/RecipeScreen.jpeg  used on input line 1230.
 (pdftex.def)             Requested size: 144.53743pt x 321.19432pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [52]
-Overfull \hbox (77.04036pt too wide) in paragraph at lines 1185--1186
+ [54]
+Overfull \hbox (77.04036pt too wide) in paragraph at lines 1251--1252
 []\OT1/cmr/m/n/10.95 Un bot^^Son flo-tan-te pa-ra a~nadir nue-vos in-gre-dien-t
 es a la des-pen-sa me-dian-te el \OT1/cmtt/m/n/10.95 IngredientSearchModal\OT1/
 cmr/m/n/10.95 . 
  []
 
-[53 <./imagenes/RecipeScreen.jpeg>]
-<imagenes/PantryScreen.jpeg, id=784, 722.7pt x 1606.0pt>
+[55 <./imagenes/RecipeScreen.jpeg>]
+<imagenes/PantryScreen.jpeg, id=792, 722.7pt x 1606.0pt>
 File: imagenes/PantryScreen.jpeg Graphic file (type jpg)
 <use imagenes/PantryScreen.jpeg>
-Package pdftex.def Info: imagenes/PantryScreen.jpeg  used on input line 1195.
+Package pdftex.def Info: imagenes/PantryScreen.jpeg  used on input line 1261.
 (pdftex.def)             Requested size: 216.81166pt x 481.80373pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [54]
-[55 <./imagenes/PantryScreen.jpeg>]
-<imagenes/GroceryListScreen.jpeg, id=796, 722.7pt x 1606.0pt>
+ [56]
+[57 <./imagenes/PantryScreen.jpeg>]
+<imagenes/GroceryListScreen.jpeg, id=803, 722.7pt x 1606.0pt>
 File: imagenes/GroceryListScreen.jpeg Graphic file (type jpg)
 <use imagenes/GroceryListScreen.jpeg>
 Package pdftex.def Info: imagenes/GroceryListScreen.jpeg  used on input line 12
-29.
+95.
 (pdftex.def)             Requested size: 216.81166pt x 481.80373pt.
- [56]
+ [58]
 Underfull \vbox (badness 2818) has occurred while \output is active []
 
- [57 <./imagenes/GroceryListScreen.jpeg>]
+ [59 <./imagenes/GroceryListScreen.jpeg>]
 
-LaTeX Warning: Hyper reference `RegisterScreen' on page 58 undefined on input l
-ine 1238.
-
-
-LaTeX Warning: Hyper reference `RecipesScreen' on page 58 undefined on input li
-ne 1238.
+LaTeX Warning: Hyper reference `RegisterScreen' on page 60 undefined on input l
+ine 1304.
 
 
-LaTeX Warning: Hyper reference `PantryScreen' on page 58 undefined on input lin
-e 1238.
+LaTeX Warning: Hyper reference `RecipesScreen' on page 60 undefined on input li
+ne 1304.
 
 
-LaTeX Warning: Hyper reference `GroceryListScreen' on page 58 undefined on inpu
-t line 1238.
+LaTeX Warning: Hyper reference `PantryScreen' on page 60 undefined on input lin
+e 1304.
 
 
-LaTeX Warning: Hyper reference `RecipesScreen' on page 58 undefined on input li
-ne 1239.
+LaTeX Warning: Hyper reference `GroceryListScreen' on page 60 undefined on inpu
+t line 1304.
 
 
-LaTeX Warning: Hyper reference `RecipeScreen' on page 58 undefined on input lin
-e 1239.
+LaTeX Warning: Hyper reference `RecipesScreen' on page 60 undefined on input li
+ne 1305.
 
-<imagenes/navigation_flow.png, id=808, 1325.95375pt x 730.73pt>
+
+LaTeX Warning: Hyper reference `RecipeScreen' on page 60 undefined on input lin
+e 1305.
+
+<imagenes/navigation_flow.png, id=816, 1325.95375pt x 730.73pt>
 File: imagenes/navigation_flow.png Graphic file (type png)
 <use imagenes/navigation_flow.png>
-Package pdftex.def Info: imagenes/navigation_flow.png  used on input line 1243.
+Package pdftex.def Info: imagenes/navigation_flow.png  used on input line 1309.
 
 (pdftex.def)             Requested size: 430.00462pt x 236.97153pt.
-[58 <./imagenes/navigation_flow.png (PNG copy)>] [59]
-Overfull \hbox (3.95491pt too wide) in paragraph at lines 1326--1328
+[60 <./imagenes/navigation_flow.png (PNG copy)>] [61]
+Overfull \hbox (3.95491pt too wide) in paragraph at lines 1392--1394
 []$[]$ \OT1/cmr/m/n/10.95 Se usa el icono de \m^^Sas"
  []
 
-[60]
-Overfull \hbox (4.10063pt too wide) in paragraph at lines 1332--1334
+[62]
+Overfull \hbox (4.10063pt too wide) in paragraph at lines 1398--1400
 []$[]$ \OT1/cmr/m/n/10.95 Se uti-li-za un
  []
 
 
-Overfull \hbox (5.50806pt too wide) in paragraph at lines 1336--1338
+Overfull \hbox (5.50806pt too wide) in paragraph at lines 1402--1404
 []$[]$ \OT1/cmr/m/n/10.95 El cu-bo de ba-su-ra es inequ^^S^^Pvo-
  []
 
 
-Overfull \hbox (2.77943pt too wide) in paragraph at lines 1342--1344
+Overfull \hbox (2.77943pt too wide) in paragraph at lines 1408--1410
 []$[]$ \OT1/cmr/m/n/10.95 La mar-ca de ve-
  []
 
-[61]
-Underfull \hbox (badness 10000) in paragraph at lines 1359--1360
+[63]
+Underfull \hbox (badness 10000) in paragraph at lines 1425--1426
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1359--1360
+Underfull \hbox (badness 10000) in paragraph at lines 1425--1426
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1361--1362
+Underfull \hbox (badness 10000) in paragraph at lines 1427--1428
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1379--1380
+Underfull \hbox (badness 10000) in paragraph at lines 1445--1446
 
  []
 
-[62]
-<imagenes/ButtonGroup.png, id=845, 292.09125pt x 66.2475pt>
+[64]
+<imagenes/ButtonGroup.png, id=852, 292.09125pt x 66.2475pt>
 File: imagenes/ButtonGroup.png Graphic file (type png)
 <use imagenes/ButtonGroup.png>
-Package pdftex.def Info: imagenes/ButtonGroup.png  used on input line 1389.
+Package pdftex.def Info: imagenes/ButtonGroup.png  used on input line 1455.
 (pdftex.def)             Requested size: 292.09052pt x 66.24733pt.
 
 
-LaTeX Warning: Hyper reference `RecipeScreen' on page 63 undefined on input lin
-e 1401.
+LaTeX Warning: Hyper reference `RecipeScreen' on page 65 undefined on input lin
+e 1467.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1401--1402
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1404--1405
+Underfull \hbox (badness 10000) in paragraph at lines 1467--1468
 
  []
 
-[63 <./imagenes/ButtonGroup.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1413--1414
+
+Underfull \hbox (badness 10000) in paragraph at lines 1470--1471
 
  []
 
-<imagenes/IngredientCard.png, id=855, 261.22594pt x 63.98906pt>
+[65 <./imagenes/ButtonGroup.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1479--1480
+
+ []
+
+<imagenes/IngredientCard.png, id=862, 261.22594pt x 63.98906pt>
 File: imagenes/IngredientCard.png Graphic file (type png)
 <use imagenes/IngredientCard.png>
-Package pdftex.def Info: imagenes/IngredientCard.png  used on input line 1435.
+Package pdftex.def Info: imagenes/IngredientCard.png  used on input line 1501.
 (pdftex.def)             Requested size: 261.22528pt x 63.98889pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1448--1449
+Underfull \hbox (badness 10000) in paragraph at lines 1514--1515
 
  []
 
-[64 <./imagenes/IngredientCard.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1450--1451
+[66 <./imagenes/IngredientCard.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1516--1517
 
  []
 
-<imagenes/AppHeader.png, id=871, 284.56313pt x 44.41594pt>
+<imagenes/AppHeader.png, id=878, 284.56313pt x 44.41594pt>
 File: imagenes/AppHeader.png Graphic file (type png)
 <use imagenes/AppHeader.png>
-Package pdftex.def Info: imagenes/AppHeader.png  used on input line 1459.
+Package pdftex.def Info: imagenes/AppHeader.png  used on input line 1525.
 (pdftex.def)             Requested size: 284.56242pt x 44.41582pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1471--1472
+Underfull \hbox (badness 10000) in paragraph at lines 1537--1538
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1471--1472
+Underfull \hbox (badness 10000) in paragraph at lines 1537--1538
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 1473--1474
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1480--1481
-
- []
-
-[65 <./imagenes/AppHeader.png>]
-<imagenes/HeaderComponent.png, id=883, 282.30469pt x 108.405pt>
-File: imagenes/HeaderComponent.png Graphic file (type png)
-<use imagenes/HeaderComponent.png>
-Package pdftex.def Info: imagenes/HeaderComponent.png  used on input line 1489.
-
-(pdftex.def)             Requested size: 282.30399pt x 108.40472pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 1501--1502
-
- []
-
-
-Overfull \hbox (37.68146pt too wide) in paragraph at lines 1501--1502
-[] \OT1/cmr/m/n/10.95 Es-te com-po-nen-te es una uni-dad de in-ter-faz que re-c
-i-be co-mo en-tra-da un ob-je-to \OT1/cmtt/m/n/10.95 RecipeIngredient
- []
-
-[66 <./imagenes/HeaderComponent.png>]
-<imagenes/IngredientComponent.png, id=890, 242.40562pt x 79.79813pt>
-File: imagenes/IngredientComponent.png Graphic file (type png)
-<use imagenes/IngredientComponent.png>
-Package pdftex.def Info: imagenes/IngredientComponent.png  used on input line 1
-524.
-(pdftex.def)             Requested size: 242.40501pt x 79.79791pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 1539--1540
 
  []
 
-<imagenes/AddIngredientModal.png, id=892, 271.76532pt x 194.97844pt>
-File: imagenes/AddIngredientModal.png Graphic file (type png)
-<use imagenes/AddIngredientModal.png>
-Package pdftex.def Info: imagenes/AddIngredientModal.png  used on input line 15
-43.
-(pdftex.def)             Requested size: 271.76465pt x 194.97795pt.
-[67 <./imagenes/IngredientComponent.png>]
 
-LaTeX Warning: Hyper reference `Recipe' on page 68 undefined on input line 1548
-.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1548--1549
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1547
 
  []
 
-<imagenes/AddRecipeModal.png, id=903, 307.1475pt x 691.08188pt>
+[67 <./imagenes/AppHeader.png>]
+<imagenes/HeaderComponent.png, id=891, 282.30469pt x 108.405pt>
+File: imagenes/HeaderComponent.png Graphic file (type png)
+<use imagenes/HeaderComponent.png>
+Package pdftex.def Info: imagenes/HeaderComponent.png  used on input line 1555.
+
+(pdftex.def)             Requested size: 282.30399pt x 108.40472pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1567--1568
+
+ []
+
+
+Overfull \hbox (37.68146pt too wide) in paragraph at lines 1567--1568
+[] \OT1/cmr/m/n/10.95 Es-te com-po-nen-te es una uni-dad de in-ter-faz que re-c
+i-be co-mo en-tra-da un ob-je-to \OT1/cmtt/m/n/10.95 RecipeIngredient
+ []
+
+[68 <./imagenes/HeaderComponent.png>]
+<imagenes/IngredientComponent.png, id=898, 242.40562pt x 79.79813pt>
+File: imagenes/IngredientComponent.png Graphic file (type png)
+<use imagenes/IngredientComponent.png>
+Package pdftex.def Info: imagenes/IngredientComponent.png  used on input line 1
+590.
+(pdftex.def)             Requested size: 242.40501pt x 79.79791pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1605--1606
+
+ []
+
+<imagenes/AddIngredientModal.png, id=900, 271.76532pt x 194.97844pt>
+File: imagenes/AddIngredientModal.png Graphic file (type png)
+<use imagenes/AddIngredientModal.png>
+Package pdftex.def Info: imagenes/AddIngredientModal.png  used on input line 16
+09.
+(pdftex.def)             Requested size: 271.76465pt x 194.97795pt.
+[69 <./imagenes/IngredientComponent.png>]
+
+LaTeX Warning: Hyper reference `Recipe' on page 70 undefined on input line 1614
+.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1614--1615
+
+ []
+
+<imagenes/AddRecipeModal.png, id=910, 307.1475pt x 691.08188pt>
 File: imagenes/AddRecipeModal.png Graphic file (type png)
 <use imagenes/AddRecipeModal.png>
-Package pdftex.def Info: imagenes/AddRecipeModal.png  used on input line 1552.
+Package pdftex.def Info: imagenes/AddRecipeModal.png  used on input line 1618.
 (pdftex.def)             Requested size: 307.14674pt x 691.08018pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [68 <./imagenes/AddIngredientModal.png>]
+ [70 <./imagenes/AddIngredientModal.png>]
 Overfull \vbox (160.3328pt too high) has occurred while \output is active []
 
 
-[69 <./imagenes/AddRecipeModal.png>]
-<imagenes/AddRecipeModalSegundaParte.png, id=918, 307.1475pt x 691.08188pt>
+[71 <./imagenes/AddRecipeModal.png>]
+<imagenes/AddRecipeModalSegundaParte.png, id=925, 307.1475pt x 691.08188pt>
 File: imagenes/AddRecipeModalSegundaParte.png Graphic file (type png)
 <use imagenes/AddRecipeModalSegundaParte.png>
 Package pdftex.def Info: imagenes/AddRecipeModalSegundaParte.png  used on input
- line 1561.
-(pdftex.def)             Requested size: 307.14674pt x 691.08018pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [70]
-Overfull \vbox (160.94112pt too high) has occurred while \output is active []
-
-
-[71 <./imagenes/AddRecipeModalSegundaParte.png>]
-<imagenes/AddRecipeModalTerceraParte.png, id=930, 307.1475pt x 691.08188pt>
-File: imagenes/AddRecipeModalTerceraParte.png Graphic file (type png)
-<use imagenes/AddRecipeModalTerceraParte.png>
-Package pdftex.def Info: imagenes/AddRecipeModalTerceraParte.png  used on input
- line 1570.
+ line 1627.
 (pdftex.def)             Requested size: 307.14674pt x 691.08018pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [72]
+Overfull \vbox (160.94112pt too high) has occurred while \output is active []
+
+
+[73 <./imagenes/AddRecipeModalSegundaParte.png>]
+<imagenes/AddRecipeModalTerceraParte.png, id=938, 307.1475pt x 691.08188pt>
+File: imagenes/AddRecipeModalTerceraParte.png Graphic file (type png)
+<use imagenes/AddRecipeModalTerceraParte.png>
+Package pdftex.def Info: imagenes/AddRecipeModalTerceraParte.png  used on input
+ line 1636.
+(pdftex.def)             Requested size: 307.14674pt x 691.08018pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [74]
 Overfull \vbox (160.3328pt too high) has occurred while \output is active []
 
 
-[73 <./imagenes/AddRecipeModalTerceraParte.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 1576--1577
+[75 <./imagenes/AddRecipeModalTerceraParte.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1642--1643
 
  []
 
-<imagenes/IngredientSearchModal.png, id=941, 265.74281pt x 125.71968pt>
+<imagenes/IngredientSearchModal.png, id=949, 265.74281pt x 125.71968pt>
 File: imagenes/IngredientSearchModal.png Graphic file (type png)
 <use imagenes/IngredientSearchModal.png>
 Package pdftex.def Info: imagenes/IngredientSearchModal.png  used on input line
- 1580.
+ 1646.
 (pdftex.def)             Requested size: 265.74216pt x 125.71936pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1586--1587
+Underfull \hbox (badness 10000) in paragraph at lines 1652--1653
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1591--1592
+Underfull \hbox (badness 10000) in paragraph at lines 1657--1658
 
  []
 
-[74 <./imagenes/IngredientSearchModal.png>]
-<imagenes/CustomPicker.png, id=950, 246.9225pt x 85.06781pt>
+[76 <./imagenes/IngredientSearchModal.png>]
+<imagenes/CustomPicker.png, id=957, 246.9225pt x 85.06781pt>
 File: imagenes/CustomPicker.png Graphic file (type png)
 <use imagenes/CustomPicker.png>
-Package pdftex.def Info: imagenes/CustomPicker.png  used on input line 1595.
+Package pdftex.def Info: imagenes/CustomPicker.png  used on input line 1661.
 (pdftex.def)             Requested size: 246.92188pt x 85.0676pt.
-<imagenes/CustomPickerModal.png, id=951, 242.40562pt x 341.77687pt>
+<imagenes/CustomPickerModal.png, id=958, 242.40562pt x 341.77687pt>
 File: imagenes/CustomPickerModal.png Graphic file (type png)
 <use imagenes/CustomPickerModal.png>
-Package pdftex.def Info: imagenes/CustomPickerModal.png  used on input line 160
-2.
+Package pdftex.def Info: imagenes/CustomPickerModal.png  used on input line 166
+8.
 (pdftex.def)             Requested size: 242.40501pt x 341.77603pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1608--1609
+Underfull \hbox (badness 10000) in paragraph at lines 1674--1675
 
  []
 
 
 Underfull \vbox (badness 1122) has occurred while \output is active []
 
- [75 <./imagenes/CustomPicker.png> <./imagenes/CustomPickerModal.png>]
-<imagenes/AddIngredientButton.png, id=959, 31.61812pt x 30.86531pt>
+ [77 <./imagenes/CustomPicker.png> <./imagenes/CustomPickerModal.png>]
+<imagenes/AddIngredientButton.png, id=966, 31.61812pt x 30.86531pt>
 File: imagenes/AddIngredientButton.png Graphic file (type png)
 <use imagenes/AddIngredientButton.png>
 Package pdftex.def Info: imagenes/AddIngredientButton.png  used on input line 1
-612.
+678.
 (pdftex.def)             Requested size: 31.61803pt x 30.86522pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1618--1619
+Underfull \hbox (badness 10000) in paragraph at lines 1684--1685
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1622--1623
+Underfull \hbox (badness 10000) in paragraph at lines 1688--1689
 
  []
 
-<imagenes/MealPicker.png, id=961, 292.09125pt x 54.9553pt>
+<imagenes/MealPicker.png, id=968, 292.09125pt x 54.9553pt>
 File: imagenes/MealPicker.png Graphic file (type png)
 <use imagenes/MealPicker.png>
-Package pdftex.def Info: imagenes/MealPicker.png  used on input line 1626.
+Package pdftex.def Info: imagenes/MealPicker.png  used on input line 1692.
 (pdftex.def)             Requested size: 292.09052pt x 54.95515pt.
-[76 <./imagenes/AddIngredientButton.png> <./imagenes/MealPicker.png>]
+[78 <./imagenes/AddIngredientButton.png> <./imagenes/MealPicker.png>]
 File: imagenes/MainScreenScreenshot.png Graphic file (type png)
 <use imagenes/MainScreenScreenshot.png>
 Package pdftex.def Info: imagenes/MainScreenScreenshot.png  used on input line 
-1640.
+1706.
 (pdftex.def)             Requested size: 108.41135pt x 240.91411pt.
 File: imagenes/RecipesScreen.jpeg Graphic file (type jpg)
 <use imagenes/RecipesScreen.jpeg>
-Package pdftex.def Info: imagenes/RecipesScreen.jpeg  used on input line 1650.
+Package pdftex.def Info: imagenes/RecipesScreen.jpeg  used on input line 1716.
 (pdftex.def)             Requested size: 75.18527pt x 160.6094pt.
- [77]
-<imagenes/RecipeOptionsModal.jpeg, id=980, 1084.05pt x 943.525pt>
+ [79]
+<imagenes/RecipeOptionsModal.jpeg, id=988, 1084.05pt x 943.525pt>
 File: imagenes/RecipeOptionsModal.jpeg Graphic file (type jpg)
 <use imagenes/RecipeOptionsModal.jpeg>
 Package pdftex.def Info: imagenes/RecipeOptionsModal.jpeg  used on input line 1
-660.
+726.
 (pdftex.def)             Requested size: 216.80615pt x 188.70164pt.
 
 Underfull \vbox (badness 5548) has occurred while \output is active []
 
- [78 <./imagenes/RecipeOptionsModal.jpeg>]
-<imagenes/PlanMealModal.png, id=987, 282.30469pt x 485.56406pt>
+ [80 <./imagenes/RecipeOptionsModal.jpeg>]
+<imagenes/PlanMealModal.png, id=995, 282.30469pt x 485.56406pt>
 File: imagenes/PlanMealModal.png Graphic file (type png)
 <use imagenes/PlanMealModal.png>
-Package pdftex.def Info: imagenes/PlanMealModal.png  used on input line 1670.
+Package pdftex.def Info: imagenes/PlanMealModal.png  used on input line 1736.
 (pdftex.def)             Requested size: 141.152pt x 242.78143pt.
 
-Overfull \hbox (3.6901pt too wide) in paragraph at lines 1676--1677
+Overfull \hbox (3.6901pt too wide) in paragraph at lines 1742--1743
  []\OT1/cmr/bx/n/10.95 PlannedIngredientOptionsModal[] \OT1/cmr/m/n/10.95 El mo
 -dal \OT1/cmtt/m/n/10.95 PlannedIngredeintOptionsModal \OT1/cmr/m/n/10.95 (nom-
 
  []
 
-<imagenes/IngredientOptionsModal.jpeg, id=989, 1084.05pt x 935.495pt>
+<imagenes/IngredientOptionsModal.jpeg, id=997, 1084.05pt x 935.495pt>
 File: imagenes/IngredientOptionsModal.jpeg Graphic file (type jpg)
 <use imagenes/IngredientOptionsModal.jpeg>
 Package pdftex.def Info: imagenes/IngredientOptionsModal.jpeg  used on input li
-ne 1680.
+ne 1746.
 (pdftex.def)             Requested size: 216.80615pt x 187.09567pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [79 <./imagenes/PlanMealModal.png>] [80 <./imagenes/IngredientOptionsModal.jpe
+ [81 <./imagenes/PlanMealModal.png>] [82 <./imagenes/IngredientOptionsModal.jpe
 g>]
-[81]
-Underfull \hbox (badness 10000) in paragraph at lines 1717--1720
-
- []
-
-[82]
-Underfull \hbox (badness 10000) in paragraph at lines 1748--1752
-
- []
-
 [83]
-Cap\'{\i }tulo 4.
+Underfull \hbox (badness 10000) in paragraph at lines 1783--1786
 
-Overfull \hbox (4.98248pt too wide) in paragraph at lines 1765--1766
-\OT1/cmr/m/n/10.95 se im-ple-men-ta-ron nue-vos ser-vi-cios en la ca-pa de da-t
-os (\OT1/cmtt/m/n/10.95 ingredientPantry-db-services.ts
  []
 
+[84]
+Underfull \hbox (badness 10000) in paragraph at lines 1814--1818
 
-Underfull \vbox (badness 3271) has occurred while \output is active []
+ []
 
- [84
+[85]
+Cap\'{\i }tulo 4.
+[86
 
 ]
 
-LaTeX Warning: Citation `sus' on page 85 undefined on input line 1774.
+LaTeX Warning: Citation `sus' on page 87 undefined on input line 1836.
 
-
-Underfull \vbox (badness 1264) has occurred while \output is active []
-
- [85]
-[86]
+[87] [88]
 Cap\'{\i }tulo 5.
-LaTeX Font Info:    Trying to load font information for U+lasy on input line 17
-81.
+LaTeX Font Info:    Trying to load font information for U+lasy on input line 18
+43.
 (/usr/share/texlive/texmf-dist/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [87
+ [89
 
 ]
-[88] [89]
+[90] [91]
 Cap\'{\i }tulo 6.
+[92
 
-Underfull \vbox (badness 5475) has occurred while \output is active []
-
- [90
-
-]
-[91] (./proyecto.bbl
+] [93] (./proyecto.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 10--15
 []\OT1/cmr/m/sc/10.95 Business Re-search In-sights\OT1/cmr/m/n/10.95 .  Meal pl
 an-ning app mar-ket re-
@@ -1122,7 +1105,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 50--55
 / about-[]us / news / news-[]2014 /
  []
 
-[92
+[94
 
 
 ]
@@ -1131,7 +1114,7 @@ Underfull \hbox (badness 7685) in paragraph at lines 80--85
 n-su-mer health and nu-tri-
  []
 
-) [93] (./proyecto.aux
+) [95] (./proyecto.aux
 LaTeX Info: Redefining \. on input line 25.
 LaTeX Info: Redefining \% on input line 25.
 )
@@ -1139,14 +1122,14 @@ LaTeX Info: Redefining \% on input line 25.
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `proyecto.out' has not changed.
-(rerunfilecheck)             Checksum: 6A979B2DE2A36C6D071E7A6E13ADFBFD;8260.
+(rerunfilecheck)             Checksum: A9678FDA7B3BCDB390983B5036B89092;8780.
  ) 
 Here is how much of TeX's memory you used:
- 13147 strings out of 480185
- 205459 string characters out of 5894212
- 616179 words of memory out of 5000000
+ 13150 strings out of 480185
+ 205489 string characters out of 5894212
+ 616187 words of memory out of 5000000
  30523 multiletter control sequences out of 15000+600000
- 476818 words of font info for 54 fonts, out of 8000000 for 9000
+ 477177 words of font info for 55 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
  60i,11n,63p,1287b,1939s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/rouk/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095.600p
@@ -1158,10 +1141,10 @@ xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive
 dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/public/amsfonts/latxfont/lasy10.pfb>
-Output written on proyecto.pdf (93 pages, 1474514 bytes).
+Output written on proyecto.pdf (95 pages, 1481589 bytes).
 PDF statistics:
- 1216 PDF objects out of 1440 (max. 8388607)
- 1033 compressed objects within 11 object streams
- 402 named destinations out of 1000 (max. 500000)
- 535 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1224 PDF objects out of 1440 (max. 8388607)
+ 1039 compressed objects within 11 object streams
+ 405 named destinations out of 1000 (max. 500000)
+ 527 words of extra memory for PDF output out of 10000 (max. 10000000)
 

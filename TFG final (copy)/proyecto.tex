@@ -39,11 +39,11 @@
 
 \textbf{Autor}\\ {Aissa Rouk El Masoudi}\\[2.5ex]
 \textbf{Directores}\\
-{CARLOS RODRIGUEZ DOMINGUEZ}\\[2cm]
+{CARLOS RODRÍGUEZ DOMÍNGUEZ}\\[2cm]
 \includegraphics[width=0.3\textwidth]{imagenes/logo-ceuta.jpg}\\[0.1cm]
 \textsc{Facultad de Educación, Tecnología y Economía de Ceuta}\\
 \textsc{---}\\
-Granada, 15 de Junio de 2025
+Granada, 5 de noviembre de 2025
 \end{minipage}
 \end{titlepage}
 \let\cleardoublepage\clearpage
@@ -89,16 +89,82 @@ Granada, 15 de Junio de 2025
 \addcontentsline{toc}{chapter}{Resumen} 
 \markboth{RESUMEN}{RESUMEN} 
 \thispagestyle{empty}
-La Organización mundial de la salud (OMS) cita que en 2022 el 43\% de los adultos en el mundo sufren de sobrepeso, y el 16\% padecía obesidad, lo que equivale a unos 890 millones de adultos obesos\cite{OMSObesidadySobrepeso}. Desde 1990, el número de personas con obesidad se han más que duplicado entre los adultos y se han cuadruplicado entre los adolescentes\cite{ONUAAComercioAlimentosyObesidad}.
-\\Esta situación afecta a personas de todas las edades, regiones y tiene graves consecuencias para la salud, economía y los sistemas sanitarios; y hace cada vez más urgente fomentar hábitos alimentarios saludables y estrategias que promuevan una alimentación consciente, eficiente y sostenible.
-\\De este contexto surge NutriPlan, una aplicación de Meal Planning y gestión de recetas cuyo objetivo es fomentar un estilo de vida saludable, económico y sostenible, reduciendo el desperdicio de alimentos. 
-Esta idea surgió en mi experiencia como estudiante Erasmus, dónde descubrí que al realizar la lista de la compra manualmente y verificar cuáles ingredientes tenía, se ahorraba más dinero en la compra, desperdiciaba menos comida y lo más importante, comía sano.
+La Organización Mundial de la Salud (OMS) cita que en 2022 el 43\% de los adultos en el mundo sufría de sobrepeso, y el 16\% padecía obesidad, lo que equivale a unos 890 millones de adultos obesos\cite{OMSObesidadySobrepeso}. Desde 1990, el número de personas con obesidad se ha más que duplicado entre los adultos y se ha cuadruplicado entre los adolescentes\cite{ONUAAComercioAlimentosyObesidad}.
+\\Esta situación afecta a personas de todas las edades, regiones y tiene graves consecuencias para la salud, la economía y los sistemas sanitarios; y hace cada vez más urgente fomentar hábitos alimentarios saludables y estrategias que promuevan una alimentación consciente, eficiente y sostenible.
+\\De este contexto surge NutriPlan, una aplicación de \textit{Meal Planning} y gestión de recetas cuyo objetivo es fomentar un estilo de vida saludable, económico y sostenible, reduciendo el desperdicio de alimentos. 
+Esta idea surgió en mi experiencia como estudiante Erasmus, donde descubrí que al realizar la lista de la compra manualmente y verificar cuáles ingredientes tenía, se ahorraba más dinero en la compra, desperdiciaba menos comida y lo más importante, comía sano.
+\\
+\textbf{Palabras clave:} planificación dietética, gestión de recetas, aplicaciones móviles, React Native, sostenibilidad, usabilidad, desperdicio de alimentos.
+
+
+	\section*{Justificación de Palabras Clave (para Repositorio)}
+	
+	\begin{description}
+		\item[\textbf{Planificación dietética}]
+		Proceso sistemático que implica la organización anticipada de comidas y menús semanales. En el contexto de NutriPlan, se refiere a la herramienta central que ayuda al usuario a establecer y seguir sus objetivos nutricionales a largo plazo.
+		
+		\item[\textbf{Gestión de recetas}]
+		Funcionalidad principal del sistema que permite al usuario almacenar, clasificar y modificar sus propias recetas y listas de ingredientes. Es la base de datos de contenido sobre la que se apoya toda la planificación semanal.
+		
+		\item[\textbf{Aplicaciones móviles}]
+		Plataforma de desarrollo elegida para el TFG. Se refiere al software diseñado específicamente para operar en sistemas operativos iOS y Android, ofreciendo portabilidad y acceso constante a la herramienta.
+		
+		\item[\textbf{React Native}]
+		Framework de código abierto seleccionado para el desarrollo multiplataforma de la aplicación. Su uso justifica la eficiencia en la unificación de la base de código y la capacidad de despliegue en múltiples entornos.
+		
+		\item[\textbf{Sostenibilidad}]
+		Eje transversal del proyecto que se centra en el impacto económico y ambiental de las elecciones alimentarias. La aplicación contribuye a la sostenibilidad al promover el consumo consciente y la compra eficiente.
+		
+		\item[\textbf{Usabilidad}]
+		Medida de la calidad de la interacción entre el usuario y NutriPlan. Se evalúa con el objetivo de asegurar que la aplicación es intuitiva, fácil de aprender y eficiente, factor clave para la retención y satisfacción del usuario.
+		
+		\item[\textbf{Desperdicio de alimentos}]
+		Uno de los problemas sociales que el proyecto busca mitigar. La aplicación aborda este desafío de manera directa al optimizar las listas de la compra basándose en los ingredientes disponibles y los planes de comidas.
+		
+		\item[\textbf{Firebase}]
+		Tecnología \textit{Backend as a Service} (BaaS) empleada para la persistencia de datos (NoSQL) y la gestión de la autenticación de usuarios. Es un componente fundamental en la arquitectura del sistema.
+	\end{description}
 
 \chapter*{Abstract} % si no queremos que añada la palabra "Capitulo"
 \addcontentsline{toc}{chapter}{Abstract} % si queremos que aparezca en el índice
 \markboth{ABSTRACT}{ABSTRACT} % encabezado
 \thispagestyle{empty}
-This project will proceed with the design and development of a recipe application...
+The World Health Organization (WHO) reports that in 2022 43\% of adults in the world are overweight, and 16\% of them suffered from obesity, which is equivalent to aproximately 890 million obese adults\cite{OMSObesidadySobrepeso}. Since 1990 the number of people with obesity have more than doubled in adults and quadrupled among adolescents\cite{ONUAAComercioAlimentosyObesidad}.
+\\This situation affects people from all ages, regions and has serious consequences on health, the economy, and healthcare systems; making it increasingly urgent to promote healthy eating habits and strategies to promote a conscious, efficient and sustainable feeding.
+\\NutriPlan stems from this context, a \textit{meal planning} and recipe managing app whose goal is to encourage a healthy, sustainable and economical lifestile.\\
+This idea came from my Erasmus exchange, where I discovered that when I made a grocery list and verified the ingredients I had in my pantry before doing the groceries themselves, I saved more money in these, I wasted less food and most importantly, I ate healthy.
+
+\textbf{\\Palabras clave:} planificación dietética, gestión de recetas, aplicaciones móviles, React Native, sostenibilidad, usabilidad, desperdicio de alimentos.
+
+
+
+\section*{Justificación de Palabras Clave (para Repositorio)}
+
+\begin{description}
+	\item[\textbf{Planificación dietética}]
+	Proceso sistemático que implica la organización anticipada de comidas y menús semanales. En el contexto de NutriPlan, se refiere a la herramienta central que ayuda al usuario a establecer y seguir sus objetivos nutricionales a largo plazo.
+	
+	\item[\textbf{Gestión de recetas}]
+	Funcionalidad principal del sistema que permite al usuario almacenar, clasificar y modificar sus propias recetas y listas de ingredientes. Es la base de datos de contenido sobre la que se apoya toda la planificación semanal.
+	
+	\item[\textbf{Aplicaciones móviles}]
+	Plataforma de desarrollo elegida para el TFG. Se refiere al software diseñado específicamente para operar en sistemas operativos iOS y Android, ofreciendo portabilidad y acceso constante a la herramienta.
+	
+	\item[\textbf{React Native}]
+	Framework de código abierto seleccionado para el desarrollo multiplataforma de la aplicación. Su uso justifica la eficiencia en la unificación de la base de código y la capacidad de despliegue en múltiples entornos.
+	
+	\item[\textbf{Sostenibilidad}]
+	Eje transversal del proyecto que se centra en el impacto económico y ambiental de las elecciones alimentarias. La aplicación contribuye a la sostenibilidad al promover el consumo consciente y la compra eficiente.
+	
+	\item[\textbf{Usabilidad}]
+	Medida de la calidad de la interacción entre el usuario y NutriPlan. Se evalúa con el objetivo de asegurar que la aplicación es intuitiva, fácil de aprender y eficiente, factor clave para la retención y satisfacción del usuario.
+	
+	\item[\textbf{Desperdicio de alimentos}]
+	Uno de los problemas sociales que el proyecto busca mitigar. La aplicación aborda este desafío de manera directa al optimizar las listas de la compra basándose en los ingredientes disponibles y los planes de comidas.
+	
+	\item[\textbf{Firebase}]
+	Tecnología \textit{Backend as a Service} (BaaS) empleada para la persistencia de datos (NoSQL) y la gestión de la autenticación de usuarios. Es un componente fundamental en la arquitectura del sistema.
+\end{description}
 
 \tableofcontents % indice de contenidos
 
@@ -194,7 +260,7 @@ This project will proceed with the design and development of a recipe applicatio
 		\subsection*{La planificación dietética o Meal prepping}
 		Hoy en día es difícil tener un estilo de vida saludable dada la falta de tiempo que causan las responsabilidades como el trabajo, familia, sueño, etc; varios datos muestran que los jóvenes consumen mucha menos fruta y verdura de la cantidad recomendada diaria, y que estos consumen mucha más comida basura de la que se recomienda \cite{NLMDifficultyEatingHealthy}.
 		\\
-		Otro análisis indica que las mayores barreras que impiden a las personas de seguir una dieta saludable son la falta de tiempo, el no querer abandonar alimentos favoritos y los elevados precios de las comidas sanas \cite{NLMDifficultyEatingHealthy}. A mucha gente le cuesta mantener ese balance entre trabajar y tener una vida sana y he de ahí donde surge la planificación de dietas o meal planning, una práctica que consiste en planificar las comidas de un periodo futuro determinado (generalmente una semana). La mayor parte de las personas planifican tres comidas por día para los días laborales (de lunes a viernes), pero esta práctica es completamente personalizable \cite{HowToMealPrep}.
+		Otro análisis indica que las mayores barreras que impiden a las personas de seguir una dieta saludable son la falta de tiempo, el no querer abandonar alimentos favoritos y los elevados precios de las comidas sanas \cite{NLMDifficultyEatingHealthy}. A mucha gente le cuesta mantener ese balance entre trabajar y tener una vida sana y he de ahí donde surge la planificación de dietas o \textit{meal planning}, una práctica que consiste en planificar las comidas de un periodo futuro determinado (generalmente una semana). La mayor parte de las personas planifican tres comidas por día para los días laborales (de lunes a viernes), pero esta práctica es completamente personalizable \cite{HowToMealPrep}.
 		\\
 		\\
 		El método de uso de esta práctica puede variar dependiendo de la persona, pero la metodología más común es la siguiente.
@@ -318,7 +384,7 @@ This project will proceed with the design and development of a recipe applicatio
 		Los beneficios que aporta la planificación dietética son los que generan el interés por este movimiento, caracterizada por la falta de tiempo para funciones básicas como el sueño, la práctica de deporte o la cocina. La organización de comidas no sólo asegura una ingesta calórica y nutricional adecuada, sino que también contribuye en diversos aspectos de la vida diaria.\\
 		\textbf{Ahorro de tiempo.} Una de las principales dificultades para mantener hábitos alimenticios saludables es la falta de tiempo. Según análisis hechos por la Biblioteca Nacional de Medicina de EE. UU., esta práctica reduce las compras improvisadas durante la semana y el tiempo empleado en decidir qué cocinar cada día, mejorando la eficiencia y disminuyendo la improvisación.
 		\\
-		\textbf{Reducción del estrés.} El meal planning ayuda a disminuir la tensión y el estrés derivados de la indecisión diaria sobre qué comer. Muchas personas deciden qué cocinar o comer en momentos de fatiga o poca motivación, lo que les conduce a optar por opciones menos saludables. Disponer de un plan y de los ingredientes necesarios facilita la elección de comidas más equilibradas y reduce la carga mental asociada a esta tarea.
+		\textbf{Reducción del estrés.} El \textit{meal planning} ayuda a disminuir la tensión y el estrés derivados de la indecisión diaria sobre qué comer. Muchas personas deciden qué cocinar o comer en momentos de fatiga o poca motivación, lo que les conduce a optar por opciones menos saludables. Disponer de un plan y de los ingredientes necesarios facilita la elección de comidas más equilibradas y reduce la carga mental asociada a esta tarea.
 		\\
 		\textbf{Mejora de la dieta.} Diversos estudios han demostrado que cocinar en casa con mayor frecuencia se asocia a un consumo menor de carbohidratos, azúcares y grasas \cite{johnshopkins2014}. Además, la planificación dietética incentiva a cumplir objetivos calóricos y nutricionales mediante la compra anticipada de ingredientes. La evidencia científica indica que esta práctica está relacionada con una mejor calidad de dieta y una menor prevalencia de obesidad, lo que la hace potencialmente relevante en estrategias de prevención \cite{ducrot2017}.
 		\\
@@ -464,7 +530,7 @@ This project will proceed with the design and development of a recipe applicatio
   	
 	\section{Proyectos actuales}
 	%Nombrar aplicaciones que hayan resultado de inspiración para el proyecto y explicar un poco de qué van esas aplicaciones
-	  \subsection*{Aplicaciones móviles existentes de meal planning}
+	  \subsection*{Aplicaciones móviles existentes de \textit{meal planning}}
 		El interés creciente por planificar la alimentación doméstica ha dado lugar a aplicaciones con enfoques bien diferenciados: desde soluciones orientadas a la rapidez y conveniencia hasta plataformas centradas en el control nutricional o en la compra integrada. A continuación se exponen las diferencias esenciales entre las propuestas comerciales más conocidas y NutriPlan.
 		
 		\begin{itemize}
@@ -1749,23 +1815,19 @@ This project will proceed with the design and development of a recipe applicatio
 				Como se observa en \texttt{App.tsx}, el contexto se inicializa al arrancar la aplicación mediante \texttt{AppProvider}, que envuelve toda la navegación. Esta disposición garantiza que el estado global está disponible en cualquier pantalla y que la autenticación del usuario (\texttt{FirebaseAuth}) está correctamente integrada con el resto de la aplicación.
 				\\\\
 				El diseño del contexto prioriza la eficiencia y la simplicidad, siguiendo los mismos principios minimalistas que guían el resto de la aplicación. La decisión de usar Context API de React en lugar de soluciones más complejas como Redux se alinea con el objetivo de mantener la base de código simple y mantenible, mientras se satisfacen las necesidades de estado global de la aplicación.
-	
-	
-	\section{Mockups}
-	%Explicar el diseño de la interfaz gráfica
 	\section{Conclusiones}
 
 \chapter{Prototipos y desarrollo}\label{cap.prototipos y desarrollo}
-La aplicación se desarrolló de forma iterativa a través de varios prototipos sucesivos. Aunque se partió de un único prototipo funcional, cada iteración añadió nuevas capacidades y refinó las existentes, siguiendo la filosofía de mejora continua. A continuación se describen los hitos más significativos:
+La aplicación se desarrolló a partir de un único prototipo que evolucionó de forma iterativa. Cada etapa añadió nuevas capacidades y refinó las existentes, siguiendo la filosofía de mejora continua. A continuación se describen las principales fases de esa evolución:
 
-	\section{Prototipo 1}
-	El primer prototipo constituyó una prueba de concepto para validar la idea central de NutriPlan. Se desarrollaron las funcionalidades básicas: autenticación de usuario mediante Firebase Auth, creación y almacenamiento de recetas en Firebase Firestore y visualización de ingredientes y recetas. La interfaz se diseñó con componentes simples para garantizar la estabilidad y rapidez de carga. Este prototipo permitió comprobar la viabilidad del modelo de datos y sentó las bases de la arquitectura por capas empleada en versiones posteriores.
+	\section{Fase inicial: construcción del núcleo}
+	Esta primera etapa se centró en validar la idea central de NutriPlan y en construir un núcleo funcional sobre el que crecer. Se implementó la autenticación de usuarios mediante Firebase Auth y se diseñó un esquema de datos básico en Firestore para almacenar recetas e ingredientes. Las primeras pantallas permitían crear y visualizar recetas, asociar ingredientes y consultar listados sencillos. La interfaz, minimalista y funcional, buscaba confirmar la viabilidad del modelo de datos y sentar las bases de la arquitectura en capas (presentación, servicios de datos y contexto global) que se mantendría en adelante. Esta fase, correspondiente a los primeros commits del proyecto, demostró que la propuesta era técnicamente factible y estableció la estructura de navegación y la gestión del estado global.
 	
-	\section{Prototipo 2}
-	El segundo prototipo añadió la gestión de la despensa y la lista de la compra. Para ello, se implementaron nuevos servicios en la capa de datos (\texttt{ingredientPantry-db-services.ts} y \texttt{groceryBought-db-services.ts}) y se crearon pantallas específicas para estas funcionalidades (\textit{PantryScreen} y \textit{GroceryListScreen}). Además, se incorporó un sistema de planificación semanal basado en un formulario dinámico y se introdujeron menús flotantes para facilitar la navegación. Este prototipo también supuso una mejora de usabilidad, con la reorganización de componentes y estilos más coherentes con la guía de diseño establecida.
+	\section{Fase de expansión: nuevas funcionalidades}
+	Una vez asentado el núcleo, el desarrollo se centró en ampliar las funciones que convierten a NutriPlan en una herramienta completa de planificación de comidas. Se introdujo la \emph{gestión de la despensa} y de la \emph{lista de la compra} mediante nuevas tablas y servicios en la base de datos, así como pantallas dedicadas (\textit{PantryScreen} y \textit{GroceryListScreen}). Se añadió la \emph{planificación semanal}, permitiendo asignar recetas a cada día de la semana y generando automáticamente la lista de ingredientes necesaria. Para mejorar la búsqueda se integró un motor de indexado local basado en MiniSearch que ofrece autocompletado inmediato de ingredientes y recetas. Estos cambios implicaron reorganizar la navegación y refinar los estilos, y reflejan hitos intermedios del repositorio en los que se agregaron las tablas \texttt{ingredientPantry} y \texttt{weeklyMeals}, así como los servicios correspondientes. La aplicación pasó de ser un prototipo básico a un gestor completo de comidas gracias a estas incorporaciones.
 	
-	\section{Prototipo 3}
-	En el tercer prototipo se pulieron los detalles de la aplicación y se añadieron funcionalidades avanzadas. Entre las mejoras destacan la subida de imágenes para las recetas, la edición de ingredientes desde la despensa, la posibilidad de marcar ingredientes como comprados en la lista de la compra y la sincronización offline/online de los datos. También se optimizó el rendimiento mediante técnicas de memoización, uso de \texttt{useCallback} y \texttt{useMemo}, y se implementaron pruebas unitarias y de integración para verificar el comportamiento de los componentes. Se revisaron los estilos para garantizar coherencia y se adaptaron las pantallas para soportar distintos tamaños de dispositivos.
+	\section{Fase de refinamiento: optimización y mejoras avanzadas}
+	La última fase de desarrollo se enfocó en pulir la experiencia y añadir características avanzadas a partir de la retroalimentación y el uso real. Se implementó la posibilidad de marcar ingredientes como comprados y sincronizar esos cambios con la despensa, creando el servicio \texttt{groceryBought} y automatizando la actualización del inventario. La autenticación se refinó mediante la introducción de la función \texttt{auth()}, que centraliza la inicialización de Firebase Auth y corrige problemas con la renovación de credenciales. Otra mejora significativa fue la incorporación de la subida y visualización de imágenes en las recetas utilizando \texttt{react-native-image-picker}, lo que aportó valor visual y una experiencia más rica. Estas mejoras fueron acompañadas de optimizaciones del código: uso intensivo de \texttt{useMemo}, \texttt{useCallback} y \texttt{useReducer} para reducir renderizados innecesarios, refactorización de servicios para unificar la lógica y la incorporación de pruebas automatizadas. Cada iteración consolidó el prototipo único, acercándolo a la versión final descrita en esta memoria, con un rendimiento optimizado y funcionalidades completas.
 	
 		\subsection*{Optimización del código y mejoras técnicas}
 		A lo largo del desarrollo se aplicaron técnicas de optimización que mejoraron notablemente el rendimiento y la mantenibilidad del código.  Se emplearon hooks como \texttt{useMemo} y \texttt{useCallback} para evitar renderizados innecesarios, y se modularizó la lógica repetitiva en servicios y hooks personalizados.  La introducción de \texttt{useReducer} en combinaciones complejas de estado permitió centralizar la gestión y facilitar la depuración.  Además, se implementó la sincronización offline/online de Firestore mediante cachés locales y operaciones en lote, reduciendo la latencia y la dependencia de la red.  Estas mejoras se complementaron con una revisión exhaustiva del código, eliminando redundancias y normalizando nombres y estilos para garantizar una lectura coherente y un mantenimiento sencillo.
@@ -1802,14 +1864,14 @@ La aplicación se desarrolló de forma iterativa a través de varios prototipos 
 	
 	La implementación de estas mejoras elevará la aplicación a un nivel profesional y permitirá explorar nuevas oportunidades de investigación y desarrollo.
 
-\chapter{Conclusions and future works}\label{cap.conclusions and future works}
+\chapter{Conclusions and future improvements}\label{cap.conclusions and future works}
 	\section{Technical conclusions}
 	From a technical perspective, \textit{NutriPlan} demonstrates the potential of React Native for rapid cross‑platform development. By leveraging Firebase as a serverless backend, the application benefits from scalable authentication, real‑time database capabilities and minimal infrastructure overhead. Local storage via SQLite ensures offline availability and responsive interactions. The architecture, based on separation of presentation components, data services and a global context layer, proved to be maintainable and easy to extend. The use of React hooks for state management avoided unnecessary complexity and aligned with a minimalist design philosophy. Performance was enhanced by memoization techniques and the adoption of \texttt{useMemo} and \texttt{useCallback}, while unit and integration tests, together with usability questionnaires, provided confidence in the robustness and user experience of the app.
 	
 	\section{Personal conclusions}
-	On a personal level, the project has been a profound learning experience. The author uses \textit{NutriPlan} every week, and it has become an invaluable tool to improve meal planning, save time and reduce food waste. Throughout the development, new skills were acquired: integrating Firebase services, employing advanced React Native libraries, generating and installing APK files, testing applications on real devices and troubleshooting platform‑specific issues. The iterative refinement of a single prototype highlighted the importance of incremental improvement and continuous feedback, and it reinforced good practices such as clean code, documentation and careful interface design.
+	On a personal level, the project has been a profound learning experience. The author uses \textit{NutriPlan} every week, and it has become an invaluable tool to improve \textit{meal planning}, save time and reduce food waste. Throughout the development, new skills were acquired: integrating Firebase services, employing advanced React Native libraries, generating and installing APK files, testing applications on real devices and troubleshooting platform‑specific issues. The iterative refinement of a single prototype highlighted the importance of incremental improvement and continuous feedback, and it reinforced good practices such as clean code, documentation and careful interface design.
 	
-	\section{Future works}
+	\section{Future improvements}
 	Looking ahead, several avenues for future work emerge. These include integrating external APIs for grocery pricing and nutrition data; implementing personalised recommendations using machine‑learning techniques; adding nutritional analysis and detailed statistics; supporting multiple languages and enhanced accessibility features; strengthening security with multi‑factor authentication and data encryption; connecting with wearable devices and health services; and establishing CI/CD pipelines with automated testing. Pursuing these directions will not only enrich the application but also offer opportunities for further research.
 
 \cleardoublepage
