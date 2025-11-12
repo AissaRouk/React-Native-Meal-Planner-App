@@ -273,7 +273,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         {isEditing ? (
           <TextInput
             style={styles.input}
-            value={editableRecipe.link || '-'}
+            value={editableRecipe.link == '' ? editableRecipe.link : '-'}
             onChangeText={text => handleChange('link', text)}
           />
         ) : (
