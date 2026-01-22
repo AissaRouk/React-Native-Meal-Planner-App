@@ -139,10 +139,10 @@ export const verifyRecipeIngredientWithoutId = (
 ): boolean => {
   const validQuantityTypeValues: string[] = Object.values(QuantityType);
   if (
-    typeof ri.recipeId === 'number' &&
-    ri.recipeId > 0 &&
-    typeof ri.ingredientId === 'number' &&
-    ri.ingredientId > 0 &&
+    typeof ri.recipeId === 'string' &&
+    ri.recipeId != '' &&
+    typeof ri.ingredientId === 'string' &&
+    ri.ingredientId != '' &&
     typeof ri.quantity === 'number' &&
     ri.quantity >= 0 &&
     typeof ri.quantityType === 'string' &&
