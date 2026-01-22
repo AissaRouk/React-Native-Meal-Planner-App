@@ -50,8 +50,7 @@ Granada, 5 de noviembre de 2025
 
 \chapter*{}
 \begin{flushright}
-\textit{Dedicado a \\
-...}
+\textit{Dedicado a mi madre, Mariem El Masoudi, y a mi pareja, Eirini Michaleakou, por haberme ayudado y apoyado en todo.}
 \end{flushright}
 \thispagestyle{empty}
 
@@ -134,37 +133,8 @@ The World Health Organization (WHO) reports that in 2022 43\% of adults in the w
 \\NutriPlan stems from this context, a \textit{meal planning} and recipe managing app whose goal is to encourage a healthy, sustainable and economical lifestile.\\
 This idea came from my Erasmus exchange, where I discovered that when I made a grocery list and verified the ingredients I had in my pantry before doing the groceries themselves, I saved more money in these, I wasted less food and most importantly, I ate healthy.
 
-\textbf{\\Palabras clave:} planificación dietética, gestión de recetas, aplicaciones móviles, React Native, sostenibilidad, usabilidad, desperdicio de alimentos.
+\textbf{\\Key words:} meal planning, recipe management, mobile apps, React Native, sustainability, usability, food waste.
 
-
-
-\section*{Justificación de Palabras Clave (para Repositorio)}
-
-\begin{description}
-	\item[\textbf{Planificación dietética}]
-	Proceso sistemático que implica la organización anticipada de comidas y menús semanales. En el contexto de NutriPlan, se refiere a la herramienta central que ayuda al usuario a establecer y seguir sus objetivos nutricionales a largo plazo.
-	
-	\item[\textbf{Gestión de recetas}]
-	Funcionalidad principal del sistema que permite al usuario almacenar, clasificar y modificar sus propias recetas y listas de ingredientes. Es la base de datos de contenido sobre la que se apoya toda la planificación semanal.
-	
-	\item[\textbf{Aplicaciones móviles}]
-	Plataforma de desarrollo elegida para el TFG. Se refiere al software diseñado específicamente para operar en sistemas operativos iOS y Android, ofreciendo portabilidad y acceso constante a la herramienta.
-	
-	\item[\textbf{React Native}]
-	Framework de código abierto seleccionado para el desarrollo multiplataforma de la aplicación. Su uso justifica la eficiencia en la unificación de la base de código y la capacidad de despliegue en múltiples entornos.
-	
-	\item[\textbf{Sostenibilidad}]
-	Eje transversal del proyecto que se centra en el impacto económico y ambiental de las elecciones alimentarias. La aplicación contribuye a la sostenibilidad al promover el consumo consciente y la compra eficiente.
-	
-	\item[\textbf{Usabilidad}]
-	Medida de la calidad de la interacción entre el usuario y NutriPlan. Se evalúa con el objetivo de asegurar que la aplicación es intuitiva, fácil de aprender y eficiente, factor clave para la retención y satisfacción del usuario.
-	
-	\item[\textbf{Desperdicio de alimentos}]
-	Uno de los problemas sociales que el proyecto busca mitigar. La aplicación aborda este desafío de manera directa al optimizar las listas de la compra basándose en los ingredientes disponibles y los planes de comidas.
-	
-	\item[\textbf{Firebase}]
-	Tecnología \textit{Backend as a Service} (BaaS) empleada para la persistencia de datos (NoSQL) y la gestión de la autenticación de usuarios. Es un componente fundamental en la arquitectura del sistema.
-\end{description}
 
 \tableofcontents % indice de contenidos
 
@@ -225,7 +195,7 @@ This idea came from my Erasmus exchange, where I discovered that when I made a g
   	
   	En el capítulo dedicado al diseño y descripción del sistema se detalla la arquitectura de la aplicación, incluyendo las decisiones sobre la lógica de la aplicación, la organización en capas (pantallas, componentes, servicios, contexto y tipos), los casos de uso y el modelado de datos.  Este capítulo también recoge la explicación de cada una de las pantallas de la app, su interfaz y comportamiento, así como los componentes reutilizables que se han desarrollado.
   	
-  	El capítulo de \emph{Prototipos y desarrollo} explica la evolución del proyecto a través de tres prototipos sucesivos.  Para cada versión se describe qué funcionalidades se implementaron, cómo evolucionó la interfaz y qué problemas técnicos se resolvieron.
+  	El capítulo de \emph{Prototipos y desarrollo} explica la evolución del proyecto.  Para cada versión se describe qué funcionalidades se implementaron, cómo evolucionó la interfaz y qué problemas técnicos se resolvieron.
   	
   	Finalmente, el capítulo de \emph{Conclusiones y mejoras futuras} recoge una síntesis de los resultados obtenidos, una reflexión sobre las decisiones adoptadas y las dificultades encontradas, así como una enumeración de posibles mejoras y ampliaciones que se podrían abordar en trabajos futuros.  Al final de la memoria se incluye la bibliografía que sustenta las afirmaciones del texto.
   
@@ -249,8 +219,8 @@ This idea came from my Erasmus exchange, where I discovered that when I made a g
 			\item \textbf{Fase de análisis y requisitos (semanas 1–2).} Se definieron los objetivos del proyecto, se identificaron las necesidades de los usuarios y se recopilaron requisitos funcionales y no funcionales.  Durante esta fase se investigaron las aplicaciones existentes de planificación de comidas y se revisaron bibliografías para comprender mejor el problema.
 			\item \textbf{Diseño de la interfaz y arquitectura (semanas 3–4).} Se elaboraron bocetos de las pantallas y diagramas UML de la arquitectura del sistema, se definieron las entidades de datos y se seleccionaron las tecnologías y librerías a utilizar.
 			\item \textbf{Implementación del prototipo 1 (semanas 5–8).} Se construyó una primera versión de NutriPlan que permitía el registro e inicio de sesión del usuario, la creación y visualización de recetas básicas y una pantalla principal con selección de día y tipo de comida.  En esta etapa se configuró la base de datos en Firebase y se probaron las operaciones CRUD de recetas.
-			\item \textbf{Implementación del prototipo 2 (semanas 9–12).} Se añadieron la funcionalidad de planificación semanal, la despensa y la generación de la lista de la compra.  Se integró MiniSearch para la búsqueda de ingredientes y se ajustó la estructura de datos para permitir la consolidación de cantidades.
-			\item \textbf{Implementación del prototipo 3 (semanas 13–15).} Se completaron las funcionalidades pendientes: subida de imágenes para las recetas, edición de ingredientes desde la despensa, marcaje de elementos comprados y mejoras de usabilidad.  También se realizaron pruebas de integración y se refinaron los estilos y la navegación.
+			\item \textbf{Implementación del prototipo 1.2 (semanas 9–12).} Se añadieron la funcionalidad de planificación semanal, la despensa y la generación de la lista de la compra.  Se integró MiniSearch para la búsqueda de ingredientes y se ajustó la estructura de datos para permitir la consolidación de cantidades.
+			\item \textbf{Implementación del prototipo 1.3 (semanas 13–15).} Se completaron las funcionalidades pendientes: subida de imágenes para las recetas, edición de ingredientes desde la despensa, marcaje de elementos comprados y mejoras de usabilidad.  También se realizaron pruebas de integración y se refinaron los estilos y la navegación.
 			\item \textbf{Pruebas y documentación (semanas 16–17).} Se efectuaron pruebas unitarias y de integración para validar el correcto funcionamiento de los servicios y componentes.  Posteriormente se elaboró la documentación de la aplicación y se redactó la memoria final.
 		\end{enumerate}
   
@@ -397,13 +367,13 @@ This idea came from my Erasmus exchange, where I discovered that when I made a g
 	  
 	
 	\section{Diseño de la interfaz}
-		El diseño de la inteefaz de usuario juega un papel muy importante en el uso y la aceptación de la aplicación. De hecho el diseño y usabilidad son requisitos esenciales para el éxito de este tipo de apps \cite{liew2019usability}. Varios estudios señalan que los usuarios tienden a aceptar apps con facilidad de uso, utilidad percibida y calidad de contenido que ofrece la aplicación \cite{Lim2025CuestionarioUsabilidad}. Todo esto demuestra que una interfaz agradable, intuitiva y adaptada a las necesidades del usuario mejora la experiencia de uso de esta y crea un sentimiento positivo hacia la aplicación. Por ello se escogieron varios principios de diseño de interfaz y experiencia de usuario como el diseño minimalista, el uso de colores específicos, etc.
+		El diseño de la interfaz de usuario juega un papel muy importante en el uso y la aceptación de la aplicación. De hecho el diseño y usabilidad son requisitos esenciales para el éxito de este tipo de apps \cite{liew2019usability}. Varios estudios señalan que los usuarios tienden a aceptar apps con facilidad de uso, utilidad percibida y calidad de contenido que ofrece la aplicación \cite{Lim2025CuestionarioUsabilidad}. Todo esto demuestra que una interfaz agradable, intuitiva y adaptada a las necesidades del usuario mejora la experiencia de uso de esta y crea un sentimiento positivo hacia la aplicación. Por ello se escogieron varios principios de diseño de interfaz y experiencia de usuario como el diseño minimalista, el uso de colores específicos, etc.
 		
 		\subsection{Diseño minimalista}
-		El disño minimalista es una corriente estética y funcional que se basa en reducir los elementos de una interfaz o producto al mínimo posible sin quitar lo esencial, lo que elimina la información innecesaria y destaca la fundamental. Esta corriente sigue la premisa de "menos es más", frase popular del arquitecto Ludwig Mies van der Rohe, que subraya la importancia de la simplicidad y la funcionalidad en el diseño \cite{wikipediaLessIsMore}. Jakob Nielsen, experto en usabilidad enfatiza que las interfaces deberían evitar la sobrecarga de información, mostrando solo lo esencial \cite{nielsen1994}. Este diseño se basa en los siguientes principios:
+		El diseño minimalista es una corriente estética y funcional que se basa en reducir los elementos de una interfaz o producto al mínimo posible sin quitar lo esencial, lo que elimina la información innecesaria y destaca la fundamental. Esta corriente sigue la premisa de "menos es más", frase popular del arquitecto Ludwig Mies van der Rohe, que subraya la importancia de la simplicidad y la funcionalidad en el diseño \cite{wikipediaLessIsMore}. Jakob Nielsen, experto en usabilidad enfatiza que las interfaces deberían evitar la sobrecarga de información, mostrando solo lo esencial \cite{nielsen1994}. Este diseño se basa en los siguientes principios:
 		\begin{enumerate}
 			\item \textbf{Simplicidad:} mantiene solo los elementos necesarios para comunicar la información.
-			\item \textbf{Funcionalidad:} enfatiza que cada componente en el diseño debe tener un propósito claro haciendo que se eliminen elementos decorativos que no aportan ningún propósito claro haciendo que se elmininen elementos decorativos que no aportan ningún valor funcional.
+			\item \textbf{Funcionalidad:} enfatiza que cada componente en el diseño debe tener un propósito claro haciendo que se eliminen elementos decorativos que no aportan ningún propósito claro haciendo que se eliminen elementos decorativos que no aportan ningún valor funcional.
 			\item \textbf{Uso de espacio blanco o "negativo":} se usa en la creación de un equilibrio entre los componentes y la redirección de la atención del usuario.
 			\item \textbf{Jerarquía visual:} el uso de una jerarquía visual que favorezca y organice la información de manera que los elementos más importantes se destaquen, creando una interfaz navegable y comprensible.
 		\end{enumerate}
@@ -1780,48 +1750,53 @@ This idea came from my Erasmus exchange, where I discovered that when I made a g
 
 				
 		\subsection{Contexto (Context)}
-				En NutriPlan, el contexto (\texttt{Context.tsx}) actúa como una capa intermedia entre los servicios de Firebase y la interfaz de usuario, centralizando el estado global de la aplicación y proporcionando métodos para su manipulación.\\
-				\textbf{\\Diseño del contexto}\\
-				El contexto se implementó siguiendo un patrón de diseño que separa la definición de tipos, el estado inicial y los métodos de manipulación. Esta separación facilita el mantenimiento y la escalabilidad del código. El contexto mantiene en memoria:
-				
-				\begin{itemize}
-					\item Lista completa de ingredientes para búsquedas rápidas
-					\item Recetas del usuario actual
-					\item Estado de la despensa
-					\item Planificación semanal activa
-					\item Elementos marcados como comprados
-				\end{itemize}
-				
-				\textbf{\\Integración con Firebase}\\
-				El contexto abstrae la complejidad de las operaciones con Firebase mediante métodos que encapsulan las llamadas a los servicios. Por ejemplo, cuando un componente necesita añadir una receta, invoca \texttt{addRecipe} del contexto en lugar de interactuar directamente con \texttt{recipe-db-services}. Este enfoque tiene varias ventajas:
-				
-				\begin{itemize}
-					\item Centraliza la lógica de actualización de estado
-					\item Reduce la duplicación de código en componentes
-					\item Facilita la implementación de caché y optimizaciones
-					\item Simplifica el testing al poder mockear el contexto
-				\end{itemize}
-				
-				\textbf{\\Gestión de estado global}\\
-				El contexto implementa un sistema de suscripción que notifica a los componentes cuando los datos relevantes cambian. Por ejemplo, cuando se marca un ingrediente como comprado en \texttt{GroceryListScreen}, el contexto:
-				
-				\begin{enumerate}
-					\item Actualiza el estado en Firebase mediante \texttt{groceryBought-db-services}
-					\item Modifica el estado local para reflejar el cambio
-					\item Notifica a los componentes suscritos (como la lista de la compra y la despensa)
-				\end{enumerate}
-				
-				\textbf{\\Inicialización y ciclo de vida}\\
-				Como se observa en \texttt{App.tsx}, el contexto se inicializa al arrancar la aplicación mediante \texttt{AppProvider}, que envuelve toda la navegación. Esta disposición garantiza que el estado global está disponible en cualquier pantalla y que la autenticación del usuario (\texttt{FirebaseAuth}) está correctamente integrada con el resto de la aplicación.
-				\\\\
-				El diseño del contexto prioriza la eficiencia y la simplicidad, siguiendo los mismos principios minimalistas que guían el resto de la aplicación. La decisión de usar Context API de React en lugar de soluciones más complejas como Redux se alinea con el objetivo de mantener la base de código simple y mantenible, mientras se satisfacen las necesidades de estado global de la aplicación.
-	\section{Conclusiones}
+		En NutriPlan, el contexto (\texttt{Context.tsx}) actúa como una capa intermedia entre los servicios de Firebase y la interfaz de usuario, centralizando el estado global de la aplicación y proporcionando métodos para su manipulación.\\
+		\textbf{\\Diseño del contexto}\\
+		El contexto se implementó siguiendo un patrón de diseño que separa la definición de tipos, el estado inicial y los métodos de manipulación. Esta separación facilita el mantenimiento y la escalabilidad del código. El contexto mantiene en memoria:
+		
+		\begin{itemize}
+			\item Lista completa de ingredientes para búsquedas rápidas
+			\item Recetas del usuario actual
+			\item Estado de la despensa
+			\item Planificación semanal activa
+			\item Elementos marcados como comprados
+		\end{itemize}
+		
+		\paragraph{\\Integración con Firebase\\}
+		El contexto abstrae la complejidad de las operaciones con Firebase mediante métodos que encapsulan las llamadas a los servicios. Por ejemplo, cuando un componente necesita añadir una receta, invoca \texttt{addRecipe} del contexto en lugar de interactuar directamente con \texttt{recipe-db-services}. Este enfoque tiene varias ventajas:
+		
+		\begin{itemize}
+			\item Centraliza la lógica de actualización de estado.
+			\item Reduce la duplicación de código en componentes.
+			\item Facilita la implementación de caché y optimizaciones.
+			\item Simplifica el testing. 
+		\end{itemize}
+		
+		\paragraph{\\Gestión de estado global\\}
+		El contexto implementa un sistema de suscripción que notifica a los componentes cuando los datos relevantes cambian. Por ejemplo, cuando se marca un ingrediente como comprado en \texttt{GroceryListScreen}, el contexto:
+		
+		\begin{enumerate}
+			\item Actualiza el estado en Firebase mediante \texttt{groceryBought-db-services}
+			\item Modifica el estado local para reflejar el cambio
+			\item Notifica a los componentes suscritos (como la lista de la compra y la despensa)
+		\end{enumerate}
+		
+		\paragraph{\\Inicialización y ciclo de vida\\}
+		Como se observa en \texttt{App.tsx}, el contexto se inicializa al arrancar la aplicación mediante \texttt{AppProvider}, que envuelve toda la navegación. Esta disposición garantiza que el estado global está disponible en cualquier pantalla y que la autenticación del usuario (\texttt{FirebaseAuth}) está correctamente integrada con el resto de la aplicación.
+		\\\\
+		El diseño del contexto prioriza la eficiencia y la simplicidad, siguiendo los mismos principios minimalistas que guían el resto de la aplicación. La decisión de usar Context API de React en lugar de soluciones más complejas como Redux se alinea con el objetivo de mantener la base de código simple y mantenible, mientras se satisfacen las necesidades de estado global de la aplicación.
+		
+		\paragraph{Detalles de implementación y funciones principales\\}
+		La definición del contexto reside en el archivo \texttt{Context.tsx}, donde se declara el tipo \texttt{ContextProps} con todas las propiedades de estado y los métodos de acceso. Entre las propiedades se incluyen el identificador del usuario (\texttt{userId}), las listas de ingredientes y recetas, la despensa, los elementos marcados como comprados y la planificación semanal. El contexto también expone métodos asíncronos como \texttt{addOrUpdateIngredient}, que decide si un ingrediente se crea o se actualiza en Firestore y sincroniza el estado local; \texttt{getAllRecipes}, que recupera todas las recetas del usuario ordenadas por fecha; y \texttt{addWeeklyMeal}, que asigna un plato o ingrediente a un día concreto de la semana y actualiza automáticamente la lista de ingredientes planificados. Otras funciones gestionan operaciones relacionadas, como eliminar ingredientes de una receta, crear múltiples relaciones en lote o sincronizar las compras con el inventario.
+		
+		\paragraph{Arquitectura y motivos de diseño\\}
+		La implementación de \texttt{AppProvider} utiliza hooks de React (\texttt{useState}, \texttt{useEffect}) para inicializar el estado y ejecutar cargas iniciales desde Firebase y SQLite. Las funciones declaradas en el contexto encapsulan la lógica de los servicios de base de datos (\texttt{ingredient-db-services.ts}, \texttt{recipe-db-services.ts}, \texttt{weeklyMeals-db-services.ts}, etc.), de modo que los componentes de la interfaz no necesitan conocer los detalles de la persistencia. Esta separación permite modificar el almacenamiento o la lógica de sincronización sin afectar a las pantallas. Se eligió Context API en lugar de Redux porque proporciona un mecanismo más ligero y suficiente para compartir estado entre pantallas en una aplicación del tamaño de NutriPlan. Además, facilita la creación de hooks personalizados y simplifica el testing al poder inyectar versiones simuladas durante las pruebas. La combinación de React Context, Firebase y SQLite garantiza consistencia entre el modo offline y el modo en línea, permitiendo que la aplicación funcione sin conexión y se sincronice cuando recupere la conectividad.
 
 \chapter{Prototipos y desarrollo}\label{cap.prototipos y desarrollo}
 La aplicación se desarrolló a partir de un único prototipo que evolucionó de forma iterativa. Cada etapa añadió nuevas capacidades y refinó las existentes, siguiendo la filosofía de mejora continua. A continuación se describen las principales fases de esa evolución:
 
 	\section{Fase inicial: construcción del núcleo}
-	Esta primera etapa se centró en validar la idea central de NutriPlan y en construir un núcleo funcional sobre el que crecer. Se implementó la autenticación de usuarios mediante Firebase Auth y se diseñó un esquema de datos básico en Firestore para almacenar recetas e ingredientes. Las primeras pantallas permitían crear y visualizar recetas, asociar ingredientes y consultar listados sencillos. La interfaz, minimalista y funcional, buscaba confirmar la viabilidad del modelo de datos y sentar las bases de la arquitectura en capas (presentación, servicios de datos y contexto global) que se mantendría en adelante. Esta fase, correspondiente a los primeros commits del proyecto, demostró que la propuesta era técnicamente factible y estableció la estructura de navegación y la gestión del estado global.
+	Esta primera etapa se centró en validar la idea central de NutriPlan y en construir un núcleo funcional sobre el que crecer. Se implementó la autenticación de usuarios mediante Firebase Auth y se diseñó un esquema de datos básico en Firestore para almacenar recetas e ingredientes. Las primeras pantallas permitían crear y visualizar recetas, asociar ingredientes y consultar listados sencillos. La interfaz, minimalista y funcional, buscaba confirmar la viabilidad del modelo de datos y sentar las bases de la arquitectura en capas (presentación, servicios de datos y contexto global) que se mantendría en adelante. Esta fase, correspondiente a los primeros \textit{commits} (puntos de guardado) de \textit{Github} del proyecto, demostró que la propuesta era técnicamente factible y estableció la estructura de navegación y la gestión del estado global.
 	
 	\section{Fase de expansión: nuevas funcionalidades}
 	Una vez asentado el núcleo, el desarrollo se centró en ampliar las funciones que convierten a NutriPlan en una herramienta completa de planificación de comidas. Se introdujo la \emph{gestión de la despensa} y de la \emph{lista de la compra} mediante nuevas tablas y servicios en la base de datos, así como pantallas dedicadas (\textit{PantryScreen} y \textit{GroceryListScreen}). Se añadió la \emph{planificación semanal}, permitiendo asignar recetas a cada día de la semana y generando automáticamente la lista de ingredientes necesaria. Para mejorar la búsqueda se integró un motor de indexado local basado en MiniSearch que ofrece autocompletado inmediato de ingredientes y recetas. Estos cambios implicaron reorganizar la navegación y refinar los estilos, y reflejan hitos intermedios del repositorio en los que se agregaron las tablas \texttt{ingredientPantry} y \texttt{weeklyMeals}, así como los servicios correspondientes. La aplicación pasó de ser un prototipo básico a un gestor completo de comidas gracias a estas incorporaciones.
@@ -1833,20 +1808,20 @@ La aplicación se desarrolló a partir de un único prototipo que evolucionó de
 		A lo largo del desarrollo se aplicaron técnicas de optimización que mejoraron notablemente el rendimiento y la mantenibilidad del código.  Se emplearon hooks como \texttt{useMemo} y \texttt{useCallback} para evitar renderizados innecesarios, y se modularizó la lógica repetitiva en servicios y hooks personalizados.  La introducción de \texttt{useReducer} en combinaciones complejas de estado permitió centralizar la gestión y facilitar la depuración.  Además, se implementó la sincronización offline/online de Firestore mediante cachés locales y operaciones en lote, reduciendo la latencia y la dependencia de la red.  Estas mejoras se complementaron con una revisión exhaustiva del código, eliminando redundancias y normalizando nombres y estilos para garantizar una lectura coherente y un mantenimiento sencillo.
 		
 		\subsection*{Validación y pruebas de usabilidad}
-		Para asegurar que la aplicación satisface las necesidades de los usuarios, se propone un plan de validación que combina pruebas técnicas y evaluaciones de usabilidad.  En el ámbito técnico se desarrollaron pruebas unitarias e integración que verifican las operaciones CRUD, la lógica de la lista de la compra y el comportamiento de la interfaz ante distintos estados.  Complementariamente, se sugiere realizar un estudio con usuarios utilizando el cuestionario estandarizado System Usability Scale (SUS), compuesto por diez afirmaciones que los participantes valoran en una escala de Likert\cite{sus}.  Entre las afirmaciones se incluyen percepciones sobre la facilidad de uso, la coherencia de las funciones, la complejidad de la interfaz y la confianza al manejar la aplicación.  La puntuación resultante permite comparar la usabilidad de NutriPlan con la de otras aplicaciones y orientar futuras mejoras.  Además del SUS, se proponen métricas de desempeño como el tiempo para completar tareas (crear una receta, generar la lista de la compra) y la tasa de error, a fin de obtener una visión cuantitativa del rendimiento.  La combinación de estas técnicas ofrece una evaluación integral que guía la evolución del producto.
+		Para asegurar que la aplicación satisface las necesidades de los usuarios, se propone un plan de validación que combina pruebas técnicas y evaluaciones de usabilidad.  En el ámbito técnico se desarrollaron pruebas unitarias e integración que verifican las operaciones CRUD, la lógica de la lista de la compra y el comportamiento de la interfaz ante distintos estados.
 		
 		\subsection*{Estructura y justificación de los anexos}
-		Además de la memoria principal, el proyecto se acompaña de anexos que incluyen el código fuente y los recursos gráficos utilizados.  El directorio \texttt{ReactNativeMealPlanner} contiene la base de código organizada en capas (pantallas, componentes, servicios, contexto y tipos) e incluye pruebas unitarias e integración.  El lector encontrará un archivo \texttt{README} con instrucciones para instalar las dependencias, ejecutar la aplicación y reproducir las pruebas.  Por otro lado, la carpeta \texttt{imagenes} integra las ilustraciones, diagramas UML y el cronograma de Gantt empleados en la memoria.  Para preservar la consistencia y el cumplimiento de licencias, se eliminaron ficheros temporales o irrelevantes (como archivos \texttt{.DS\_Store} o diagramas obsoletos) y se documentó la procedencia de cada recurso.  Esta organización facilita que cualquier persona interesada pueda revisar el código, ejecutar la aplicación y comprender el contexto de los anexos sin ambigüedades.
+		Además de la memoria principal, el proyecto se acompaña de anexos que incluyen el código fuente y los recursos gráficos utilizados.  El directorio \texttt{ReactNativeMealPlanner} contiene la base de código organizada en capas (pantallas, componentes, servicios, contexto y tipos) e incluye pruebas unitarias e integración.  El lector encontrará un archivo \texttt{README} con instrucciones para instalar las dependencias, ejecutar la aplicación y reproducir las pruebas. Esta organización facilita que cualquier persona interesada pueda revisar el código, ejecutar la aplicación y comprender el contexto de los anexos sin ambigüedades.
 
 \chapter{Conclusiones y mejoras futuras}\label{cap.conclusiones y mejoras futuras}
 	\section{Conclusiones técnicas}
-	En el aspecto técnico, el desarrollo de NutriPlan ha permitido explorar y consolidar diversas tecnologías. El uso de React Native como framework principal facilitó la creación de una aplicación multiplataforma con un único código base, reduciendo los tiempos de desarrollo y mantenimiento. La integración con Firebase proporcionó un backend «serverless» robusto que combina autenticación segura, almacenamiento en Firestore y sincronización en tiempo real. Además, se empleó SQLite a través de \texttt{expo-sqlite} para almacenar datos en caché y permitir el uso en modo offline, garantizando una experiencia fluida incluso sin conexión a Internet. La arquitectura de la aplicación se diseñó en capas (componentes de presentación, servicios de datos y contexto global) lo que simplificó la separación de responsabilidades y mejoró la escalabilidad del proyecto.
+	En el aspecto técnico, el desarrollo de NutriPlan ha permitido explorar y consolidar diversas tecnologías. El uso de React Native como framework principal facilitó la creación de una aplicación multiplataforma con un único código base, reduciendo los tiempos de desarrollo y mantenimiento. La integración con Firebase proporcionó un backend «serverless» robusto que combina autenticación segura, almacenamiento en Firestore y sincronización en tiempo real. La arquitectura de la aplicación se diseñó en capas (componentes de presentación, servicios de datos y contexto global) lo que simplificó la separación de responsabilidades y mejoró la escalabilidad del proyecto.
 	
-	La gestión del estado se implementó mediante Context API y hooks personalizados, proporcionando un sistema de suscripción ligero que notifica a las pantallas cuando se producen cambios en los datos. Esta decisión evitó la complejidad añadida de librerías como Redux y se ajustó a la filosofía minimalista del proyecto. Asimismo, se aplicaron patrones de diseño para la comunicación con Firebase, encapsulando las llamadas en servicios reutilizables. Desde el punto de vista de rendimiento, se optimizaron los componentes con \texttt{useMemo}, \texttt{useCallback} y técnicas de memoización para reducir renderizaciones innecesarias. Finalmente, se incorporaron pruebas unitarias y de integración, así como cuestionarios de usabilidad inspirados en estudios recientes sobre aplicaciones de salud\cite{liew2019usability,Lim2025CuestionarioUsabilidad}, con el fin de asegurar que la aplicación cumple tanto requisitos técnicos como de experiencia de usuario.
+	La gestión del estado se implementó mediante Context API y hooks personalizados, proporcionando un sistema de suscripción ligero que notifica a las pantallas cuando se producen cambios en los datos. Esta decisión evitó la complejidad añadida de librerías como Redux y se ajustó a la filosofía minimalista del proyecto. Asimismo, se aplicaron patrones de diseño para la comunicación con Firebase, encapsulando las llamadas en servicios reutilizables. Desde el punto de vista de rendimiento, se optimizaron los componentes con \texttt{useMemo}, \texttt{useCallback} y técnicas de memoización para reducir renderizaciones innecesarias. 
 	
 	\section{Conclusiones personales}
-	A nivel personal, el desarrollo de NutriPlan ha supuesto un aprendizaje integral. El autor utiliza la aplicación de forma semanal para planificar sus propias comidas y gestionar la lista de la compra, lo que ha tenido un impacto positivo en su alimentación y en la optimización del tiempo y del presupuesto. El proyecto ha sido una oportunidad para dominar tecnologías clave como Firebase, Firestore y el ecosistema de React Native, así como para comprender en profundidad el ciclo de vida de una aplicación móvil completa. El proceso de generación de archivos APK, su instalación en dispositivos reales y la posterior verificación del funcionamiento fue especialmente enriquecedor, permitiendo llevar la teoría a la práctica y solucionar problemas reales relacionados con la compatibilidad y el rendimiento.
-	
+	A nivel personal, el desarrollo de NutriPlan ha supuesto un aprendizaje integral. He utilizado la aplicación de forma semanal para planificar mis propias comidas y gestionar la lista de la compra, lo que ha tenido un impacto positivo en mi alimentación y en la optimización del tiempo y del presupuesto. El proyecto ha sido una oportunidad para dominar tecnologías clave como Firebase, Firestore y el ecosistema de React Native, así como para comprender en profundidad el ciclo de vida de una aplicación móvil completa. El proceso de generación de archivos APK, su instalación en dispositivos reales y la posterior verificación del funcionamiento fue especialmente enriquecedor, permitiendo llevar la teoría a la práctica y solucionar problemas reales relacionados con la compatibilidad y el rendimiento.
+	\\\\
 	Además, se adquirieron competencias en el diseño de interfaces centradas en el usuario, en la estructuración de bases de datos optimizadas para BaaS y en la gestión de proyectos de software. La iteración continua sobre un mismo prototipo enseñó el valor de la mejora incremental y la importancia de la retroalimentación. El trabajo también reforzó la disciplina de documentar el código y las decisiones, lo que contribuye a la mantenibilidad y a la transferencia de conocimientos.
 	
 	\section{Futuras mejoras}
@@ -1859,20 +1834,19 @@ La aplicación se desarrolló a partir de un único prototipo que evolucionó de
 		\item \textbf{Internacionalización y accesibilidad:} Añadir soporte multilingüe, así como funciones de accesibilidad (lectores de pantalla, ajustes de contraste y tamaño de texto) para llegar a un público más amplio.
 		\item \textbf{Seguridad y autenticación avanzada:} Explorar mecanismos de autenticación multifactor, cifrado de datos sensibles y cumplimiento con el RGPD, además de definir una política de privacidad clara.
 		\item \textbf{Integración con dispositivos y servicios externos:} Sincronizar con wearables o servicios como Google Fit o Apple Health para adaptar la planificación alimentaria a la actividad física del usuario.
-		\item \textbf{Automatización de pruebas y CI/CD:} Incorporar pipelines de integración y entrega continua, junto con una batería de pruebas automatizadas, para garantizar la calidad del software y acelerar las iteraciones.
 	\end{itemize}
 	
 	La implementación de estas mejoras elevará la aplicación a un nivel profesional y permitirá explorar nuevas oportunidades de investigación y desarrollo.
 
 \chapter{Conclusions and future improvements}\label{cap.conclusions and future works}
 	\section{Technical conclusions}
-	From a technical perspective, \textit{NutriPlan} demonstrates the potential of React Native for rapid cross‑platform development. By leveraging Firebase as a serverless backend, the application benefits from scalable authentication, real‑time database capabilities and minimal infrastructure overhead. Local storage via SQLite ensures offline availability and responsive interactions. The architecture, based on separation of presentation components, data services and a global context layer, proved to be maintainable and easy to extend. The use of React hooks for state management avoided unnecessary complexity and aligned with a minimalist design philosophy. Performance was enhanced by memoization techniques and the adoption of \texttt{useMemo} and \texttt{useCallback}, while unit and integration tests, together with usability questionnaires, provided confidence in the robustness and user experience of the app.
+	From a technical perspective, \textit{NutriPlan} demonstrates the potential of React Native for rapid cross‑platform development. By leveraging Firebase as a serverless backend, the application benefits from scalable authentication, real‑time database capabilities and minimal infrastructure overhead. The architecture, based on separation of presentation components, data services and a global context layer, proved to be maintainable and easy to extend. The use of React hooks for state management avoided unnecessary complexity and aligned with a minimalist design philosophy. Performance was enhanced by memoization techniques and the adoption of \texttt{useMemo} and \texttt{useCallback} all of these technologies and designs provided confidence in the robustness and user experience of the app.
 	
 	\section{Personal conclusions}
 	On a personal level, the project has been a profound learning experience. The author uses \textit{NutriPlan} every week, and it has become an invaluable tool to improve \textit{meal planning}, save time and reduce food waste. Throughout the development, new skills were acquired: integrating Firebase services, employing advanced React Native libraries, generating and installing APK files, testing applications on real devices and troubleshooting platform‑specific issues. The iterative refinement of a single prototype highlighted the importance of incremental improvement and continuous feedback, and it reinforced good practices such as clean code, documentation and careful interface design.
 	
 	\section{Future improvements}
-	Looking ahead, several avenues for future work emerge. These include integrating external APIs for grocery pricing and nutrition data; implementing personalised recommendations using machine‑learning techniques; adding nutritional analysis and detailed statistics; supporting multiple languages and enhanced accessibility features; strengthening security with multi‑factor authentication and data encryption; connecting with wearable devices and health services; and establishing CI/CD pipelines with automated testing. Pursuing these directions will not only enrich the application but also offer opportunities for further research.
+	Looking ahead, several avenues for future work emerge. These include integrating external APIs for grocery pricing and nutrition data; implementing personalised recommendations using machine‑learning techniques; adding nutritional analysis and detailed statistics; supporting multiple languages and enhanced accessibility features; strengthening security with multi‑factor authentication and data encryption; and connecting with wearable devices and health services. Pursuing these directions will not only enrich the application but also offer opportunities for further research.
 
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Bibliografía}
