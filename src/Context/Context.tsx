@@ -14,6 +14,7 @@ import {
   WeeklyMeal,
 } from '../Types/Types';
 import {
+  deleteRecipeDb,
   getAllRecipesDb,
   getRecipeByIdDb,
   updateRecipe,
@@ -110,6 +111,14 @@ type ContextProps = {
     ingredientId: string,
     recipeId: string,
   ) => Promise<boolean>;
+
+  /**
+   * Deletes a RecipeIngredient by looking up its internal row ID via recipeId and ingredientId.
+   * @param ingredientId - ID of the ingredient to remove
+   * @param recipeId     - ID of the recipe containing that ingredient
+   * @returns Promise<boolean> - true if deletion succeeded, false otherwise
+   */
+  deleteRecipe: (recipeId: string) => Promise<boolean>;
 
   /**
    * Adds multiple RecipeIngredient entries for a given recipe.
@@ -209,6 +218,7 @@ const AppContext = React.createContext<ContextProps>({
   getIngredientsOfRecipe: async () => [],
   updateRecipeIngredient: async () => {},
   deleteRecipeIngredient: async () => false,
+  deleteRecipe: async () => false,
   addRecipeIngredientMultiple: async () => ({
     created: false,
   }),
@@ -297,6 +307,15 @@ export const AppProvider = ({children}: AppProviderProps) => {
     ingredient: IngredientWithoutId,
   ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
     const response = await addIngredientDb(ingredient);
+    if (
+      response.created &&
+      typeof response.insertedId == 'string' &&
+      response.insertedId != undefined
+    )
+      setIngredients(prev => [
+        ...prev,
+        {id: response.insertedId || '', ...ingredient},
+      ]);
     showToast("Ingredient '" + ingredient.name + "' added.");
     return response;
   };
@@ -355,6 +374,13 @@ export const AppProvider = ({children}: AppProviderProps) => {
     // Validate the newRecIng object (checks recipeId, ingredientId, etc.)
     const isValid = verifyRecipeIngredientWithoutId(newRecIng);
 
+    console.log(
+      'addRecipeIngredient -> Validating:',
+      newRecIng,
+      'isValid:',
+      isValid,
+    );
+
     if (!isValid) {
       Alert.alert('Validation error', 'Invalid recipe‐ingredient data.');
       return '';
@@ -364,6 +390,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
       // Try inserting into SQLite
       const result = await addRecipeIngredientDb(newRecIng);
       if (result.created && result.insertedId != null) {
+        showToast('Ingredient added to recipe.');
         return result.insertedId;
       } else {
         // Insert succeeded but rowsAffected was 0 (UNIQUE constraint triggered)
@@ -518,7 +545,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
         ingredientId,
       );
 
-      if (recipeIngredientId != '' && recipeIngredientId) {
+      if (recipeIngredientId == '' || !recipeIngredientId) {
         console.warn(
           'deleteRecipeIngredient -> no matching ID for',
           recipeId,
@@ -545,6 +572,25 @@ export const AppProvider = ({children}: AppProviderProps) => {
         'Error',
         'Unexpected error while deleting ingredient from recipe.',
       );
+      return false;
+    }
+  };
+
+  /**
+   * Deletes the recipe and all the recipeIngredients associated with it.
+   */
+  const deleteRecipe = async (recipeId: string): Promise<boolean> => {
+    try {
+      // Find the row ID in RecipeIngredients
+      await deleteRecipeDb(recipeId);
+      //borrar la receta de recipes array
+      setRecipes(prev => prev.filter(r => r.id !== recipeId));
+      showToast('Recipe deleted');
+      return true;
+    } catch (error) {
+      // Unexpected exception
+      console.error('deleteRecipe -> Exception:', error);
+      Alert.alert('Error', 'Unexpected error while deleting recipe.');
       return false;
     }
   };
@@ -647,7 +693,8 @@ export const AppProvider = ({children}: AppProviderProps) => {
         getAllGroceryBought,
         addGroceryBought,
         removeGroceryBought,
-        addWeeklyMeal, // Add addWeeklyMeal to the context value
+        addWeeklyMeal,
+        deleteRecipe, // Add addWeeklyMeal to the context value
       }}>
       {children}
     </AppContext.Provider>
