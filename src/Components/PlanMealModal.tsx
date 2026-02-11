@@ -128,7 +128,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   const filteredIngredients = useMemo(() => {
     const s = search.trim().toLowerCase();
     if (!s) return ingredients;
-    return ingredients.filter(i => i.name.toLowerCase().includes(s));
+    return ingredients.filter(i => (i.name ?? '').toLowerCase().includes(s));
   }, [ingredients, search]);
 
   const validateAndSave = async () => {
