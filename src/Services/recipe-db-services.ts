@@ -11,6 +11,7 @@ import {
   getDoc,
   where,
 } from '@react-native-firebase/firestore';
+import {deleteRecipeIngredientDb} from './recipeIngredients-db-services';
 
 // Fields for the Recipe table
 export const RECIPE_ID = 'id';
@@ -67,7 +68,7 @@ export const addRecipeDb: (recipe: RecipeWithoutId) => Promise<{
     const recipeWithId = {...recipe, id: newRecipeRef.id};
     await setDoc(newRecipeRef, recipeWithId);
     const addRef = newRecipeRef.id;
-    console.log('addIngredient -> Firestore document added with ID:', addRef);
+    console.log('addRecipe -> Firestore document added with ID:', addRef);
 
     return {created: SUCCESS, insertedId: addRef};
   } catch (error) {
@@ -169,6 +170,11 @@ export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
     );
 
     const querySnapshot = await getDocs(recipesQuery);
+    if (querySnapshot)
+      console.log(
+        'getAllRecipesDb -> Retrieved recipes for user:',
+        JSON.stringify(querySnapshot.docs.map((doc: any) => doc.data())),
+      );
 
     querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: string}) => {
       const data = doc.data() as RecipeWithoutId;
@@ -211,9 +217,33 @@ export const updateRecipe = async (recipe: Recipe): Promise<boolean> => {
  *
  * @param {number} id the id of the Recipe to delete
  */
-export const deleteRecipe: (id: string) => Promise<void> = async id => {
-  // Firebase Implementation
-  const recipeDoc = doc(recipeCollection, id.toString());
-  await deleteDoc(recipeDoc);
-  console.log('deleteRecipe -> Firestore document deleted successfully.');
+export const deleteRecipeDb: (id: string) => Promise<void> = async id => {
+  try {
+    // Firebase Implementation
+    const recipeDoc = doc(recipeCollection, id.toString());
+    await deleteDoc(recipeDoc);
+    // delete the recipeIngredients associated with this recipe
+    const recipeQuery = query(
+      collection(firestoreDb, 'RecipeIngredients'),
+      where('recipeId', '==', id),
+    );
+    const querySnapshot = await getDocs(recipeQuery);
+    querySnapshot.forEach(async (docItem: {id: string}) => {
+      await deleteRecipeIngredientDb(docItem.id);
+    });
+    //Delete the weekly meals associated with this recipe
+    const weeklyMealQuery = query(
+      collection(firestoreDb, 'WeeklyMeals'),
+      where('recipeId', '==', id),
+    );
+    const weeklyMealSnapshot = await getDocs(weeklyMealQuery);
+    weeklyMealSnapshot.forEach(async (docItem: {id: string}) => {
+      const weeklyMealDoc = doc(firestoreDb, 'WeeklyMeals', docItem.id);
+      await deleteDoc(weeklyMealDoc);
+    });
+    console.log('deleteRecipe -> Firestore document deleted successfully.');
+  } catch (error) {
+    console.error('deleteRecipe -> Error deleting the recipe:', error);
+    throw new Error('Error while deleting recipe: ' + error);
+  }
 };

@@ -1,3 +1,4 @@
+import {auth} from '../Screens/MainScreen';
 import {
   DaysOfWeek,
   MealType,
@@ -92,7 +93,11 @@ export const getWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
   try {
     const weeklyMeals: WeeklyMeal[] = [];
     // Firebase Implementation
-    const weeklyMealsQuery = query(weeklyMealCollection);
+    // Get all documetns where userId matches
+    const weeklyMealsQuery = query(
+      weeklyMealCollection,
+      where('userId', '==', auth.currentUser?.uid),
+    ); // TODO: replace with actual userId
     const querySnapshot = await getDocs(weeklyMealsQuery);
     querySnapshot.forEach((doc: {data: () => WeeklyMealWithoutId; id: any}) => {
       const data = doc.data() as WeeklyMealWithoutId;
@@ -134,6 +139,7 @@ export const getWeeklyMealsByDayAndMealTypeDb: (
       weeklyMealCollection,
       where(WEEKLY_MEALS_DAY, '==', dayOfWeek),
       where(WEEKLY_MEALS_MEAL_TYPE, '==', mealType),
+      where('userId', '==', auth.currentUser?.uid), // TODO: replace with actual userId
     );
     const querySnapshot = await getDocs(weeklyMealsQuery);
     querySnapshot.forEach((doc: {data: () => WeeklyMealWithoutId; id: any}) => {

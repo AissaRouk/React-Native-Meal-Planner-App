@@ -5,10 +5,15 @@ import RecipeCard from '../Components/RecipeCardComponent';
 import {screensBackgroundColor} from '../Utils/Styiling';
 import {useNavigation} from '@react-navigation/native';
 import {RecipeScreenName} from '../../App';
+import {useState} from 'react';
+import {Recipe} from '../Types/Types';
+import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
 
 export function RecipesScreen(): React.JSX.Element {
-  const {recipes, setRecipes} = useAppContext();
+  const {recipes, deleteRecipe} = useAppContext();
   const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe>();
 
   return (
     <View
@@ -30,9 +35,27 @@ export function RecipesScreen(): React.JSX.Element {
                 recipe: recipe,
               })
             }
+            onLongPress={() => {
+              setModalVisible(true);
+              setSelectedRecipe(recipe);
+            }}
           />
         ))}
       </ScrollView>
+      {selectedRecipe && (
+        <RecipeOptionsModal
+          recipe={selectedRecipe}
+          menuVisible={modalVisible}
+          deleteOption
+          onDelete={async () =>
+            await deleteRecipe(selectedRecipe.id).then(() => {
+              setModalVisible(false);
+            })
+          }
+          setMenuVisible={setModalVisible}
+          key={selectedRecipe.id}
+        />
+      )}
     </View>
   );
 }

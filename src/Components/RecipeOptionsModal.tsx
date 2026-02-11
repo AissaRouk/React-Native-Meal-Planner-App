@@ -16,6 +16,7 @@ export function RecipeOptionsModal({
   deleteOption,
   onDelete,
   unPlanOption,
+  planOption,
   onPlan,
   onUnplan,
 }: {
@@ -24,9 +25,10 @@ export function RecipeOptionsModal({
   recipe: Recipe;
   deleteOption?: boolean;
   unPlanOption?: boolean;
+  planOption?: boolean;
   onDelete?: () => any;
   onUnplan?: () => any;
-  onPlan: () => any;
+  onPlan?: () => any;
 }): React.ReactNode {
   return (
     <Modal
@@ -43,12 +45,14 @@ export function RecipeOptionsModal({
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={styles.optionButton}
-            onPress={() => onPlan()}>
-            <Icon name="calendar-outline" size={18} color="#fb7945" />
-            <Text style={styles.optionText}>Plan this meal</Text>
-          </TouchableOpacity>
+          {planOption && (
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => onPlan && onPlan()}>
+              <Icon name="calendar-outline" size={18} color="#fb7945" />
+              <Text style={styles.optionText}>Plan this meal</Text>
+            </TouchableOpacity>
+          )}
 
           {unPlanOption && (
             <TouchableOpacity

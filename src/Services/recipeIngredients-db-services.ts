@@ -289,10 +289,35 @@ export const deleteRecipeIngredientDb: (
     console.log(
       'deleteRecipeIngredient -> Firestore document deleted successfully.',
     );
+    deleted = true;
     return deleted;
   } catch (error) {
     throw new Error(
       'deleteRecipeIngredient -> could not delete RecipeIngredient: ' + error,
+    );
+  }
+};
+
+/** Delete a all recipeIngredients with the same recipeId */
+export const deleteRecipeIngredientsByRecipeIdDb: (
+  recipeId: string,
+) => Promise<void> = async recipeId => {
+  try {
+    const recipeQuery = query(
+      collection(firestoreDb, 'RecipeIngredients'),
+      where('recipeId', '==', recipeId),
+    );
+    const querySnapshot = await getDocs(recipeQuery);
+    querySnapshot.forEach(async (docItem: {id: string}) => {
+      await deleteRecipeIngredientDb(docItem.id);
+    });
+    console.log(
+      'deleteRecipeIngredientsByRecipeId -> Firestore documents deleted successfully.',
+    );
+  } catch (error) {
+    throw new Error(
+      'deleteRecipeIngredientsByRecipeId -> could not delete RecipeIngredients: ' +
+        error,
     );
   }
 };

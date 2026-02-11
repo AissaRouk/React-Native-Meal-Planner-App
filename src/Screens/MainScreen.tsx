@@ -37,6 +37,8 @@ import PlannedIngredientCard from '../Components/PlannedIngredientCard';
 import {IngredientOptionsModal} from '../Components/PlannedIngredeintOptionsModal';
 import AddIngredientModal from '../Components/AddIngredientModal';
 
+export const auth = getAuth(); // Needed for sign-out; keep outside render paths.
+
 export default function MainScreen(): React.JSX.Element {
   // Types
   type WeeklyMealsIngredient = {
@@ -98,8 +100,6 @@ export default function MainScreen(): React.JSX.Element {
     getWeeklyMealsByDayAndMealType,
     addIngredient,
   } = useAppContext();
-
-  const auth = getAuth(); // Needed for sign-out; keep outside render paths.
   const navigation = useNavigation(); // Untyped here; consider useNavigation<AppStackNav>() for type-safety.
 
   // Thin wrapper: keeps caller code clean and testable.

@@ -1,5 +1,4 @@
-// src/Screens/GroceryListScreen.tsx
-
+// GroceryListScreen.tsx
 import React, {useEffect, useState, useCallback} from 'react';
 import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
 import AppHeader from '../Components/AppHeader';
@@ -13,9 +12,8 @@ import {
   modalBorderRadius,
 } from '../Utils/Styiling';
 import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
-import {getAllWeeklyMealsDb} from '../Services/weeklyMeals-db-services'; // Import the new function
+import {getAllWeeklyMealsDb} from '../Services/weeklyMeals-db-services';
 
-// Type for a grocery item to buy
 interface GroceryItem {
   ingredientId: string;
   name: string;
@@ -23,8 +21,76 @@ interface GroceryItem {
   quantityType: QuantityType;
 }
 
+// Conversión de unidades
+const conversionFactors: Record<QuantityType, number> = {
+  [QuantityType.TEASPOON]: 1,
+  [QuantityType.TABLESPOON]: 2,
+  [QuantityType.CUP]: 48,
+  [QuantityType.GRAM]: 1,
+  [QuantityType.KILOGRAM]: 1000,
+  [QuantityType.MILLILITER]: 1,
+  [QuantityType.LITER]: 1000,
+  [QuantityType.UNIT]: 1,
+};
+
+const preferredUnits: QuantityType[][] = [
+  [QuantityType.TEASPOON, QuantityType.TABLESPOON, QuantityType.CUP],
+  [QuantityType.GRAM, QuantityType.KILOGRAM],
+  [QuantityType.MILLILITER, QuantityType.LITER],
+];
+
+function unifyQuantities(items: GroceryItem[]): GroceryItem[] {
+  const grouped: Record<string, GroceryItem[]> = {};
+
+  for (const item of items) {
+    const key = item.ingredientId;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(item);
+  }
+
+  const unified: GroceryItem[] = [];
+
+  for (const ingId in grouped) {
+    const items = grouped[ingId];
+    const first = items[0];
+
+    const unitGroup = preferredUnits.find(group =>
+      group.includes(first.quantityType),
+    );
+
+    if (!unitGroup) {
+      const total = items.reduce((acc, i) => acc + i.toBuy, 0);
+      unified.push({...first, toBuy: total});
+      continue;
+    }
+
+    const toBase = (qty: number, from: QuantityType) =>
+      qty * (conversionFactors[from] || 1);
+
+    const fromBase = (qty: number, to: QuantityType) =>
+      qty / (conversionFactors[to] || 1);
+
+    const totalBase = items.reduce(
+      (acc, i) => acc + toBase(i.toBuy, i.quantityType),
+      0,
+    );
+
+    // Use the largest unit from the group
+    const targetUnit = unitGroup[unitGroup.length - 1];
+    const finalQuantity = fromBase(totalBase, targetUnit);
+
+    unified.push({
+      ingredientId: ingId,
+      name: first.name,
+      toBuy: finalQuantity,
+      quantityType: targetUnit,
+    });
+  }
+
+  return unified;
+}
+
 export default function GroceryListScreen(): React.ReactElement {
-  // Context hooks for app state and actions
   const {
     ingredients,
     getIngredientsOfRecipe,
@@ -33,32 +99,21 @@ export default function GroceryListScreen(): React.ReactElement {
     removeGroceryBought,
   } = useAppContext();
 
-  // Local state
-  const [groceryList, setGroceryList] = useState<GroceryItem[]>([]); // List of items to buy
-  const [boughtIds, setBoughtIds] = useState<Set<string>>(new Set()); // Set of bought ingredient IDs
-  const [boughtCollapsed, setBoughtCollapsed] = useState<boolean>(false); // Collapse bought section
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null); // Last refresh time
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading indicator
+  const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
+  const [boughtIds, setBoughtIds] = useState<Set<string>>(new Set());
+  const [boughtCollapsed, setBoughtCollapsed] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Loads grocery list by:
-   * 1. Gathering all planned meals for the week
-   * 2. Aggregating needed ingredients
-   * 3. Subtracting pantry stock
-   * 4. Building the final to-buy list
-   * 5. Loading bought flags from DB
-   */
   const loadGroceryList = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allWeekly: WeeklyMeal[] = await getAllWeeklyMealsDb(); // Use the new function
-
-      // 2) Aggregate ingredient needs from all recipes
-      type NeedKey = string;
+      const allWeekly: WeeklyMeal[] = await getAllWeeklyMealsDb();
       const neededMap: Record<
-        NeedKey,
+        string,
         {ingredientId: string; quantity: number; quantityType: QuantityType}
       > = {};
+
       for (const wm of allWeekly) {
         const entryType = wm.entryType ?? WeeklyEntryType.RECIPE;
         if (entryType === WeeklyEntryType.INGREDIENT && wm.ingredientId) {
@@ -85,39 +140,36 @@ export default function GroceryListScreen(): React.ReactElement {
         }
       }
 
-      // 3) Subtract pantry stock from needed quantities
       const pantry = await getAllIngredientPantriesDb();
       const pantryLookup: Record<string, number> = {};
       pantry.forEach(p => (pantryLookup[p.ingredientId] = p.quantity));
 
-      // 4) Build final to-buy list (exclude items already in pantry)
-      const list: GroceryItem[] = [];
-      for (const key in neededMap) {
-        if (neededMap.hasOwnProperty(key)) {
-          const needed = neededMap[key];
-          const have = pantryLookup[needed.ingredientId] || 0;
-          const toBuy = Math.max(0, needed.quantity - have);
+      const tempList: GroceryItem[] = [];
 
-          if (toBuy > 0) {
-            const ing = ingredients.find(i => i.id === needed.ingredientId);
-            if (ing) {
-              list.push({
-                ingredientId: needed.ingredientId,
-                name: ing.name,
-                toBuy: toBuy,
-                quantityType: needed.quantityType,
-              });
-            }
+      for (const key in neededMap) {
+        const needed = neededMap[key];
+        const have = pantryLookup[needed.ingredientId] || 0;
+        const toBuy = Math.max(0, needed.quantity - have);
+
+        if (toBuy > 0) {
+          const ing = ingredients.find(i => i.id === needed.ingredientId);
+          if (ing) {
+            tempList.push({
+              ingredientId: needed.ingredientId,
+              name: ing.name,
+              toBuy,
+              quantityType: needed.quantityType,
+            });
           }
         }
       }
 
-      list.sort((a, b) => a.name.localeCompare(b.name));
+      const mergedList = unifyQuantities(tempList);
+      mergedList.sort((a, b) => a.name.localeCompare(b.name));
 
-      setGroceryList(list);
+      setGroceryList(mergedList);
       setLastUpdated(new Date());
 
-      // 5) Load persisted “bought” flags from DB
       const boughtArray = await getAllGroceryBought();
       setBoughtIds(new Set(boughtArray.map(item => item.ingredientId)));
     } catch (error) {
@@ -130,36 +182,27 @@ export default function GroceryListScreen(): React.ReactElement {
     getIngredientsOfRecipe,
     getAllIngredientPantriesDb,
     getAllGroceryBought,
-    getAllWeeklyMealsDb, // Add the new function to the dependency array
+    getAllWeeklyMealsDb,
   ]);
 
-  // Load grocery list on mount and when dependencies change
   useEffect(() => {
     loadGroceryList();
   }, [loadGroceryList]);
 
-  /**
-   * Toggle an ingredient's "bought" state both in UI and in DB.
-   * Adds/removes the ingredient from the bought set and persists to DB.
-   */
   const toggleBought = async (id: string) => {
     if (boughtIds.has(id)) {
-      await removeGroceryBought(id); // Remove from DB
+      await removeGroceryBought(id);
       setBoughtIds(prev => {
         const next = new Set(prev);
         next.delete(id);
         return next;
       });
     } else {
-      await addGroceryBought(id); // Add to DB
+      await addGroceryBought(id);
       setBoughtIds(prev => new Set(prev).add(id));
     }
   };
 
-  /**
-   * Renders each “to buy” grocery card.
-   * Shows item name, quantity, and a checkbox to mark as bought.
-   */
   const renderToBuyItem = ({item}: {item: GroceryItem}) => (
     <View style={styles.card}>
       <View style={styles.row}>
@@ -169,18 +212,16 @@ export default function GroceryListScreen(): React.ReactElement {
         <Text style={styles.name}>{item.name}</Text>
       </View>
       <Text style={styles.qty}>
-        {item.toBuy} {item.quantityType}
+        {item.toBuy.toFixed(2)} {item.quantityType}
       </Text>
     </View>
   );
 
-  // Split grocery list into items to buy and already bought
   const toBuyList = groceryList.filter(i => !boughtIds.has(i.ingredientId));
   const boughtList = groceryList.filter(i => boughtIds.has(i.ingredientId));
 
   return (
     <View style={styles.container}>
-      {/* App header with refresh button */}
       <AppHeader
         title="Grocery List"
         rightComponent={
@@ -195,15 +236,11 @@ export default function GroceryListScreen(): React.ReactElement {
           </TouchableOpacity>
         }
       />
-
-      {/* Last updated time */}
       {lastUpdated && (
         <Text style={styles.updatedText}>
           Updated: {lastUpdated.toLocaleTimeString()}
         </Text>
       )}
-
-      {/* List of items to buy */}
       <View style={{flex: 1}}>
         <FlatList
           data={toBuyList}
@@ -219,8 +256,6 @@ export default function GroceryListScreen(): React.ReactElement {
           }
         />
       </View>
-
-      {/* Already bought section, collapsible */}
       {boughtList.length > 0 && (
         <>
           <TouchableOpacity
@@ -242,7 +277,7 @@ export default function GroceryListScreen(): React.ReactElement {
                 onPress={() => toggleBought(item.ingredientId)}>
                 <Icon name="checkbox" size={20} color={orangeBackgroundColor} />
                 <Text style={[styles.name, styles.nameBought]}>
-                  {item.name} — {item.toBuy} {item.quantityType}
+                  {item.name} — {item.toBuy.toFixed(2)} {item.quantityType}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -252,7 +287,6 @@ export default function GroceryListScreen(): React.ReactElement {
   );
 }
 
-// Styles for the screen and components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -264,8 +298,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     color: '#666',
   },
-
-  /* To Buy Cards */
   card: {
     backgroundColor: 'white',
     borderColor: greyBorderColor,
@@ -289,8 +321,6 @@ const styles = StyleSheet.create({
     color: '#555',
     marginLeft: 36,
   },
-
-  /* Already Bought Section */
   sectionHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -317,8 +347,6 @@ const styles = StyleSheet.create({
     color: '#999',
     marginLeft: 8,
   },
-
-  /* Empty State */
   empty: {
     textAlign: 'center',
     marginTop: 50,

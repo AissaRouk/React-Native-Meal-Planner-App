@@ -173,28 +173,35 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
       quantity: recipeIngredient.quantity,
       quantityType: recipeIngredient.quantityType,
     });
-    if (!response) {
+    if (response) {
+      onCloseModal();
       setFetchFlag(prev => !prev);
     }
   };
 
   /**
-   * Handle when an ingredient is added from the AddRecipeModal
+   * Handle when an ingredient is added from the AddIngredientModal
    */
   const handleAddIngredient = async (
     ingredient: IngredientWithoutId,
   ): Promise<string> => {
-    var response = '';
     const check = verifyIngredientWithoutId(ingredient);
     if (check) {
-      // the ingredient added is without id, so give it a temporal one
-      response == (await addIngredient({...ingredient})).insertedId;
-      if (response) {
+      const result = await addIngredient({...ingredient});
+      if (result.insertedId) {
+        await handleAddRecipeIngredient({
+          id: result.insertedId,
+          name: ingredient.name,
+          quantity: 0,
+          quantityType: QuantityType.GRAM,
+          category: ingredient.category,
+        });
         onCloseModal();
+
+        return result.insertedId;
       }
     }
-
-    return response;
+    return '';
   };
 
   /**
@@ -204,6 +211,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
     ingredient: IngredientWithoutId,
   ): Promise<boolean> => {
     const response = await handleAddIngredient(ingredient);
+    onCloseModal();
     return response ? true : false;
   };
 
@@ -213,6 +221,7 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
    */
   const onCloseModal = () => {
     setAddIngredientModalVisible(false);
+    setIsIngredientModalVisible(false);
   };
 
   // async function that fethces all the ingredients of a recipe
@@ -315,42 +324,44 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
           marginBottom: 10,
         }}>
         <Text style={styles.ingredientsHeader}>Ingredients:</Text>
-        <FloatingButton
-          iconName="add"
-          onPress={() => setIsIngredientModalVisible(true)}
-          containerStyle={{
-            backgroundColor: orangeBackgroundColor,
-            width: 30,
-            height: 30,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 5, // Android shadow
-            shadowColor: '#000', // iOS shadow
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.3,
-            shadowRadius: 3,
-          }}
-          iconSize={20}
-        />
+        {isEditing && (
+          <FloatingButton
+            iconName="add"
+            onPress={() => setIsIngredientModalVisible(true)}
+            containerStyle={{
+              backgroundColor: orangeBackgroundColor,
+              width: 30,
+              height: 30,
+              borderRadius: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+              elevation: 5, // Android shadow
+              shadowColor: '#000', // iOS shadow
+              shadowOffset: {width: 0, height: 2},
+              shadowOpacity: 0.3,
+              shadowRadius: 3,
+            }}
+            iconSize={20}
+          />
+        )}
       </View>
 
       {/* ScrollView with all the ingredients of the Recipe */}
       <ScrollView>
         {!isEditing
-          ? recipeIngredients.map((ingredients, index) => (
+          ? recipeIngredients.map((ingredient, index) => (
               <IngredientCard
-                id={ingredients.id}
-                name={ingredients.name}
-                category={ingredients.category}
-                quantity={ingredients.quantity}
-                quantityType={ingredients.quantityType}
-                key={index}
+                id={ingredient.id}
+                name={ingredient.name}
+                category={ingredient.category}
+                quantity={ingredient.quantity}
+                quantityType={ingredient.quantityType}
+                key={ingredient.id}
               />
             ))
           : recipeIngredients.map((ingredient, index) => (
               <IngredientComponent
-                key={index}
+                key={ingredient.id}
                 ingredients={recipeIngredients}
                 id={ingredient.id}
                 number={index}
@@ -370,8 +381,8 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
                     quantityType,
                   )
                 }
-                onDelete={() => {
-                  handleDeleteIngredient(ingredient.id);
+                onDelete={async () => {
+                  await handleDeleteIngredient(ingredient.id);
                 }}
               />
             ))}
@@ -405,7 +416,6 @@ export const RecipeScreen: React.FC<RecipeScreenProps> = ({route}) => {
         onOpenAddIngredientModal={() => setAddIngredientModalVisible(true)}
       />
 
-      {/* The button for opening the modal */}
       <AddIngredientModal
         visible={isAddIngredientModalVisible}
         onSubmit={handleCallHandleAddIngredient}
