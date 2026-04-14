@@ -1,38 +1,10 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import {
-  View,
-  Text,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-  TextInput,
-  Alert,
-} from 'react-native';
-import {
-  DaysOfWeek,
-  MealType,
-  Recipe,
-  QuantityType,
-  quantityTypes,
-  WeeklyEntryType,
-} from '../Types/Types';
-import {ModalHeader} from './ModalHeareComponent';
-import {CustomPicker} from './CustomPicker';
-import {
-  modalBorderRadius,
-  modalSemiTransparentBg,
-  modalWhiteBg,
-  orangeBackgroundColor,
-} from '../Utils/Styiling';
-import {useAppContext} from '../Context/Context';
+import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { View, Text, Modal, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, TextInput, Alert, } from 'react-native';
+import { DaysOfWeek, MealType, Recipe, QuantityType, quantityTypes, WeeklyEntryType, } from '../Types/Types';
+import { ModalHeader } from './ModalHeareComponent';
+import { CustomPicker } from './CustomPicker';
+import { modalBorderRadius, modalSemiTransparentBg, modalWhiteBg, orangeBackgroundColor, } from '../Utils/Styiling';
+import { useAppContext } from '../Context/Context';
 import AddIngredientButton from './AddIngredientButton';
 import auth from '@react-native-firebase/auth';
 
@@ -56,12 +28,8 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   setAddIngredientModalVisible,
 }) => {
   // selection values
-  const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(
-    initialDay ?? DaysOfWeek.MONDAY,
-  );
-  const [selectedMealType, setSelectedMealType] = useState<MealType>(
-    initialMealType ?? MealType.BREAKFAST,
-  );
+  const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(initialDay ?? DaysOfWeek.MONDAY,);
+  const [selectedMealType, setSelectedMealType] = useState<MealType>(initialMealType ?? MealType.BREAKFAST,);
 
   // picker open/close state (the crucial bit)
   const [dayPickerOpen, setDayPickerOpen] = useState(false);
@@ -73,12 +41,10 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   // recipes
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState<boolean>(true);
-  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(
-    initialRecipeId ?? null,
-  );
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(initialRecipeId ?? null);
 
   // ingredients
-  const {ingredients, getAllRecipes, addWeeklyMeal} = useAppContext();
+  const { ingredients, getAllRecipes, addWeeklyMeal } = useAppContext();
   const [search, setSearch] = useState('');
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>('');
   const [qtyText, setQtyText] = useState('1');
@@ -108,10 +74,9 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
       try {
         const fetched: Recipe[] = await getAllRecipes(user.uid);
         setAllRecipes(fetched);
-        if (!initialRecipeId && fetched.length > 0)
-          setSelectedRecipeId(fetched[0].id);
+        if (!initialRecipeId && fetched.length > 0) setSelectedRecipeId(fetched[0].id);
       } catch (e) {
-        console.error('PlanMealModal: error loading recipes:', e);
+        console.error(e);
       } finally {
         setIsLoadingRecipes(false);
       }
@@ -195,7 +160,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
           />
 
           {/* Meal type */}
-          <Text style={[styles.label, {marginTop: 16}]}>Meal Type</Text>
+          <Text style={[styles.label, { marginTop: 16 }]}>Meal Type</Text>
           <CustomPicker
             isPickerOpen={mealPickerOpen}
             setIsPickerOpen={setMealPickerOpen}
@@ -261,10 +226,10 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
             </View>
           ) : (
             <View>
-              <Text style={[styles.label, {marginTop: 12}]}>
+              <Text style={[styles.label, { marginTop: 12 }]}>
                 Find ingredient
               </Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TextInput
                   style={styles.input}
                   placeholder="Banana, muesli bar…"
@@ -298,7 +263,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
               </View>
 
               <View style={styles.row}>
-                <View style={{flex: 1, marginRight: 8}}>
+                <View style={{ flex: 1, marginRight: 8 }}>
                   <Text style={styles.label}>Quantity</Text>
                   <TextInput
                     style={styles.input}
@@ -307,7 +272,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
                     onChangeText={setQtyText}
                   />
                 </View>
-                <View style={{flex: 1, marginLeft: 8}}>
+                <View style={{ flex: 1, marginLeft: 8 }}>
                   <Text style={styles.label}>Unit</Text>
                   <CustomPicker
                     isPickerOpen={qtyPickerOpen}
@@ -323,7 +288,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
 
           {/* Save */}
           <TouchableOpacity
-            style={[styles.saveButton, isSaving && {opacity: 0.6}]}
+            style={[styles.saveButton, isSaving && { opacity: 0.6 }]}
             onPress={validateAndSave}
             disabled={isSaving}>
             <Text style={styles.saveButtonText}>
@@ -349,7 +314,7 @@ const styles = StyleSheet.create({
     padding: 16,
     maxHeight: '90%',
   },
-  label: {fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 8},
+  label: { fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 8 },
   toggleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -369,8 +334,8 @@ const styles = StyleSheet.create({
     backgroundColor: orangeBackgroundColor,
     borderColor: orangeBackgroundColor,
   },
-  toggleText: {color: '#333', fontWeight: '600'},
-  toggleTextActive: {color: 'white'},
+  toggleText: { color: '#333', fontWeight: '600' },
+  toggleTextActive: { color: 'white' },
   listBox: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -378,17 +343,17 @@ const styles = StyleSheet.create({
     height: 200,
     overflow: 'hidden',
   },
-  noData: {padding: 12, color: '#666', fontStyle: 'italic'},
-  scrollArea: {paddingHorizontal: 8},
+  noData: { padding: 12, color: '#666', fontStyle: 'italic' },
+  scrollArea: { paddingHorizontal: 8 },
   option: {
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  optionActive: {backgroundColor: orangeBackgroundColor, borderRadius: 4},
-  optionText: {color: '#333', fontSize: 16},
-  optionTextActive: {color: 'white', fontWeight: '600'},
+  optionActive: { backgroundColor: orangeBackgroundColor, borderRadius: 4 },
+  optionText: { color: '#333', fontSize: 16 },
+  optionTextActive: { color: 'white', fontWeight: '600' },
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
@@ -397,7 +362,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flex: 1,
   },
-  chipsRow: {flexDirection: 'row', flexWrap: 'wrap', marginTop: 8},
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 },
   chip: {
     paddingVertical: 6,
     paddingHorizontal: 10,
@@ -406,10 +371,10 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
-  chipActive: {backgroundColor: orangeBackgroundColor},
-  chipText: {color: '#333'},
-  chipTextActive: {color: 'white', fontWeight: '600'},
-  row: {flexDirection: 'row', marginTop: 10},
+  chipActive: { backgroundColor: orangeBackgroundColor },
+  chipText: { color: '#333' },
+  chipTextActive: { color: 'white', fontWeight: '600' },
+  row: { flexDirection: 'row', marginTop: 10 },
   saveButton: {
     backgroundColor: orangeBackgroundColor,
     marginTop: 20,
@@ -417,5 +382,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
   },
-  saveButtonText: {color: 'white', fontSize: 18, fontWeight: '600'},
+  saveButtonText: { color: 'white', fontSize: 18, fontWeight: '600' },
 });
