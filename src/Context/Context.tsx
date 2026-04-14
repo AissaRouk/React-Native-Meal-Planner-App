@@ -1,46 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import React, { useState } from 'react';
+import { Alert } from 'react-native';
 import {
-  DaysOfWeek,
-  ErrorResponseCodes,
-  GroceryBought,
-  Ingredient,
-  IngredientPantry,
-  IngredientWithoutId,
-  MealType,
-  QuantityType,
-  Recipe,
-  RecipeIngredientWithoutId,
-  WeeklyMeal,
+  DaysOfWeek, ErrorResponseCodes, GroceryBought, Ingredient, IngredientPantry, IngredientWithoutId, MealType, QuantityType, Recipe,
+  RecipeIngredientWithoutId, WeeklyMeal
 } from '../Types/Types';
+import { deleteRecipeDb, getAllRecipesDb, getRecipeByIdDb, updateRecipe } from '../Services/recipe-db-services';
 import {
-  deleteRecipeDb,
-  getAllRecipesDb,
-  getRecipeByIdDb,
-  updateRecipe,
-} from '../Services/recipe-db-services';
-import {
-  addRecipeIngredientDb,
-  addRecipeIngredientMultipleDb,
-  deleteRecipeIngredientDb,
-  getIdFromRecipeIdAndIngredientId,
-  getIngredientsFromRecipeIdDb,
-  updateRecipeIngredientDb,
+  addRecipeIngredientDb, addRecipeIngredientMultipleDb, deleteRecipeIngredientDb, getIdFromRecipeIdAndIngredientId,
+  getIngredientsFromRecipeIdDb, updateRecipeIngredientDb
 } from '../Services/recipeIngredients-db-services';
-import {addIngredientDb} from '../Services/ingredient-db-services';
-import {showToast, verifyRecipeIngredientWithoutId} from '../Utils/utils';
-import {
-  AddWeeklyMealInput,
-  deleteWeeklyMealDb,
-  getWeeklyMealsByDayAndMealTypeDb,
-} from '../Services/weeklyMeals-db-services';
-import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
-import {
-  addGroceryBoughtDb,
-  getAllGroceryBoughtDb,
-  removeGroceryBoughtDb,
-} from '../Services/groceryBought-db-services';
-import {addWeeklyMealDb} from '../Services/weeklyMeals-db-services'; // Import addWeeklyMealDb
+import { addIngredientDb } from '../Services/ingredient-db-services';
+import { showToast, verifyRecipeIngredientWithoutId } from '../Utils/utils';
+import { AddWeeklyMealInput, deleteWeeklyMealDb, getWeeklyMealsByDayAndMealTypeDb } from '../Services/weeklyMeals-db-services';
+import { getAllIngredientPantriesDb } from '../Services/ingredientPantry-db-services';
+import { addGroceryBoughtDb, getAllGroceryBoughtDb, removeGroceryBoughtDb } from '../Services/groceryBought-db-services';
+import { addWeeklyMealDb } from '../Services/weeklyMeals-db-services'; // Import addWeeklyMealDb
 
 // Define the shape of the entire context, including methods and state values.
 type ContextProps = {
@@ -82,7 +56,7 @@ type ContextProps = {
    */
   addIngredient: (
     ingredient: IngredientWithoutId,
-  ) => Promise<{created: boolean; response?: string; insertedId?: string}>;
+  ) => Promise<{ created: boolean; response?: string; insertedId?: string }>;
 
   /**
    * Fetches all ingredients (with quantity & type) for a given recipe.
@@ -91,7 +65,7 @@ type ContextProps = {
    */
   getIngredientsOfRecipe: (
     recipeId: string,
-  ) => Promise<(Ingredient & {quantity: number; quantityType: QuantityType})[]>;
+  ) => Promise<(Ingredient & { quantity: number; quantityType: QuantityType })[]>;
 
   /**
    * Updates an existing RecipeIngredient entry in the database.
@@ -129,7 +103,7 @@ type ContextProps = {
   addRecipeIngredientMultiple: (
     recipeId: string,
     ingredients: Array<
-      Ingredient & {quantity: number; quantityType: QuantityType}
+      Ingredient & { quantity: number; quantityType: QuantityType }
     >,
   ) => Promise<{
     created: boolean;
@@ -205,37 +179,37 @@ type AppProviderProps = {
 // Create the actual context with default values (no-ops).
 const AppContext = React.createContext<ContextProps>({
   userId: '',
-  setUserId: () => {},
+  setUserId: () => { },
   ingredients: [],
   setIngredients: () => Promise.resolve(),
   addOrUpdateIngredient: async () => '-1',
 
   recipes: [],
-  setRecipes: () => {},
-  addOrUpdateRecipe: async () => {},
+  setRecipes: () => { },
+  addOrUpdateRecipe: async () => { },
 
   addRecipeIngredient: async () => '-1',
   getIngredientsOfRecipe: async () => [],
-  updateRecipeIngredient: async () => {},
+  updateRecipeIngredient: async () => { },
   deleteRecipeIngredient: async () => false,
   deleteRecipe: async () => false,
   addRecipeIngredientMultiple: async () => ({
     created: false,
   }),
-  addIngredient: async () => ({created: false}),
+  addIngredient: async () => ({ created: false }),
   getAllRecipes: async () => [],
   getRecipeById: async () => null,
   deleteWeeklyMeal: async () => false,
   getWeeklyMealsByDayAndMealType: async () => [],
   getAllIngredientPantries: async () => [],
   getAllGroceryBought: async () => [],
-  addGroceryBought: async () => ({id: '', ingredientId: '', timestamp: 0}),
-  removeGroceryBought: async () => {},
+  addGroceryBought: async () => ({ id: '', ingredientId: '', timestamp: 0 }),
+  removeGroceryBought: async () => { },
   addWeeklyMeal: async () => '', // Add default implementation
 });
 
 // The provider component wraps the app and supplies state + methods.
-export const AppProvider = ({children}: AppProviderProps) => {
+export const AppProvider = ({ children }: AppProviderProps) => {
   // Local state for the list of ingredients (in memory)
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
@@ -303,19 +277,10 @@ export const AppProvider = ({children}: AppProviderProps) => {
    * @param ingredient - The new ingredient object without an ID
    * @returns Promise containing an object with { created, insertedId?, response? }
    */
-  const addIngredient = async (
-    ingredient: IngredientWithoutId,
-  ): Promise<{created: boolean; response?: string; insertedId?: string}> => {
+  const addIngredient = async (ingredient: IngredientWithoutId): Promise<{ created: boolean; response?: string; insertedId?: string }> => {
     const response = await addIngredientDb(ingredient);
-    if (
-      response.created &&
-      typeof response.insertedId == 'string' &&
-      response.insertedId != undefined
-    )
-      setIngredients(prev => [
-        ...prev,
-        {id: response.insertedId || '', ...ingredient},
-      ]);
+    if (response.created && typeof response.insertedId === 'string' && response.insertedId !== undefined)
+      setIngredients(prev => [...prev, { id: response.insertedId || '', ...ingredient },]);
     showToast("Ingredient '" + ingredient.name + "' added.");
     return response;
   };
@@ -323,7 +288,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
   /**
    * Gets all the Recipes
    */
-  const getAllRecipes = async (userId: string) => {
+  const getAllRecipes = async () => {
     const result: Recipe[] = await getAllRecipesDb(userId);
     return result;
   };
@@ -418,7 +383,7 @@ export const AppProvider = ({children}: AppProviderProps) => {
   const addRecipeIngredientMultiple = async (
     recipeId: string,
     ingredients: Array<
-      Ingredient & {quantity: number; quantityType: QuantityType}
+      Ingredient & { quantity: number; quantityType: QuantityType }
     >,
   ) => {
     const response = await addRecipeIngredientMultipleDb(recipeId, ingredients);
@@ -426,9 +391,9 @@ export const AppProvider = ({children}: AppProviderProps) => {
     if (recipe)
       showToast(
         ingredients.length +
-          " ingredient(s) added to recipe '" +
-          recipe.name +
-          "'.",
+        " ingredient(s) added to recipe '" +
+        recipe.name +
+        "'.",
       );
     return response;
   };
@@ -484,11 +449,11 @@ export const AppProvider = ({children}: AppProviderProps) => {
   const getIngredientsOfRecipe = async (
     recipeId: string,
   ): Promise<
-    (Ingredient & {quantity: number; quantityType: QuantityType})[]
+    (Ingredient & { quantity: number; quantityType: QuantityType })[]
   > => {
     // Prepare return array
     const result: Array<
-      Ingredient & {quantity: number; quantityType: QuantityType}
+      Ingredient & { quantity: number; quantityType: QuantityType }
     > = [];
 
     // Guard: invalid recipeId
