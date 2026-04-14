@@ -1,43 +1,27 @@
 // src/Screens/MainScreen.tsx
 
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  ActivityIndicator,
-} from 'react-native';
-import {
-  DaysOfWeek,
-  Ingredient,
-  MealType,
-  QuantityType,
-  Recipe,
-  WeeklyMeal,
-} from '../Types/Types';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from 'react-native';
+import { DaysOfWeek, Ingredient, MealType, QuantityType, Recipe, WeeklyMeal } from '../Types/Types';
 import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
 import AddRecipeModal from '../Components/AddRecipeModal';
-import {useAppContext} from '../Context/Context';
+import { useAppContext } from '../Context/Context';
 import MealsHeader from '../Components/MealsHeader';
-import {screensBackgroundColor} from '../Utils/Styiling';
-import {FloatingButton} from '../Components/FloatingButton';
-import {PlanMealModal} from '../Components/PlanMealModal';
-import {RecipeOptionsModal} from '../Components/RecipeOptionsModal';
-import {handleNavigate, handleOnSubmitAddIngredient} from '../Utils/utils';
-import {getAuth} from '@react-native-firebase/auth';
-import {useNavigation} from '@react-navigation/native';
-import {
-  getAllIngredients,
-  getIngredientById,
-} from '../Services/ingredient-db-services';
-import {WeeklyEntryType} from '../Types/Types';
+import { screensBackgroundColor } from '../Utils/Styiling';
+import { FloatingButton } from '../Components/FloatingButton';
+import { PlanMealModal } from '../Components/PlanMealModal';
+import { RecipeOptionsModal } from '../Components/RecipeOptionsModal';
+import { handleNavigate, handleOnSubmitAddIngredient } from '../Utils/utils';
+import { getAuth } from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import { getAllIngredients, getIngredientById, } from '../Services/ingredient-db-services';
+import { WeeklyEntryType } from '../Types/Types';
 import PlannedIngredientCard from '../Components/PlannedIngredientCard';
-import {IngredientOptionsModal} from '../Components/PlannedIngredeintOptionsModal';
+import { IngredientOptionsModal } from '../Components/PlannedIngredeintOptionsModal';
 import AddIngredientModal from '../Components/AddIngredientModal';
 
-export const auth = getAuth(); // Needed for sign-out; keep outside render paths.
+export const auth = getAuth();
 
 export default function MainScreen(): React.JSX.Element {
   // Types
@@ -49,9 +33,7 @@ export default function MainScreen(): React.JSX.Element {
   };
 
   // Tracks the active tab; used to query weekly meals and default Plan modal.
-  const [selectedMeal, setSelectedMeal] = useState<MealType>(
-    MealType.BREAKFAST,
-  );
+  const [selectedMeal, setSelectedMeal] = useState<MealType>(MealType.BREAKFAST,);
   // Day selector that drives weekly-meal queries and Plan modal defaults.
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
   // Source of truth for scheduled entries for the current (day, meal).
@@ -61,54 +43,38 @@ export default function MainScreen(): React.JSX.Element {
     Recipe[]
   >([]);
   // The list of the ingredients available in the weeklyMeals
-  const [currentWeeklyMealsIngredients, setCurrentWeeklyMealsIngredients] =
-    useState<WeeklyMealsIngredient[]>([]);
+  const [currentWeeklyMealsIngredients, setCurrentWeeklyMealsIngredients] = useState<WeeklyMealsIngredient[]>([]);
   // Flip-flop to force a refetch when mutating schedule without changing filters.
   const [renderFlag, setRenderFlag] = useState<boolean>(false);
   // Toggles the add-recipe modal.
   const [visible, setVisible] = useState<boolean>(false);
   // Shows the plan-meal modal (planning a recipe into a (day, meal)).
-  const [planMealModalVisible, setPlanMealModalVisible] =
-    useState<boolean>(false);
+  const [planMealModalVisible, setPlanMealModalVisible] = useState<boolean>(false);
   // Controls the AddIngredientModal visibility
-  const [addIngredientModalVisible, setAddIngredientModalVisible] =
-    useState<boolean>(false);
+  const [addIngredientModalVisible, setAddIngredientModalVisible] = useState<boolean>(false);
   // Controls the long-press options on a recipe card.
-  const [recipeOptionsVisibility, setRecipeOptionsVisibility] =
-    useState<boolean>(false);
+  const [recipeOptionsVisibility, setRecipeOptionsVisibility] = useState<boolean>(false);
   // Controls the long-press options on a planned ingredient card.
-  const [ingredientOptionsVisibility, setIngredientOptionsVisibility] =
-    useState<boolean>(false);
+  const [ingredientOptionsVisibility, setIngredientOptionsVisibility] = useState<boolean>(false);
   // Holds the recipe the user long-pressed; optional by design.
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe>();
   // Holds the ingredient instance the user long-pressed; optional by design.
-  const [selectedIngredientInst, setSelectedIngredientInst] =
-    useState<WeeklyMealsIngredient | null>(null);
+  const [selectedIngredientInst, setSelectedIngredientInst] = useState<WeeklyMealsIngredient | null>(null);
   // Guards first-render UX; prevents UI flashing before initial data is ready.
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
   // Spinner for the weekly-meals fetch (distinct from initial boot loading).
-  const [isWeeklyMealsLoading, setIsWeeklyMealsLoading] =
-    useState<boolean>(false);
+  const [isWeeklyMealsLoading, setIsWeeklyMealsLoading] = useState<boolean>(false);
 
   // CONTEXT — central app API/state providers.
   const {
-    setIngredients,
-    getRecipeById,
-    setRecipes,
-    getAllRecipes,
-    deleteWeeklyMeal,
-    getWeeklyMealsByDayAndMealType,
-    addIngredient,
-  } = useAppContext();
-  const navigation = useNavigation(); // Untyped here; consider useNavigation<AppStackNav>() for type-safety.
+    setIngredients, getRecipeById, setRecipes, getAllRecipes, deleteWeeklyMeal, getWeeklyMealsByDayAndMealType, addIngredient } = useAppContext();
+  const navigation = useNavigation();
 
   // Thin wrapper: keeps caller code clean and testable.
   const fetchWeeklyMeals = async (
     dayOfWeek: DaysOfWeek,
     mealType: MealType,
-  ) => {
-    return await getWeeklyMealsByDayAndMealType(dayOfWeek, mealType);
-  };
+  ) => { return await getWeeklyMealsByDayAndMealType(dayOfWeek, mealType) };
 
   // Fetches recipe docs for current weeklyMeals.
   // NOTE: This runs sequentially to preserve order; if order is irrelevant, `Promise.all` would be faster.
@@ -123,17 +89,14 @@ export default function MainScreen(): React.JSX.Element {
       }
       // if it's an ingredient, we add it to the ingredient list
       else if (meal.ingredientId) {
-        const ingredient: Ingredient = await getIngredientById(
-          meal.ingredientId!,
-        );
-        if (ingredient) {
-          fetchedIngredients.push({
+        const ingredient: Ingredient = await getIngredientById(meal.ingredientId!);
+        if (ingredient) fetchedIngredients.push(
+          {
             weeklyMealId: meal.id,
             IngredientName: ingredient.name,
             quantity: meal.quantity!,
             quantityType: meal.quantityType!,
           });
-        }
       }
     }
     setCurrentWeeklyMealsIngredients(fetchedIngredients);
@@ -148,7 +111,7 @@ export default function MainScreen(): React.JSX.Element {
   // Unplan removes the specific WeeklyMeal entry that references the recipe.
   // Why: a recipe can exist in multiple slots; we target only the current (day, meal) entry.
   const handleUnplanRecipe = async () => {
-    if (!selectedRecipe) return; // Defensive: modal can linger after state changes.
+    if (!selectedRecipe) return;
 
     const entry = weeklyMeals.find(wm => wm.recipeId === selectedRecipe.id);
     if (!entry) {
@@ -183,7 +146,7 @@ export default function MainScreen(): React.JSX.Element {
       const fetchedRecipes = await getAllRecipes(userId);
 
       setRecipes(fetchedRecipes);
-      setIsFetchFinished(true); // Unlocks UI; also set again in `.then` below (dup but harmless).
+      setIsFetchFinished(true);
     };
     asyncFunctions()
       .catch(error => {
@@ -229,61 +192,35 @@ export default function MainScreen(): React.JSX.Element {
   // Keep `currentWeeklyMealsRecipes` in sync with `weeklyMeals`.
   // Why: these are separate because weeklyMeals are lightweight refs, recipes are full docs.
   useEffect(() => {
-    if (weeklyMeals.length > 0) {
-      fetchRecipes();
-    } else {
-      setCurrentWeeklyMealsRecipes([]); // Clear when there are no entries for the slot.
-    }
+    if (weeklyMeals.length > 0) fetchRecipes();
+    else setCurrentWeeklyMealsRecipes([]);
   }, [weeklyMeals]);
 
   return isFetchFinished ? (
-    <View style={[styles.container, {padding: 16}]}>
+    <View style={[styles.container, { padding: 16 }]}>
       {/* Header */}
       <>
         {/* Day selector; also exposes navigation and sign-out actions. */}
-        <MealsHeader
-          selectedDay={selectedDay}
-          setSelectedDay={setSelectedDay}
-          onRecipesButtonPress={() =>
-            handleNavigate({screen: 'Recipes'}, navigation)
-          }
-          onLogoutButtonPress={() => auth.signOut()}
-        />
+        <MealsHeader selectedDay={selectedDay} setSelectedDay={setSelectedDay}
+          onRecipesButtonPress={() => handleNavigate({ screen: 'Recipes' }, navigation)}
+          onLogoutButtonPress={() => auth.signOut()} />
         {/* Meal-type tabs; drives the (day, meal) query. */}
-        <MealTypeComponent
-          mealType={selectedMeal}
-          onSelectedMeal={setSelectedMeal}
-        />
+        <MealTypeComponent mealType={selectedMeal} onSelectedMeal={setSelectedMeal} />
       </>
+
       {/* PlannedRecipes and PlannedIngredients list area */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {isWeeklyMealsLoading ? (
-          <ActivityIndicator
-            size="large"
-            color="#fb7945"
-            style={{marginTop: 20}}
-          />
-        ) : !isWeeklyMealsLoading &&
-          currentWeeklyMealsRecipes.length === 0 &&
-          weeklyMeals.length === 0 ? (
-          // Shows an empty state only when both arrays are empty to avoid flicker during transitions.
+          <ActivityIndicator size="large" color="#fb7945" style={{ marginTop: 20 }} />
+        ) : !isWeeklyMealsLoading && currentWeeklyMealsRecipes.length === 0 && weeklyMeals.length === 0 ? (
           <Text>No Recipes Found</Text>
         ) : (
           <>
-            <View style={{marginTop: 12}}>
-              <Text style={{fontWeight: '700', marginBottom: 6}}>
-                Planned Ingredients
-              </Text>
+            <View style={{ marginTop: 12 }}>
+              <Text style={{ fontWeight: '700', marginBottom: 6 }}>Planned Ingredients</Text>
               {currentWeeklyMealsRecipes.map((recipe, index) => (
-                <RecipeCard
-                  key={index} // Consider key={recipe.id} if stable to avoid re-mounting.
-                  recipe={recipe}
-                  onPress={() =>
-                    handleNavigate(
-                      {screen: 'Recipe', params: {recipe: recipe}},
-                      navigation,
-                    )
-                  }
+                <RecipeCard key={index} recipe={recipe}
+                  onPress={() => handleNavigate({ screen: 'Recipe', params: { recipe: recipe } }, navigation,)}
                   onLongPress={() => {
                     setSelectedRecipe(recipe);
                     setRecipeOptionsVisibility(true);
@@ -291,11 +228,8 @@ export default function MainScreen(): React.JSX.Element {
                 />
               ))}
               {currentWeeklyMealsIngredients.map((instance, index) => (
-                <PlannedIngredientCard
-                  ingredientName={instance.IngredientName}
-                  quantity={instance.quantity}
-                  quantityType={instance.quantityType}
-                  key={index}
+                <PlannedIngredientCard ingredientName={instance.IngredientName} quantity={instance.quantity}
+                  quantityType={instance.quantityType} key={index}
                   onLongPress={() => {
                     setIngredientOptionsVisibility(true);
                     setSelectedIngredientInst(instance);
@@ -309,67 +243,37 @@ export default function MainScreen(): React.JSX.Element {
 
       {/* Floating actions — duplicated inline styles for independent positioning. */}
       <>
-        <FloatingButton
-          iconName="add"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => setVisible(true)}
-        />
+        <FloatingButton iconName="add" iconSize={32} iconColor="white" onPress={() => setVisible(true)} />
 
         {/* Opens planner quickly from the main screen. */}
-        <FloatingButton
-          iconName="calendar-outline"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => setPlanMealModalVisible(true)}
+        <FloatingButton iconName="calendar-outline" iconSize={32} iconColor="white" onPress={() => setPlanMealModalVisible(true)}
           containerStyle={styles.planModalFloatingButton}
         />
         {/* Quick access to Pantry. */}
-        <FloatingButton
-          iconName="basket-outline"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => handleNavigate({screen: 'Pantry'}, navigation)}
-          containerStyle={styles.pantryFloatingButton}
+        <FloatingButton iconName="basket-outline" iconSize={32} iconColor="white"
+          onPress={() => handleNavigate({ screen: 'Pantry' }, navigation)} containerStyle={styles.pantryFloatingButton}
         />
         {/* Opens Grocery List — CHECK route name spelling in navigator. */}
-        <FloatingButton
-          iconName="cart-outline"
-          iconSize={32}
-          iconColor="white"
-          onPress={() => handleNavigate({screen: 'GroceyList'}, navigation)} // likely 'GroceryList'
-          containerStyle={styles.groceryFloatingButton}
+        <FloatingButton iconName="cart-outline" iconSize={32} iconColor="white"
+          onPress={() => handleNavigate({ screen: 'GroceyList' }, navigation)} containerStyle={styles.groceryFloatingButton}
         />
       </>
 
       {/* Modals — mounted here so they can cover the whole screen. */}
       <>
         <AddRecipeModal visible={visible} onClose={() => setVisible(false)} />
-        <PlanMealModal
-          visible={planMealModalVisible}
-          onClose={() => setPlanMealModalVisible(false)}
-          onSaved={() => setRenderFlag(!renderFlag)} // Triggers a refresh of the current (day, meal) view.
-          initialDay={selectedDay}
-          initialMealType={selectedMeal}
-          initialRecipeId={
-            selectedRecipe?.id !== undefined ? selectedRecipe.id : undefined
-          } // Prefills with long-pressed recipe when present.
+        <PlanMealModal visible={planMealModalVisible} onClose={() => setPlanMealModalVisible(false)} onSaved={() => setRenderFlag(!renderFlag)}
+          initialDay={selectedDay} initialMealType={selectedMeal}
+          initialRecipeId={selectedRecipe?.id !== undefined ? selectedRecipe.id : undefined}
           setAddIngredientModalVisible={setAddIngredientModalVisible}
         />
         {selectedRecipe && (
-          <RecipeOptionsModal
-            menuVisible={recipeOptionsVisibility}
-            setMenuVisible={() => setRecipeOptionsVisibility(false)}
-            recipe={selectedRecipe}
-            onPlan={() => handlePlanRecipe()}
-            unPlanOption // Exposes the unplan action only when appropriate.
-            onUnplan={handleUnplanRecipe}
+          <RecipeOptionsModal menuVisible={recipeOptionsVisibility} setMenuVisible={() => setRecipeOptionsVisibility(false)}
+            recipe={selectedRecipe} onPlan={() => handlePlanRecipe()} unPlanOption onUnplan={handleUnplanRecipe}
           />
         )}
         {/* New simple modal for planned ingredients */}
-        <IngredientOptionsModal
-          menuVisible={ingredientOptionsVisibility}
-          setMenuVisible={setIngredientOptionsVisibility}
+        <IngredientOptionsModal menuVisible={ingredientOptionsVisibility} setMenuVisible={setIngredientOptionsVisibility}
           ingredientName={selectedIngredientInst?.IngredientName ?? ''}
           onPlan={() => {
             setIngredientOptionsVisibility(false);
@@ -387,27 +291,16 @@ export default function MainScreen(): React.JSX.Element {
         {/* Modal added to the planMealModal to create an ingredient */}
         <AddIngredientModal
           onSubmit={ingredient =>
-            handleOnSubmitAddIngredient(
-              ingredient.name,
-              ingredient.category,
-              addIngredient,
-              setIngredients,
-              async () => {},
-              setAddIngredientModalVisible,
-            )
-          }
-          onClose={() => setAddIngredientModalVisible(false)}
-          visible={addIngredientModalVisible}
+            handleOnSubmitAddIngredient(ingredient.name, ingredient.category, addIngredient, setIngredients, async () => { },
+              setAddIngredientModalVisible
+            )}
+          onClose={() => setAddIngredientModalVisible(false)} visible={addIngredientModalVisible}
         />
       </>
     </View>
   ) : (
     // Full-screen spinner while bootstrapping global data.
-    <ActivityIndicator
-      size={100}
-      color={'#fb7945'}
-      style={styles.activityIndicatorStyle}
-    />
+    <ActivityIndicator size={100} color={'#fb7945'} style={styles.activityIndicatorStyle} />
   );
 }
 
@@ -447,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
@@ -463,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
@@ -479,7 +372,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
