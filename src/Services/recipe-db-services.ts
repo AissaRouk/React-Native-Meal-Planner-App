@@ -1,5 +1,5 @@
-import {Recipe, RecipeWithoutId} from '../Types/Types';
-import {FAILED, SUCCESS, TABLE_RECIPE} from './db-services';
+import { Recipe, RecipeWithoutId } from '../Types/Types';
+import { FAILED, SUCCESS, TABLE_RECIPE } from './db-services';
 import {
   collection,
   query,
@@ -11,7 +11,7 @@ import {
   getDoc,
   where,
 } from '@react-native-firebase/firestore';
-import {deleteRecipeIngredientDb} from './recipeIngredients-db-services';
+import { deleteRecipeIngredientDb } from './recipeIngredients-db-services';
 
 // Fields for the Recipe table
 export const RECIPE_ID = 'id';
@@ -65,15 +65,15 @@ export const addRecipeDb: (recipe: RecipeWithoutId) => Promise<{
 
     // Adding with Firebase
     const newRecipeRef = doc(recipeCollection); // Create a new document reference with auto-generated ID
-    const recipeWithId = {...recipe, id: newRecipeRef.id};
+    const recipeWithId = { ...recipe, id: newRecipeRef.id };
     await setDoc(newRecipeRef, recipeWithId);
     const addRef = newRecipeRef.id;
     console.log('addRecipe -> Firestore document added with ID:', addRef);
 
-    return {created: SUCCESS, insertedId: addRef};
+    return { created: SUCCESS, insertedId: addRef };
   } catch (error) {
     console.error('addRecipe -> Error adding the recipe:', error);
-    return {created: FAILED};
+    return { created: FAILED };
   }
 };
 
@@ -90,7 +90,7 @@ export const getRecipes: () => Promise<Recipe[]> = async () => {
     const firebaseRecipes: Recipe[] = [];
     const ingredientsQuery = query(recipeCollection);
     const querySnapshot = await getDocs(ingredientsQuery);
-    querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: any}) => {
+    querySnapshot.forEach((doc: { data: () => RecipeWithoutId; id: any }) => {
       const data = doc.data() as RecipeWithoutId;
       const recipe: Recipe = {
         id: doc.id, // Use Firestore document ID as the ingredient ID
@@ -155,19 +155,13 @@ export const getRecipeByIdDb: (
  * @param userid - The user ID of the logged-in user.
  * @returns an array of all the recipes belonging to that user.
  */
-export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
+export const getAllRecipesDb = async (): Promise<Recipe[]> => {
   try {
-    if (!userid) {
-      throw new Error('User ID is required to fetch recipes.');
-    }
 
     const firebaseRecipes: Recipe[] = [];
 
     // Query only recipes that belong to the current user
-    const recipesQuery = query(
-      recipeCollection,
-      where(RECIPE_USER_ID, '==', userid),
-    );
+    const recipesQuery = query(recipeCollection);
 
     const querySnapshot = await getDocs(recipesQuery);
     if (querySnapshot)
@@ -176,7 +170,7 @@ export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
         JSON.stringify(querySnapshot.docs.map((doc: any) => doc.data())),
       );
 
-    querySnapshot.forEach((doc: {data: () => RecipeWithoutId; id: string}) => {
+    querySnapshot.forEach((doc: { data: () => RecipeWithoutId; id: string }) => {
       const data = doc.data() as RecipeWithoutId;
       const frecipe: Recipe = {
         id: doc.id,
@@ -195,6 +189,47 @@ export const getAllRecipesDb = async (userid: string): Promise<Recipe[]> => {
     throw new Error('getAllRecipesDb -> Error while retrieving: ' + error);
   }
 };
+
+export const getUserRecipesDb = async (userId: string): Promise<Recipe[]> => {
+  try {
+    if (!userId) {
+      throw new Error('User ID is required to fetch recipes.');
+    }
+
+    const firebaseRecipes: Recipe[] = [];
+
+    // Query only recipes that belong to the current user
+    const recipesQuery = query(
+      recipeCollection,
+      where(RECIPE_USER_ID, '==', userId),
+    );
+
+    const querySnapshot = await getDocs(recipesQuery);
+    if (querySnapshot)
+      console.log(
+        'getAllRecipesDb -> Retrieved recipes for user:',
+        JSON.stringify(querySnapshot.docs.map((doc: any) => doc.data())),
+      );
+
+    querySnapshot.forEach((doc: { data: () => RecipeWithoutId; id: string }) => {
+      const data = doc.data() as RecipeWithoutId;
+      const frecipe: Recipe = {
+        id: doc.id,
+        name: data.name,
+        link: data.link || '',
+        preparationTime: data.preparationTime || 0,
+        servingSize: data.servingSize || 0,
+        userId: data.userId,
+        image: data.image || undefined, // add this if your Recipe type supports images
+      };
+      firebaseRecipes.push(frecipe);
+    });
+
+    return firebaseRecipes;
+  } catch (error) {
+    throw new Error('getAllRecipesDb -> Error while retrieving: ' + error);
+  }
+}
 
 /**
  * Function to update an existing recipe
@@ -228,7 +263,7 @@ export const deleteRecipeDb: (id: string) => Promise<void> = async id => {
       where('recipeId', '==', id),
     );
     const querySnapshot = await getDocs(recipeQuery);
-    querySnapshot.forEach(async (docItem: {id: string}) => {
+    querySnapshot.forEach(async (docItem: { id: string }) => {
       await deleteRecipeIngredientDb(docItem.id);
     });
     //Delete the weekly meals associated with this recipe
@@ -237,7 +272,7 @@ export const deleteRecipeDb: (id: string) => Promise<void> = async id => {
       where('recipeId', '==', id),
     );
     const weeklyMealSnapshot = await getDocs(weeklyMealQuery);
-    weeklyMealSnapshot.forEach(async (docItem: {id: string}) => {
+    weeklyMealSnapshot.forEach(async (docItem: { id: string }) => {
       const weeklyMealDoc = doc(firestoreDb, 'WeeklyMeals', docItem.id);
       await deleteDoc(weeklyMealDoc);
     });

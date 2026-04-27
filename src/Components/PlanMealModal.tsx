@@ -44,7 +44,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(initialRecipeId ?? null);
 
   // ingredients
-  const { ingredients, getAllRecipes, addWeeklyMeal } = useAppContext();
+  const { ingredients, getUserRecipes, addWeeklyMeal } = useAppContext();
   const [search, setSearch] = useState('');
   const [selectedIngredientId, setSelectedIngredientId] = useState<string>('');
   const [qtyText, setQtyText] = useState('1');
@@ -72,11 +72,20 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     const fetchAll = async () => {
       setIsLoadingRecipes(true);
       try {
-        const fetched: Recipe[] = await getAllRecipes(user.uid);
+        // ADD THIS CHECK
+        if (!user?.uid) {
+          console.error('User not authenticated');
+          Alert.alert('Error', 'User not authenticated');
+          setIsLoadingRecipes(false);
+          return;
+        }
+
+        const fetched: Recipe[] = await getUserRecipes(user.uid);
         setAllRecipes(fetched);
         if (!initialRecipeId && fetched.length > 0) setSelectedRecipeId(fetched[0].id);
       } catch (e) {
         console.error(e);
+        Alert.alert('Error', 'Could not load recipes');
       } finally {
         setIsLoadingRecipes(false);
       }
@@ -88,7 +97,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
     setSelectedIngredientId('');
     setQtyText('1');
     setQtyType(QuantityType.UNIT);
-  }, [visible, initialDay, initialMealType, initialRecipeId, getAllRecipes]);
+  }, [visible, initialDay, initialMealType, initialRecipeId, getUserRecipes]);
 
   const filteredIngredients = useMemo(() => {
     const s = search.trim().toLowerCase();

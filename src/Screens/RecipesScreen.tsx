@@ -20,8 +20,10 @@ export function RecipesScreen(): React.JSX.Element {
       <View style={{ marginBottom: 16 }}>
         <AppHeader title="Recipes" />
       </View>
-      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}>
         {recipes.length === 0 && <Text >No recipes yet!</Text>}
+      </View>
+      <ScrollView >
         {recipes.map((recipe, index) => (
           <RecipeCard key={index} recipe={recipe}
             onPress={() => (navigation as any).navigate(RecipeScreenName, { recipe: recipe, })}

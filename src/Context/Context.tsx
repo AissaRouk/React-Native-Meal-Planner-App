@@ -4,7 +4,7 @@ import {
   DaysOfWeek, ErrorResponseCodes, GroceryBought, Ingredient, IngredientPantry, IngredientWithoutId, MealType, QuantityType, Recipe,
   RecipeIngredientWithoutId, WeeklyMeal
 } from '../Types/Types';
-import { deleteRecipeDb, getAllRecipesDb, getRecipeByIdDb, updateRecipe } from '../Services/recipe-db-services';
+import { deleteRecipeDb, getAllRecipesDb, getRecipeByIdDb, getUserRecipesDb, updateRecipe } from '../Services/recipe-db-services';
 import {
   addRecipeIngredientDb, addRecipeIngredientMultipleDb, deleteRecipeIngredientDb, getIdFromRecipeIdAndIngredientId,
   getIngredientsFromRecipeIdDb, updateRecipeIngredientDb
@@ -117,6 +117,8 @@ type ContextProps = {
    */
   getAllRecipes: (userId: string) => Promise<Recipe[]>;
 
+  getUserRecipes: (userId: string) => Promise<Recipe[]>;
+
   /**
    * Fetches a recipe from the Recipe table by its ID.
    *
@@ -198,6 +200,7 @@ const AppContext = React.createContext<ContextProps>({
   }),
   addIngredient: async () => ({ created: false }),
   getAllRecipes: async () => [],
+  getUserRecipes: async () => [],
   getRecipeById: async () => null,
   deleteWeeklyMeal: async () => false,
   getWeeklyMealsByDayAndMealType: async () => [],
@@ -289,7 +292,12 @@ export const AppProvider = ({ children }: AppProviderProps) => {
    * Gets all the Recipes
    */
   const getAllRecipes = async () => {
-    const result: Recipe[] = await getAllRecipesDb(userId);
+    const result: Recipe[] = await getAllRecipesDb();
+    return result;
+  };
+
+  const getUserRecipes = async (userId: string) => {
+    const result: Recipe[] = await getUserRecipesDb(userId);
     return result;
   };
 
@@ -652,6 +660,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         deleteRecipeIngredient,
         getRecipeById,
         getAllRecipes,
+        getUserRecipes,
         deleteWeeklyMeal,
         getWeeklyMealsByDayAndMealType,
         getAllIngredientPantries,
