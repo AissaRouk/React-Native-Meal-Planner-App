@@ -33,15 +33,13 @@ export default function MainScreen(): React.JSX.Element {
   };
 
   // Tracks the active tab; used to query weekly meals and default Plan modal.
-  const [selectedMeal, setSelectedMeal] = useState<MealType>(MealType.BREAKFAST,);
+  const [selectedMeal, setSelectedMeal] = useState<MealType>(MealType.BREAKFAST);
   // Day selector that drives weekly-meal queries and Plan modal defaults.
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
   // Source of truth for scheduled entries for the current (day, meal).
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
   // Concrete recipe docs for current weeklyMeals (rendered as cards).
-  const [currentWeeklyMealsRecipes, setCurrentWeeklyMealsRecipes] = useState<
-    Recipe[]
-  >([]);
+  const [currentWeeklyMealsRecipes, setCurrentWeeklyMealsRecipes] = useState<Recipe[]>([]);
   // The list of the ingredients available in the weeklyMeals
   const [currentWeeklyMealsIngredients, setCurrentWeeklyMealsIngredients] = useState<WeeklyMealsIngredient[]>([]);
   // Flip-flop to force a refetch when mutating schedule without changing filters.
@@ -67,14 +65,14 @@ export default function MainScreen(): React.JSX.Element {
 
   // CONTEXT — central app API/state providers.
   const {
-    setIngredients, getRecipeById, setRecipes, getAllRecipes, deleteWeeklyMeal, getWeeklyMealsByDayAndMealType, addIngredient } = useAppContext();
+    setIngredients, getRecipeById, setRecipes, getAllRecipes, deleteWeeklyMeal, getWeeklyMealsByDayAndMealType,
+    addIngredient, getUserRecipes } = useAppContext();
   const navigation = useNavigation();
 
   // Thin wrapper: keeps caller code clean and testable.
-  const fetchWeeklyMeals = async (
-    dayOfWeek: DaysOfWeek,
-    mealType: MealType,
-  ) => { return await getWeeklyMealsByDayAndMealType(dayOfWeek, mealType) };
+  const fetchWeeklyMeals = async (dayOfWeek: DaysOfWeek, mealType: MealType,) => {
+    return await getWeeklyMealsByDayAndMealType(dayOfWeek, mealType)
+  };
 
   // Fetches recipe docs for current weeklyMeals.
   // NOTE: This runs sequentially to preserve order; if order is irrelevant, `Promise.all` would be faster.
@@ -104,9 +102,7 @@ export default function MainScreen(): React.JSX.Element {
   };
 
   // From options modal: open planner prefilled with current selection.
-  const handlePlanRecipe = () => {
-    setPlanMealModalVisible(true);
-  };
+  const handlePlanRecipe = () => { setPlanMealModalVisible(true); };
 
   // Unplan removes the specific WeeklyMeal entry that references the recipe.
   // Why: a recipe can exist in multiple slots; we target only the current (day, meal) entry.
@@ -136,14 +132,14 @@ export default function MainScreen(): React.JSX.Element {
   // Why: downstream components expect these lists to be present in context.
   useEffect(() => {
     const asyncFunctions = async () => {
-      const fetingredients: Ingredient[] = await getAllIngredients();
-      setIngredients(fetingredients);
+      const fetchedIngredients: Ingredient[] = await getAllIngredients();
+      setIngredients(fetchedIngredients);
 
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error('No user ID found in auth context');
 
       // Fetch only the current user's recipes.
-      const fetchedRecipes = await getAllRecipes(userId);
+      const fetchedRecipes = await getUserRecipes(userId);
 
       setRecipes(fetchedRecipes);
       setIsFetchFinished(true);

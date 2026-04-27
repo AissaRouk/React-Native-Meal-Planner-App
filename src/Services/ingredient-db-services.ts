@@ -1,31 +1,17 @@
-import {Ingredient, IngredientWithoutId} from '../Types/Types';
-import {TABLE_INGREDIENT} from './db-services';
-import {
-  collection,
-  query,
-  getDocs,
-  getFirestore,
-  setDoc,
-  doc,
-  deleteDoc,
-  getDoc,
-  where,
-} from '@react-native-firebase/firestore';
+import { Ingredient, IngredientWithoutId, Recipe, RecipeIngredient } from '../Types/Types';
+import { TABLE_INGREDIENT } from './db-services';
+import { collection, query, getDocs, getFirestore, setDoc, doc, deleteDoc, getDoc } from '@react-native-firebase/firestore';
+import { getUserRecipesDb } from './recipe-db-services';
+import { getIngredientsFromRecipeIdDb } from './recipeIngredients-db-services';
 
 const firestoreDb = getFirestore();
 const ingredientCollection = collection(firestoreDb, 'Ingredient');
 
 //Ingredient CRUD functions
 
-/**
- * Function that adds an ingredient row to the table, checking for duplicate by ID.
- *
- * @param {IngredientWithoutId} ingredient the ingredient object but without id
- * @returns {Promise<{created: boolean; response?: string; insertedId?: string}>} Result of the operation
- */
-export const addIngredientDb = async (
-  ingredient: IngredientWithoutId,
-): Promise<{created: boolean; response?: string; insertedId?: string}> => {
+
+export const addIngredientDb = async (ingredient: IngredientWithoutId):
+  Promise<{ created: boolean; response?: string; insertedId?: string }> => {
   try {
     // Generate a new document reference with an auto-generated ID
     const docRef = doc(ingredientCollection);
@@ -43,8 +29,8 @@ export const addIngredientDb = async (
     }
 
     // Add the ingredient with the generated ID as a prop
-    await setDoc(docRef, {...ingredient, id: docRef.id});
-    return {created: true, insertedId: docRef.id};
+    await setDoc(docRef, { ...ingredient, id: docRef.id });
+    return { created: true, insertedId: docRef.id };
   } catch (error) {
     throw new Error(
       'addIngredientDb -> ingredient was not added: ' + JSON.stringify(error),
@@ -70,7 +56,7 @@ export const getAllIngredients: () => Promise<Ingredient[]> = async (): Promise<
     // Firebase Implementation
     const ingredientsQuery = query(ingredientCollection);
     const querySnapshot = await getDocs(ingredientsQuery);
-    querySnapshot.forEach((doc: {data: () => IngredientWithoutId; id: any}) => {
+    querySnapshot.forEach((doc: { data: () => IngredientWithoutId; id: any }) => {
       const data = doc.data() as IngredientWithoutId;
       const ingredient: Ingredient = {
         id: doc.id, // Use Firestore document ID as the ingredient ID
@@ -115,7 +101,7 @@ export const deleteIngredient: (id: number | string) => Promise<void> = async (
     );
     throw new Error(
       'Failed to delete ingredient: ' +
-        (error instanceof Error ? error.message : JSON.stringify(error)),
+      (error instanceof Error ? error.message : JSON.stringify(error)),
     );
   }
 };
@@ -164,3 +150,20 @@ export const getIngredientById: (id: string) => Promise<Ingredient> = async (
 
   return ingredient;
 };
+
+export const getUserIngredients = async (userId: string): Promise<Ingredient[]> => {
+  if (!userId || userId.trim() === '') throw new Error('Invalid user ID provided for fetching ingredients.');
+  const { getUserRecipesDb } = await import('./recipe-db-services');
+  const fetchedRecipes: Recipe[] = await getUserRecipesDb(userId);
+  const fetchedRecipeIngredients: RecipeIngredient[] = [];
+  fetchedRecipes.forEach(async recipe => {
+    const ingredients = await getIngredientsFromRecipeIdDb(recipe.id);
+    fetchedRecipeIngredients.push(...ingredients);
+  });
+  const fetchedIngredients: Ingredient[] = [];
+  fetchedRecipeIngredients.forEach(async ingredient => {
+    const ingredientData = await getIngredientById(ingredient.ingredientId);
+    fetchedIngredients.push(ingredientData);
+  });
+  return fetchedIngredients;
+}
