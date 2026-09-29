@@ -1,25 +1,15 @@
 // src/Screens/LoginScreen.tsx
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
 import AppHeader from '../Components/AppHeader';
 import {
-  screensBackgroundColor,
-  greyBorderColor,
-  orangeBackgroundColor,
-  modalBorderRadius,
+  screensBackgroundColor, greyBorderColor, orangeBackgroundColor, modalBorderRadius,
 } from '../Utils/Styiling';
-import {genericStyles} from '../Utils/Styiling';
-import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
+import { genericStyles } from '../Utils/Styiling';
+import { useNavigation } from '@react-navigation/native';
+import { getAuth, signInWithEmailAndPassword } from '@react-native-firebase/auth';
 
 // Make sure these match the names you registered in App.tsx
 const MainScreenName = 'MainScreen';
@@ -36,37 +26,25 @@ export default function LoginScreen(): React.ReactElement {
       return;
     }
     try {
-      await auth().signInWithEmailAndPassword(email.trim(), password);
+      await signInWithEmailAndPassword(getAuth(), email.trim(), password,);
     } catch (err: any) {
       Alert.alert('Login failed', err.message);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.select({ios: 'padding', android: undefined})}
+    <KeyboardAvoidingView behavior={Platform.select({ ios: 'padding', android: undefined })}
       style={styles.container}>
       <AppHeader title="Login" />
 
       <View style={styles.form}>
         <Text style={genericStyles.nameBold}>Email</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="you@example.com"
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+        <TextInput style={styles.input} value={email} onChangeText={setEmail} placeholder="you@example.com"
+          keyboardType="email-address" autoCapitalize="none" />
 
         <Text style={genericStyles.nameBold}>Password</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="••••••••"
-          secureTextEntry
-        />
+        <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="••••••••"
+          secureTextEntry />
 
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Sign In</Text>
@@ -74,8 +52,7 @@ export default function LoginScreen(): React.ReactElement {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>No account?</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate(RegisterScreenName as never)}>
+          <TouchableOpacity onPress={() => navigation.navigate(RegisterScreenName as never)}>
             <Text style={styles.footerLink}>Register</Text>
           </TouchableOpacity>
         </View>

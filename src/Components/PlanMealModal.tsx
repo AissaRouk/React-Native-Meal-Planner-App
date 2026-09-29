@@ -6,7 +6,7 @@ import { CustomPicker } from './CustomPicker';
 import { modalBorderRadius, modalSemiTransparentBg, modalWhiteBg, orangeBackgroundColor, } from '../Utils/Styiling';
 import { useAppContext } from '../Context/Context';
 import AddIngredientButton from './AddIngredientButton';
-import auth from '@react-native-firebase/auth';
+import { getAuth } from '@react-native-firebase/auth';
 
 export type PlanMealModalProps = {
   visible: boolean;
@@ -52,7 +52,7 @@ export const PlanMealModal: React.FC<PlanMealModalProps> = ({
 
   const [isSaving, setIsSaving] = useState(false);
 
-  const user = auth().currentUser;
+  const user = getAuth().currentUser;
   if (!user) throw new Error('No user logged in');
 
   useEffect(() => {
