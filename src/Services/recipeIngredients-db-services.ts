@@ -1,5 +1,5 @@
-import {TABLE_RECIPE_INGREDIENTS} from './db-services';
-import {SUCCESS, FAILED} from './db-services';
+import { TABLE_RECIPE_INGREDIENTS } from './db-services';
+import { SUCCESS, FAILED } from './db-services';
 import {
   ErrorResponseCodes,
   Ingredient,
@@ -102,7 +102,7 @@ export const addRecipeIngredientDb = async (
 export const addRecipeIngredientMultipleDb = async (
   recipeId: string,
   ingredients: Array<
-    Ingredient & {quantity: number; quantityType: QuantityType}
+    Ingredient & { quantity: number; quantityType: QuantityType }
   >,
 ): Promise<{
   created: boolean;
@@ -121,13 +121,13 @@ export const addRecipeIngredientMultipleDb = async (
         console.log(
           `addRecipeIngredientMultiple -> Ingredient ${ingredient.name} not added for Recipe ID: ${recipeId}`,
         );
-        return {created: FAILED};
+        return { created: FAILED };
       }
     }
-    return {created: SUCCESS};
+    return { created: SUCCESS };
   } catch (error) {
     console.error('addRecipeIngredientMultiple -> Error:', error);
-    return {created: FAILED};
+    return { created: FAILED };
   }
 };
 
@@ -157,7 +157,7 @@ export const getIdFromRecipeIdAndIngredientId = async (
   } catch (error) {
     throw new Error(
       'Error while getting the RecipeIngredient by recipeId and ingredientId: ' +
-        error,
+      error,
     );
   }
 };
@@ -178,7 +178,7 @@ export const getAllRecipeIngredients = async (): Promise<
     const recipeIngredientsQuery = query(recipeIngredientCollection);
     const querySnapshot = await getDocs(recipeIngredientsQuery);
     querySnapshot.forEach(
-      (doc: {data: () => RecipeIngredientWithoutId; id: any}) => {
+      (doc: { data: () => RecipeIngredientWithoutId; id: any }) => {
         const data = doc.data() as RecipeIngredientWithoutId;
         const recipeIngredient: RecipeIngredient = {
           id: doc.id, // Use Firestore document ID as the ingredient ID
@@ -207,9 +207,7 @@ export const getAllRecipeIngredients = async (): Promise<
  * @param recipeId the id of the recipe
  * @returns an array with all the RecipeIngredients, each one contains the ingredient of a Recipe
  */
-export const getIngredientsFromRecipeIdDb = async (
-  recipeId: string,
-): Promise<RecipeIngredient[]> => {
+export const getIngredientsFromRecipeIdDb = async (recipeId: string,): Promise<RecipeIngredient[]> => {
   try {
     const result: RecipeIngredient[] = [];
 
@@ -223,7 +221,7 @@ export const getIngredientsFromRecipeIdDb = async (
     );
     const querySnapshot = await getDocs(q);
 
-    querySnapshot.forEach((doc: {data: () => RecipeIngredient; id: any}) => {
+    querySnapshot.forEach((doc: { data: () => RecipeIngredient; id: any }) => {
       const data = doc.data() as RecipeIngredient;
       const rcpIngredient: RecipeIngredient = {
         id: doc.id, // Use Firestore document ID as the ingredient ID
@@ -235,10 +233,7 @@ export const getIngredientsFromRecipeIdDb = async (
       result.push(rcpIngredient);
     });
 
-    console.log(
-      'getIngredientsFromRecipeId -> Ingredients fetched successfully:',
-      result,
-    );
+    console.log('getIngredientsFromRecipeId -> Ingredients fetched successfully:', JSON.stringify(result, null, 2),);
     return result;
   } catch (error) {
     console.error('getIngredientsFromRecipeId -> Transaction failed:', error);
@@ -308,7 +303,7 @@ export const deleteRecipeIngredientsByRecipeIdDb: (
       where('recipeId', '==', recipeId),
     );
     const querySnapshot = await getDocs(recipeQuery);
-    querySnapshot.forEach(async (docItem: {id: string}) => {
+    querySnapshot.forEach(async (docItem: { id: string }) => {
       await deleteRecipeIngredientDb(docItem.id);
     });
     console.log(
@@ -317,7 +312,7 @@ export const deleteRecipeIngredientsByRecipeIdDb: (
   } catch (error) {
     throw new Error(
       'deleteRecipeIngredientsByRecipeId -> could not delete RecipeIngredients: ' +
-        error,
+      error,
     );
   }
 };

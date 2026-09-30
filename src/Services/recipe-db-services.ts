@@ -164,11 +164,7 @@ export const getAllRecipesDb = async (): Promise<Recipe[]> => {
     const recipesQuery = query(recipeCollection);
 
     const querySnapshot = await getDocs(recipesQuery);
-    if (querySnapshot)
-      console.log(
-        'getAllRecipesDb -> Retrieved recipes for user:',
-        JSON.stringify(querySnapshot.docs.map((doc: any) => doc.data())),
-      );
+    if (querySnapshot) console.log('getAllRecipesDb -> Retrieved recipes for user:', JSON.stringify(querySnapshot.docs.map((doc: any) => doc.data()), null, 2));
 
     querySnapshot.forEach((doc: { data: () => RecipeWithoutId; id: string }) => {
       const data = doc.data() as RecipeWithoutId;

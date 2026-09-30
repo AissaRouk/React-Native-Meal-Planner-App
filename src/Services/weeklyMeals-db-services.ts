@@ -129,10 +129,7 @@ export const getWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
  * @returns {Promise<WeeklyMeal[]>} Resolves with an array of WeeklyMeals objects that match the criteria.
  * @throws {Error} If the retrieval operation fails.
  */
-export const getWeeklyMealsByDayAndMealTypeDb: (
-  dayOfWeek: DaysOfWeek,
-  mealType: MealType,
-) => Promise<WeeklyMeal[]> = async (dayOfWeek, mealType) => {
+export const getWeeklyMealsByDayAndMealTypeDb: (dayOfWeek: DaysOfWeek, mealType: MealType) => Promise<WeeklyMeal[]> = async (dayOfWeek, mealType) => {
   try {
     const weeklyMeals: WeeklyMeal[] = [];
     const weeklyMealsQuery = query(
@@ -149,10 +146,7 @@ export const getWeeklyMealsByDayAndMealTypeDb: (
         ...data,
       });
     });
-    console.log(
-      'getWeeklyMealsByDayAndMealTypeDb -> WeeklyMeals fetched successfully:',
-      weeklyMeals,
-    );
+    console.log('getWeeklyMealsByDayAndMealTypeDb -> WeeklyMeals fetched successfully:', JSON.stringify(weeklyMeals, null, 2));
     return weeklyMeals;
   } catch (error) {
     console.error('Error fetching WeeklyMeals:', error);
