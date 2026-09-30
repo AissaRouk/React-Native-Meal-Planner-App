@@ -7,7 +7,7 @@ import { QuantityType, WeeklyEntryType, WeeklyMeal } from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 import { screensBackgroundColor, orangeBackgroundColor, greyBorderColor, modalBorderRadius, } from '../Utils/Styiling';
 import { getAllIngredientPantriesDb } from '../Services/ingredientPantry-db-services';
-import { getAllWeeklyMealsDb } from '../Services/weeklyMeals-db-services';
+import { getAllUserWeeklyMealsDb } from '../Services/weeklyMeals-db-services';
 
 interface GroceryItem {
   ingredientId: string;
@@ -86,7 +86,8 @@ function unifyQuantities(items: GroceryItem[]): GroceryItem[] {
 }
 
 export default function GroceryListScreen(): React.ReactElement {
-  const { ingredients, getIngredientsOfRecipe, getAllGroceryBought, addGroceryBought, removeGroceryBought, } = useAppContext();
+  const { ingredients, getIngredientsOfRecipe, getAllGroceryBought, addGroceryBought,
+    removeGroceryBought, userId } = useAppContext();
 
   const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
   const [boughtIds, setBoughtIds] = useState<Set<string>>(new Set());
@@ -97,7 +98,7 @@ export default function GroceryListScreen(): React.ReactElement {
   const loadGroceryList = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allWeekly: WeeklyMeal[] = await getAllWeeklyMealsDb();
+      const allWeekly: WeeklyMeal[] = await getAllUserWeeklyMealsDb(userId);
       console.log("getAll")
       const neededMap: Record<string, { ingredientId: string; quantity: number; quantityType: QuantityType }> = {};
 
@@ -164,7 +165,7 @@ export default function GroceryListScreen(): React.ReactElement {
     } finally {
       setIsLoading(false);
     }
-  }, [ingredients, getIngredientsOfRecipe, getAllIngredientPantriesDb, getAllGroceryBought, getAllWeeklyMealsDb,]);
+  }, [ingredients, getIngredientsOfRecipe, getAllIngredientPantriesDb, getAllGroceryBought, getAllUserWeeklyMealsDb,]);
 
   useEffect(() => {
     loadGroceryList();

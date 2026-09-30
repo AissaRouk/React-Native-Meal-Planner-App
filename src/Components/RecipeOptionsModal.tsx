@@ -1,41 +1,15 @@
 import React from 'react';
-import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {
-  modalSemiTransparentBg,
-  modalWhiteBg,
-  modalBorderRadius,
-  orangeBackgroundColor,
-} from '../Utils/Styiling';
-import {Recipe} from '../Types/Types';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { modalSemiTransparentBg, modalWhiteBg, modalBorderRadius, orangeBackgroundColor, } from '../Utils/Styiling';
+import { Recipe } from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
 
-export function RecipeOptionsModal({
-  menuVisible,
-  setMenuVisible,
-  recipe,
-  deleteOption,
-  onDelete,
-  unPlanOption,
-  planOption,
-  onPlan,
-  onUnplan,
-}: {
-  menuVisible: boolean;
-  setMenuVisible: (visible: boolean) => void;
-  recipe: Recipe;
-  deleteOption?: boolean;
-  unPlanOption?: boolean;
-  planOption?: boolean;
-  onDelete?: () => any;
-  onUnplan?: () => any;
-  onPlan?: () => any;
-}): React.ReactNode {
+export function RecipeOptionsModal({ menuVisible, setMenuVisible, recipe, deleteOption, onDelete, unPlanOption, planOption, onPlan, onUnplan }: {
+  menuVisible: boolean; setMenuVisible: (visible: boolean) => void; recipe: Recipe; deleteOption?: boolean; unPlanOption?: boolean; planOption?: boolean; onDelete?: () => any;
+  onUnplan?: () => any; onPlan?: () => any;
+}): React.JSX.Element {
   return (
-    <Modal
-      visible={menuVisible}
-      transparent
-      animationType="fade"
-      onRequestClose={() => setMenuVisible(false)}>
+    <Modal visible={menuVisible} transparent animationType="fade" onRequestClose={() => setMenuVisible(false)}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <View style={styles.header}>
@@ -46,35 +20,27 @@ export function RecipeOptionsModal({
           </View>
 
           {planOption && (
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => onPlan && onPlan()}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => onPlan && onPlan()}>
               <Icon name="calendar-outline" size={18} color="#fb7945" />
               <Text style={styles.optionText}>Plan this meal</Text>
             </TouchableOpacity>
           )}
 
           {unPlanOption && (
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => onUnplan && onUnplan()}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => onUnplan && onUnplan()}>
               <Icon name="trash-outline" size={18} color="#fb7945" />
               <Text style={styles.optionText}>Remove from schedule</Text>
             </TouchableOpacity>
           )}
 
           {deleteOption && (
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={() => onDelete && onDelete()}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => onDelete && onDelete()}>
               <Icon name="trash-outline" size={18} color="#fb7945" />
               <Text style={styles.optionText}>Delete this recipe</Text>
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={() => setMenuVisible(false)}>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => setMenuVisible(false)}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -99,7 +65,7 @@ const styles = StyleSheet.create({
     padding: 20,
     // Shadow
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
