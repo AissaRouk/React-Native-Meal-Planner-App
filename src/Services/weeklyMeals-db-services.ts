@@ -25,20 +25,20 @@ export const WEEKLY_MEALS_ID = 'id';
 export const WEEKLY_MEALS_DAY = 'day';
 export const WEEKLY_MEALS_MEAL_TYPE = 'mealType';
 export const WEEKLY_MEALS_RECIPE_ID = 'recipeId';
+export const WEEKLY_MEALS_USER_ID = "userId";
 
 //firestore imports
 const firestoreDb = getFirestore();
 const weeklyMealCollection = collection(firestoreDb, TABLE_WEEKLY_MEALS);
 
 export type AddWeeklyMealInput =
-  | {
+  {
     day: DaysOfWeek;
     mealType: MealType;
     recipeId: string;
     entryType?: WeeklyEntryType.RECIPE | 'RECIPE';
     userId: string;
-  }
-  | {
+  } | {
     day: DaysOfWeek;
     mealType: MealType;
     ingredientId: string;
@@ -48,9 +48,7 @@ export type AddWeeklyMealInput =
     userId: string;
   };
 
-export async function addWeeklyMealDb(
-  input: AddWeeklyMealInput,
-): Promise<string> {
+export async function addWeeklyMealDb(input: AddWeeklyMealInput): Promise<string> {
   // why: single API to store either a recipe entry or a single-ingredient entry
   const ref = doc(weeklyMealCollection); // auto-id
   const base = {
@@ -81,14 +79,6 @@ export async function addWeeklyMealDb(
   return ref.id;
 }
 
-/**
- * Fetches all entries from the WeeklyMeals table.
- *
- * @async
- * @function getWeeklyMealsDb
- * @returns {Promise<WeeklyMeal[]>} Resolves with an array of weekly meal entries.
- * @throws {Error} If there's an error fetching the weekly meals.
- */
 export const getWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
   try {
     const weeklyMeals: WeeklyMeal[] = [];
@@ -119,16 +109,6 @@ export const getWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
   }
 };
 
-/**
- * Retrieves the WeeklyMeals for a specific DayOfWeek and MealType combination.
- *
- * @async
- * @function getWeeklyMealsByDayAndMealTypeDb
- * @param {DayOfWeek} dayOfWeek - The day of the week for which meals are to be fetched.
- * @param {MealType} mealType - The type of meal for which meals are to be fetched.
- * @returns {Promise<WeeklyMeal[]>} Resolves with an array of WeeklyMeals objects that match the criteria.
- * @throws {Error} If the retrieval operation fails.
- */
 export const getWeeklyMealsByDayAndMealTypeDb: (dayOfWeek: DaysOfWeek, mealType: MealType) => Promise<WeeklyMeal[]> = async (dayOfWeek, mealType) => {
   try {
     const weeklyMeals: WeeklyMeal[] = [];
@@ -154,10 +134,7 @@ export const getWeeklyMealsByDayAndMealTypeDb: (dayOfWeek: DaysOfWeek, mealType:
   }
 };
 
-// OPTIONAL: one-time helper to backfill old docs without entryType (treat as RECIPE)
-export async function backfillWeeklyEntryTypeOnce(): Promise<{
-  updated: number;
-}> {
+export async function backfillWeeklyEntryTypeOnce(): Promise<{ updated: number; }> {
   const q = query(weeklyMealCollection, where('entryType', '==', null as any));
   const snap = await getDocs(q);
   let updated = 0;
@@ -171,18 +148,7 @@ export async function backfillWeeklyEntryTypeOnce(): Promise<{
   return { updated };
 }
 
-/**
- * Updates an existing entry in the WeeklyMeals table.
- *
- * @async
- * @function updateWeeklyMealDb
- * @param {WeeklyMeal} weeklyMeal - The weekly meal to update.
- * @returns {Promise<void>} Resolves when the weekly meal entry is updated successfully.
- * @throws {Error} If the update operation fails.
- */
-export const updateWeeklyMealDb: (
-  weeklyMeal: WeeklyMeal,
-) => Promise<void> = async (weeklyMeal: WeeklyMeal) => {
+export const updateWeeklyMealDb: (weeklyMeal: WeeklyMeal,) => Promise<void> = async (weeklyMeal: WeeklyMeal) => {
   try {
     await setDoc(doc(weeklyMealCollection, weeklyMeal.id), weeklyMeal);
     console.log('updateWeeklyMeal -> Weekly meal updated successfully');
@@ -192,18 +158,7 @@ export const updateWeeklyMealDb: (
   }
 };
 
-/**
- * Deletes an entry from the WeeklyMeals table by its ID.
- *
- * @async
- * @function deleteWeeklyMealDb
- * @param {string} id - The ID of the weekly meal entry to be deleted.
- * @returns {Promise<boolean>} Resolves with true if the deletion was successful.
- * @throws {Error} If the deletion operation fails.
- */
-export const deleteWeeklyMealDb: (
-  id: string,
-) => Promise<boolean> = async id => {
+export const deleteWeeklyMealDb: (id: string) => Promise<boolean> = async id => {
   try {
     const weeklyMealDoc = doc(weeklyMealCollection, id);
     await deleteDoc(weeklyMealDoc);
@@ -215,29 +170,19 @@ export const deleteWeeklyMealDb: (
   }
 };
 
-/**
- * Fetches all entries from the WeeklyMeals table.
- *
- * @async
- * @function getAllWeeklyMeals
- * @returns {Promise<WeeklyMeal[]>} Resolves with an array of weekly meal entries.
- * @throws {Error} If there's an error fetching the weekly meals.
- */
-export const getAllWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
+
+export const getAllUserWeeklyMealsDb: (userId: string) => Promise<WeeklyMeal[]> = async (userId) => {
   try {
     const weeklyMeals: WeeklyMeal[] = [];
-    const weeklyMealsQuery = query(weeklyMealCollection);
+    const weeklyMealsQuery = query(weeklyMealCollection, where(WEEKLY_MEALS_USER_ID, '==', userId),);
     const querySnapshot = await getDocs(weeklyMealsQuery);
     querySnapshot.forEach(
       (doc: { data: () => WeeklyMealWithoutId; id: string }) => {
         const data = doc.data() as WeeklyMealWithoutId;
-        weeklyMeals.push({
-          id: doc.id,
-          ...data,
-        });
+        weeklyMeals.push({ id: doc.id, ...data });
       },
     );
-    console.log('getAllWeeklyMeals Firebase -> WeeklyMeals fetched successfully:', JSON.stringify(weeklyMeals, null, 2));
+    console.log('getAllUserWeeklyMeals Firebase -> WeeklyMeals fetched successfully:', JSON.stringify(weeklyMeals, null, 2));
 
     return weeklyMeals;
   } catch (error) {
