@@ -1,7 +1,5 @@
-// src/Screens/MainScreen.tsx
-
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator, LayoutAnimation, Platform, UIManager, } from 'react-native';
 import { DaysOfWeek, Ingredient, MealType, QuantityType, Recipe, WeeklyMeal } from '../Types/Types';
 import RecipeCard from '../Components/RecipeCardComponent';
 import MealTypeComponent from '../Components/MealTypeComponent';
@@ -20,11 +18,11 @@ import { WeeklyEntryType } from '../Types/Types';
 import PlannedIngredientCard from '../Components/PlannedIngredientCard';
 import { IngredientOptionsModal } from '../Components/PlannedIngredeintOptionsModal';
 import AddIngredientModal from '../Components/AddIngredientModal';
+import { FadeInView } from '../Utils/AnimatedComposable';
 
 export const auth = getAuth();
 
 export default function MainScreen(): React.JSX.Element {
-  // Types
   type WeeklyMealsIngredient = {
     weeklyMealId: string;
     IngredientName: string;
@@ -32,60 +30,39 @@ export default function MainScreen(): React.JSX.Element {
     quantityType: QuantityType;
   };
 
-  // Tracks the active tab; used to query weekly meals and default Plan modal.
   const [selectedMeal, setSelectedMeal] = useState<MealType>(MealType.BREAKFAST);
-  // Day selector that drives weekly-meal queries and Plan modal defaults.
   const [selectedDay, setSelectedDay] = useState<DaysOfWeek>(DaysOfWeek.MONDAY);
-  // Source of truth for scheduled entries for the current (day, meal).
   const [weeklyMeals, setWeeklyMeals] = useState<WeeklyMeal[]>([]);
-  // Concrete recipe docs for current weeklyMeals (rendered as cards).
   const [currentWeeklyMealsRecipes, setCurrentWeeklyMealsRecipes] = useState<Recipe[]>([]);
-  // The list of the ingredients available in the weeklyMeals
   const [currentWeeklyMealsIngredients, setCurrentWeeklyMealsIngredients] = useState<WeeklyMealsIngredient[]>([]);
-  // Flip-flop to force a refetch when mutating schedule without changing filters.
   const [renderFlag, setRenderFlag] = useState<boolean>(false);
-  // Toggles the add-recipe modal.
   const [visible, setVisible] = useState<boolean>(false);
-  // Shows the plan-meal modal (planning a recipe into a (day, meal)).
   const [planMealModalVisible, setPlanMealModalVisible] = useState<boolean>(false);
-  // Controls the AddIngredientModal visibility
   const [addIngredientModalVisible, setAddIngredientModalVisible] = useState<boolean>(false);
-  // Controls the long-press options on a recipe card.
   const [recipeOptionsVisibility, setRecipeOptionsVisibility] = useState<boolean>(false);
-  // Controls the long-press options on a planned ingredient card.
   const [ingredientOptionsVisibility, setIngredientOptionsVisibility] = useState<boolean>(false);
-  // Holds the recipe the user long-pressed; optional by design.
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe>();
-  // Holds the ingredient instance the user long-pressed; optional by design.
   const [selectedIngredientInst, setSelectedIngredientInst] = useState<WeeklyMealsIngredient | null>(null);
-  // Guards first-render UX; prevents UI flashing before initial data is ready.
   const [isFetchFinished, setIsFetchFinished] = useState<boolean>(false);
-  // Spinner for the weekly-meals fetch (distinct from initial boot loading).
   const [isWeeklyMealsLoading, setIsWeeklyMealsLoading] = useState<boolean>(false);
 
-  // CONTEXT — central app API/state providers.
   const {
-    setIngredients, getRecipeById, setRecipes, getAllRecipes, deleteWeeklyMeal, getWeeklyMealsByDayAndMealType,
+    setIngredients, getRecipeById, setRecipes, deleteWeeklyMeal, getWeeklyMealsByDayAndMealType,
     addIngredient, getUserRecipes } = useAppContext();
   const navigation = useNavigation();
 
-  // Thin wrapper: keeps caller code clean and testable.
   const fetchWeeklyMeals = async (dayOfWeek: DaysOfWeek, mealType: MealType,) => {
     return await getWeeklyMealsByDayAndMealType(dayOfWeek, mealType)
   };
 
-  // Fetches recipe docs for current weeklyMeals.
-  // NOTE: This runs sequentially to preserve order; if order is irrelevant, `Promise.all` would be faster.
   const fetchRecipes = async () => {
     const fetchedRecipes: Recipe[] = [];
     const fetchedIngredients: WeeklyMealsIngredient[] = [];
     for (const meal of weeklyMeals) {
       if (meal.entryType === WeeklyEntryType.RECIPE && meal.recipeId) {
-        // Skip non-recipe entries.
         const item: Recipe | null = await getRecipeById(meal.recipeId!);
-        if (item) fetchedRecipes.push(item); // Only add existing recipes.
+        if (item) fetchedRecipes.push(item);
       }
-      // if it's an ingredient, we add it to the ingredient list
       else if (meal.ingredientId) {
         const ingredient: Ingredient = await getIngredientById(meal.ingredientId!);
         if (ingredient) fetchedIngredients.push(
@@ -97,15 +74,13 @@ export default function MainScreen(): React.JSX.Element {
           });
       }
     }
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setCurrentWeeklyMealsIngredients(fetchedIngredients);
     setCurrentWeeklyMealsRecipes(fetchedRecipes || []);
   };
 
-  // From options modal: open planner prefilled with current selection.
   const handlePlanRecipe = () => { setPlanMealModalVisible(true); };
 
-  // Unplan removes the specific WeeklyMeal entry that references the recipe.
-  // Why: a recipe can exist in multiple slots; we target only the current (day, meal) entry.
   const handleUnplanRecipe = async () => {
     if (!selectedRecipe) return;
 
@@ -118,8 +93,8 @@ export default function MainScreen(): React.JSX.Element {
     try {
       const success = await deleteWeeklyMeal(entry.id.toString());
       if (success) {
-        setRenderFlag(flag => !flag); // Force refresh of the current view.
-        setRecipeOptionsVisibility(false); // Close menu on success for clear UX.
+        setRenderFlag(flag => !flag);
+        setRecipeOptionsVisibility(false);
       } else {
         console.error('Failed to unplan meal', entry.id);
       }
@@ -128,79 +103,63 @@ export default function MainScreen(): React.JSX.Element {
     }
   };
 
-  // Boot strap: load global ingredients and recipes before showing the screen.
-  // Why: downstream components expect these lists to be present in context.
   useEffect(() => {
     const asyncFunctions = async () => {
       const fetchedIngredients: Ingredient[] = await getAllIngredients();
       setIngredients(fetchedIngredients);
-
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error('No user ID found in auth context');
-
-      // Fetch only the current user's recipes.
       const fetchedRecipes = await getUserRecipes(userId);
-
       setRecipes(fetchedRecipes);
       setIsFetchFinished(true);
     };
-    asyncFunctions()
-      .catch(error => {
-        if (error instanceof Error) {
-          console.error(
-            'MainScreen -> error in asyncFunctions :',
-            error.message,
-            error.stack,
-          );
-        } else {
-          console.error('MainScreen -> error in asyncFunctions :', error);
-        }
-      })
-      .then(() => setIsFetchFinished(true)); // Redundant with the set above; safe but can be removed.
+    asyncFunctions().catch(error => {
+      if (error instanceof Error) {
+        console.error('MainScreen -> error in asyncFunctions :', error.message, error.stack,);
+      } else {
+        console.error('MainScreen -> error in asyncFunctions :', error);
+      }
+    }).then(() => setIsFetchFinished(true));
   }, []);
 
-  // React to (day, meal) changes or explicit refreshes.
-  // Why: clear stale data before fetch to avoid flicker of old items.
   useEffect(() => {
     if (selectedDay && selectedMeal && isFetchFinished == true) {
       const fetchData = async () => {
         try {
           setIsWeeklyMealsLoading(true);
-          setWeeklyMeals([]); // Avoids rendering outdated recipes while loading.
-          const fetchedWeeklyMeals: WeeklyMeal[] = await fetchWeeklyMeals(
-            selectedDay,
-            selectedMeal,
-          );
+          const fetchedWeeklyMeals: WeeklyMeal[] = await fetchWeeklyMeals(selectedDay, selectedMeal,);
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
           setWeeklyMeals(fetchedWeeklyMeals);
         } catch (error) {
-          console.error(
-            'Error fetching weekly meals: ' + JSON.stringify(error),
-          );
+          console.error('Error fetching weekly meals: ' + JSON.stringify(error));
         } finally {
           setIsWeeklyMealsLoading(false);
         }
       };
-
       fetchData();
     }
   }, [selectedMeal, selectedDay, renderFlag, isFetchFinished]);
 
-  // Keep `currentWeeklyMealsRecipes` in sync with `weeklyMeals`.
-  // Why: these are separate because weeklyMeals are lightweight refs, recipes are full docs.
   useEffect(() => {
     if (weeklyMeals.length > 0) fetchRecipes();
     else setCurrentWeeklyMealsRecipes([]);
   }, [weeklyMeals]);
 
+  useEffect(() => {
+    if (
+      Platform.OS === 'android' &&
+      UIManager.setLayoutAnimationEnabledExperimental
+    ) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+
   return isFetchFinished ? (
     <View style={[styles.container, { padding: 16 }]}>
       {/* Header */}
       <>
-        {/* Day selector; also exposes navigation and sign-out actions. */}
-        <MealsHeader selectedDay={selectedDay} setSelectedDay={setSelectedDay}
-          onRecipesButtonPress={() => handleNavigate({ screen: 'Recipes' }, navigation)}
+        <MealsHeader selectedDay={selectedDay} setSelectedDay={setSelectedDay} onRecipesButtonPress={() => handleNavigate({ screen: 'Recipes' }, navigation)}
           onLogoutButtonPress={() => auth.signOut()} />
-        {/* Meal-type tabs; drives the (day, meal) query. */}
         <MealTypeComponent mealType={selectedMeal} onSelectedMeal={setSelectedMeal} />
       </>
 
@@ -212,27 +171,19 @@ export default function MainScreen(): React.JSX.Element {
           <Text>No Recipes Found</Text>
         ) : (
           <>
-            <View style={{ marginTop: 12 }}>
-              <Text style={{ fontWeight: '700', marginBottom: 6 }}>Planned Ingredients</Text>
-              {currentWeeklyMealsRecipes.map((recipe, index) => (
-                <RecipeCard key={index} recipe={recipe}
-                  onPress={() => handleNavigate({ screen: 'Recipe', params: { recipe: recipe } }, navigation,)}
-                  onLongPress={() => {
-                    setSelectedRecipe(recipe);
-                    setRecipeOptionsVisibility(true);
-                  }}
-                />
-              ))}
-              {currentWeeklyMealsIngredients.map((instance, index) => (
-                <PlannedIngredientCard ingredientName={instance.IngredientName} quantity={instance.quantity}
-                  quantityType={instance.quantityType} key={index}
-                  onLongPress={() => {
-                    setIngredientOptionsVisibility(true);
-                    setSelectedIngredientInst(instance);
-                  }}
-                />
-              ))}
-            </View>
+            <FadeInView key={`${selectedDay}-${selectedMeal}`}>
+              <View style={{ marginTop: 12 }}>
+                <Text style={{ fontWeight: '700', marginBottom: 6 }}>Planned Recipes</Text>
+                {currentWeeklyMealsRecipes.map((recipe, index) => (
+                  <RecipeCard key={index} recipe={recipe} onPress={() => handleNavigate({ screen: 'Recipe', params: { recipe: recipe } }, navigation,)}
+                    onLongPress={() => { setSelectedRecipe(recipe); setRecipeOptionsVisibility(true); }} />
+                ))}
+                {currentWeeklyMealsIngredients.map((instance, index) => (
+                  <PlannedIngredientCard ingredientName={instance.IngredientName} quantity={instance.quantity} quantityType={instance.quantityType} key={index}
+                    onLongPress={() => { setIngredientOptionsVisibility(true); setSelectedIngredientInst(instance); }} />
+                ))}
+              </View>
+            </FadeInView>
           </>
         )}
       </ScrollView>
