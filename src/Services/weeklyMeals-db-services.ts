@@ -1,4 +1,4 @@
-import {auth} from '../Screens/MainScreen';
+import { auth } from '../Screens/MainScreen';
 import {
   DaysOfWeek,
   MealType,
@@ -7,7 +7,7 @@ import {
   WeeklyMeal,
   WeeklyMealWithoutId,
 } from '../Types/Types';
-import {TABLE_WEEKLY_MEALS} from './db-services';
+import { TABLE_WEEKLY_MEALS } from './db-services';
 import {
   collection,
   query,
@@ -32,21 +32,21 @@ const weeklyMealCollection = collection(firestoreDb, TABLE_WEEKLY_MEALS);
 
 export type AddWeeklyMealInput =
   | {
-      day: DaysOfWeek;
-      mealType: MealType;
-      recipeId: string;
-      entryType?: WeeklyEntryType.RECIPE | 'RECIPE';
-      userId: string;
-    }
+    day: DaysOfWeek;
+    mealType: MealType;
+    recipeId: string;
+    entryType?: WeeklyEntryType.RECIPE | 'RECIPE';
+    userId: string;
+  }
   | {
-      day: DaysOfWeek;
-      mealType: MealType;
-      ingredientId: string;
-      quantity: number;
-      quantityType: QuantityType;
-      entryType?: WeeklyEntryType.INGREDIENT | 'INGREDIENT';
-      userId: string;
-    };
+    day: DaysOfWeek;
+    mealType: MealType;
+    ingredientId: string;
+    quantity: number;
+    quantityType: QuantityType;
+    entryType?: WeeklyEntryType.INGREDIENT | 'INGREDIENT';
+    userId: string;
+  };
 
 export async function addWeeklyMealDb(
   input: AddWeeklyMealInput,
@@ -63,19 +63,19 @@ export async function addWeeklyMealDb(
   const isIngredient = (input as any).ingredientId && !(input as any).recipeId;
   const payload: WeeklyMeal = isIngredient
     ? {
-        ...base,
-        entryType: WeeklyEntryType.INGREDIENT,
-        ingredientId: (input as any).ingredientId,
-        quantity: (input as any).quantity,
-        quantityType: (input as any).quantityType,
-        userId: (input as any).userId,
-      }
+      ...base,
+      entryType: WeeklyEntryType.INGREDIENT,
+      ingredientId: (input as any).ingredientId,
+      quantity: (input as any).quantity,
+      quantityType: (input as any).quantityType,
+      userId: (input as any).userId,
+    }
     : {
-        ...base,
-        entryType: WeeklyEntryType.RECIPE,
-        recipeId: (input as any).recipeId,
-        userId: (input as any).userId,
-      };
+      ...base,
+      entryType: WeeklyEntryType.RECIPE,
+      recipeId: (input as any).recipeId,
+      userId: (input as any).userId,
+    };
 
   await setDoc(ref, payload);
   return ref.id;
@@ -99,7 +99,7 @@ export const getWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
       where('userId', '==', auth.currentUser?.uid),
     ); // TODO: replace with actual userId
     const querySnapshot = await getDocs(weeklyMealsQuery);
-    querySnapshot.forEach((doc: {data: () => WeeklyMealWithoutId; id: any}) => {
+    querySnapshot.forEach((doc: { data: () => WeeklyMealWithoutId; id: any }) => {
       const data = doc.data() as WeeklyMealWithoutId;
       const wMeal: WeeklyMeal = {
         id: doc.id, // Use Firestore document ID as the ingredient ID
@@ -142,7 +142,7 @@ export const getWeeklyMealsByDayAndMealTypeDb: (
       where('userId', '==', auth.currentUser?.uid), // TODO: replace with actual userId
     );
     const querySnapshot = await getDocs(weeklyMealsQuery);
-    querySnapshot.forEach((doc: {data: () => WeeklyMealWithoutId; id: any}) => {
+    querySnapshot.forEach((doc: { data: () => WeeklyMealWithoutId; id: any }) => {
       const data = doc.data() as WeeklyMealWithoutId;
       weeklyMeals.push({
         id: doc.id,
@@ -170,11 +170,11 @@ export async function backfillWeeklyEntryTypeOnce(): Promise<{
   for (const docSnap of snap.docs) {
     const data = docSnap.data() as WeeklyMeal;
     if (!data.entryType) {
-      await updateDoc(docSnap.ref, {entryType: WeeklyEntryType.RECIPE});
+      await updateDoc(docSnap.ref, { entryType: WeeklyEntryType.RECIPE });
       updated++;
     }
   }
-  return {updated};
+  return { updated };
 }
 
 /**
@@ -235,7 +235,7 @@ export const getAllWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
     const weeklyMealsQuery = query(weeklyMealCollection);
     const querySnapshot = await getDocs(weeklyMealsQuery);
     querySnapshot.forEach(
-      (doc: {data: () => WeeklyMealWithoutId; id: string}) => {
+      (doc: { data: () => WeeklyMealWithoutId; id: string }) => {
         const data = doc.data() as WeeklyMealWithoutId;
         weeklyMeals.push({
           id: doc.id,
@@ -243,10 +243,7 @@ export const getAllWeeklyMealsDb: () => Promise<WeeklyMeal[]> = async () => {
         });
       },
     );
-    console.log(
-      'getAllWeeklyMeals Firebase -> WeeklyMeals fetched successfully:',
-      weeklyMeals,
-    );
+    console.log('getAllWeeklyMeals Firebase -> WeeklyMeals fetched successfully:', JSON.stringify(weeklyMeals, null, 2));
 
     return weeklyMeals;
   } catch (error) {

@@ -1,18 +1,13 @@
 // GroceryListScreen.tsx
-import React, {useEffect, useState, useCallback} from 'react';
-import {View, StyleSheet, FlatList, Text, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
 import AppHeader from '../Components/AppHeader';
-import {useAppContext} from '../Context/Context';
-import {QuantityType, WeeklyEntryType, WeeklyMeal} from '../Types/Types';
+import { useAppContext } from '../Context/Context';
+import { QuantityType, WeeklyEntryType, WeeklyMeal } from '../Types/Types';
 import Icon from '@react-native-vector-icons/ionicons';
-import {
-  screensBackgroundColor,
-  orangeBackgroundColor,
-  greyBorderColor,
-  modalBorderRadius,
-} from '../Utils/Styiling';
-import {getAllIngredientPantriesDb} from '../Services/ingredientPantry-db-services';
-import {getAllWeeklyMealsDb} from '../Services/weeklyMeals-db-services';
+import { screensBackgroundColor, orangeBackgroundColor, greyBorderColor, modalBorderRadius, } from '../Utils/Styiling';
+import { getAllIngredientPantriesDb } from '../Services/ingredientPantry-db-services';
+import { getAllWeeklyMealsDb } from '../Services/weeklyMeals-db-services';
 
 interface GroceryItem {
   ingredientId: string;
@@ -60,7 +55,7 @@ function unifyQuantities(items: GroceryItem[]): GroceryItem[] {
 
     if (!unitGroup) {
       const total = items.reduce((acc, i) => acc + i.toBuy, 0);
-      unified.push({...first, toBuy: total});
+      unified.push({ ...first, toBuy: total });
       continue;
     }
 
@@ -91,13 +86,7 @@ function unifyQuantities(items: GroceryItem[]): GroceryItem[] {
 }
 
 export default function GroceryListScreen(): React.ReactElement {
-  const {
-    ingredients,
-    getIngredientsOfRecipe,
-    getAllGroceryBought,
-    addGroceryBought,
-    removeGroceryBought,
-  } = useAppContext();
+  const { ingredients, getIngredientsOfRecipe, getAllGroceryBought, addGroceryBought, removeGroceryBought, } = useAppContext();
 
   const [groceryList, setGroceryList] = useState<GroceryItem[]>([]);
   const [boughtIds, setBoughtIds] = useState<Set<string>>(new Set());
@@ -109,10 +98,8 @@ export default function GroceryListScreen(): React.ReactElement {
     setIsLoading(true);
     try {
       const allWeekly: WeeklyMeal[] = await getAllWeeklyMealsDb();
-      const neededMap: Record<
-        string,
-        {ingredientId: string; quantity: number; quantityType: QuantityType}
-      > = {};
+      console.log("getAll")
+      const neededMap: Record<string, { ingredientId: string; quantity: number; quantityType: QuantityType }> = {};
 
       for (const wm of allWeekly) {
         const entryType = wm.entryType ?? WeeklyEntryType.RECIPE;
@@ -177,13 +164,7 @@ export default function GroceryListScreen(): React.ReactElement {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    ingredients,
-    getIngredientsOfRecipe,
-    getAllIngredientPantriesDb,
-    getAllGroceryBought,
-    getAllWeeklyMealsDb,
-  ]);
+  }, [ingredients, getIngredientsOfRecipe, getAllIngredientPantriesDb, getAllGroceryBought, getAllWeeklyMealsDb,]);
 
   useEffect(() => {
     loadGroceryList();
@@ -203,7 +184,7 @@ export default function GroceryListScreen(): React.ReactElement {
     }
   };
 
-  const renderToBuyItem = ({item}: {item: GroceryItem}) => (
+  const renderToBuyItem = ({ item }: { item: GroceryItem }) => (
     <View style={styles.card}>
       <View style={styles.row}>
         <TouchableOpacity onPress={() => toggleBought(item.ingredientId)}>
@@ -225,13 +206,7 @@ export default function GroceryListScreen(): React.ReactElement {
       <AppHeader
         title="Grocery List"
         rightComponent={
-          <TouchableOpacity
-            onPress={loadGroceryList}
-            style={{
-              backgroundColor: orangeBackgroundColor,
-              borderRadius: modalBorderRadius,
-              padding: 10,
-            }}>
+          <TouchableOpacity onPress={loadGroceryList} style={{ backgroundColor: orangeBackgroundColor, borderRadius: modalBorderRadius, padding: 10, }}>
             <Icon name="refresh" size={20} color="white" />
           </TouchableOpacity>
         }
@@ -241,46 +216,25 @@ export default function GroceryListScreen(): React.ReactElement {
           Updated: {lastUpdated.toLocaleTimeString()}
         </Text>
       )}
-      <View style={{flex: 1}}>
-        <FlatList
-          data={toBuyList}
-          keyExtractor={item => item.ingredientId}
-          refreshing={isLoading}
-          onRefresh={loadGroceryList}
-          renderItem={renderToBuyItem}
-          ListEmptyComponent={
-            <Text style={styles.empty}>Nothing to buy 🎉</Text>
-          }
-          contentContainerStyle={
-            toBuyList.length === 0 && styles.emptyContainer
-          }
-        />
+      <View style={{ flex: 1 }}>
+        <FlatList data={toBuyList} keyExtractor={item => item.ingredientId} refreshing={isLoading} onRefresh={loadGroceryList} renderItem={renderToBuyItem}
+          ListEmptyComponent={<Text style={styles.empty}>Nothing to buy 🎉</Text>} contentContainerStyle={toBuyList.length === 0 && styles.emptyContainer} />
       </View>
       {boughtList.length > 0 && (
         <>
-          <TouchableOpacity
-            style={styles.sectionHeaderContainer}
-            onPress={() => setBoughtCollapsed(prev => !prev)}>
-            <Icon
-              name={boughtCollapsed ? 'chevron-down' : 'chevron-up'}
-              size={20}
-              color="#444"
-            />
+          <TouchableOpacity style={styles.sectionHeaderContainer} onPress={() => setBoughtCollapsed(prev => !prev)}>
+            <Icon name={boughtCollapsed ? 'chevron-down' : 'chevron-up'} size={20} color="#444" />
             <Text style={styles.sectionHeader}>Already Bought</Text>
             <Text style={styles.count}>({boughtList.length})</Text>
           </TouchableOpacity>
-          {!boughtCollapsed &&
-            boughtList.map(item => (
-              <TouchableOpacity
-                key={item.ingredientId}
-                style={styles.boughtRow}
-                onPress={() => toggleBought(item.ingredientId)}>
-                <Icon name="checkbox" size={20} color={orangeBackgroundColor} />
-                <Text style={[styles.name, styles.nameBought]}>
-                  {item.name} — {item.toBuy.toFixed(2)} {item.quantityType}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          {!boughtCollapsed && boughtList.map(item => (
+            <TouchableOpacity key={item.ingredientId} style={styles.boughtRow} onPress={() => toggleBought(item.ingredientId)}>
+              <Icon name="checkbox" size={20} color={orangeBackgroundColor} />
+              <Text style={[styles.name, styles.nameBought]}>
+                {item.name} — {item.toBuy.toFixed(2)} {item.quantityType}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </>
       )}
     </View>
